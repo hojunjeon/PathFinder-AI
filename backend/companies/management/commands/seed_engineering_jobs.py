@@ -4,14 +4,20 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from companies.models import Company, Job
-
+from companies.models import Company
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "large_company_engineering_jobs.jsonl"
+REQUIRED_KEYS = {
+    "company_name",
+    "industry",
+    "size",
+    "talent_description",
+    "culture_keywords",
+}
 
 
 class Command(BaseCommand):
-    help = "대기업 이공계 엔지니어링 직무 기준 데이터를 Company/Job 테이블에 적재합니다."
+    help = "실제 대기업 메타데이터 JSONL을 Company 테이블에 적재합니다."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -28,59 +34,41 @@ class Command(BaseCommand):
 
         created_companies = 0
         updated_companies = 0
-        created_jobs = 0
-        updated_jobs = 0
 
         with path.open(encoding="utf-8") as f:
             for line_no, line in enumerate(f, start=1):
                 if not line.strip():
                     continue
+
                 record = json.loads(line)
-                if record.get("size") != Company.Size.LARGE:
+                missing_keys = REQUIRED_KEYS - record.keys()
+                if missing_keys:
+                    missing = ", ".join(sorted(missing_keys))
+                    raise CommandError(f"{line_no}행: 필수 키가 없습니다: {missing}")
+
+                if record["size"] != Company.Size.LARGE:
                     raise CommandError(f"{line_no}행: 대기업 데이터가 아닙니다.")
 
-                company, company_created = Company.objects.update_or_create(
+                if not isinstance(record["culture_keywords"], list):
+                    raise CommandError(f"{line_no}행: culture_keywords는 배열이어야 합니다.")
+
+                company, created = Company.objects.update_or_create(
                     company_name=record["company_name"],
                     defaults={
                         "industry": record["industry"],
                         "size": Company.Size.LARGE,
-                        "talent_description": record.get("talent_description", ""),
-                        "culture_keywords": record.get("culture_keywords", []),
+                        "talent_description": record["talent_description"],
+                        "culture_keywords": record["culture_keywords"],
                     },
                 )
-                if company_created:
+                if created:
                     created_companies += 1
                 else:
                     updated_companies += 1
 
-                job_defaults = {
-                    "annual_salary_krw": record.get("annual_salary_krw", 0),
-                    "required_experience_years": record.get("required_experience_years", 0),
-                    "applicant_count": record.get("applicant_count", 0),
-                    "interview_stages": record.get("interview_stages", []),
-                    "required_skills": record.get("required_skills", []),
-                    "job_description": record.get("job_description", ""),
-                    "preferred_qualifications": record.get("preferred_qualifications", []),
-                    "recommended_study_areas": record.get("recommended_study_areas", []),
-                }
-                job = Job.objects.filter(company=company, job_title=record["job_title"]).first()
-                if job:
-                    for field, value in job_defaults.items():
-                        setattr(job, field, value)
-                    job.save(update_fields=[*job_defaults.keys()])
-                    updated_jobs += 1
-                else:
-                    Job.objects.create(
-                        company=company,
-                        job_title=record["job_title"],
-                        **job_defaults,
-                    )
-                    created_jobs += 1
-
         self.stdout.write(
             self.style.SUCCESS(
                 "완료: "
-                f"기업 생성 {created_companies}개, 기업 갱신 {updated_companies}회, "
-                f"직무 생성 {created_jobs}개, 직무 갱신 {updated_jobs}개"
+                f"기업 생성 {created_companies}개, 기업 갱신 {updated_companies}회"
             )
         )

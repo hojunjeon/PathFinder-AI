@@ -28,7 +28,7 @@
       </div>
 
       <section class="card insights">
-        <h2>📊 설계 의도 및 주요 인사이트 (F310)</h2>
+        <h2>📊 설계 의도 및 주요 인사이트</h2>
         <div class="insight-grid">
           <div class="insight-item">
             <h4>차트 A — 이중 막대 (산업별)</h4>

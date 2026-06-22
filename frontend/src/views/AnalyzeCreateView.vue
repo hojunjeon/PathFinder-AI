@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="progress">
-      <div :class="['step', { active: currentStep >= 1, done: currentStep > 1 }]">1. URL 입력</div>
+      <div :class="['step', { active: currentStep >= 1, done: currentStep > 1 }]">1. 공고 입력</div>
       <div :class="['step', { active: currentStep >= 2, done: currentStep > 2 }]">2. 자소서</div>
       <div :class="['step', { active: currentStep >= 3 }]">3. 면접 유형</div>
     </div>
@@ -30,6 +30,7 @@ const jobUrl = ref('')
 const selectedJobId = ref(null)
 const selectedJob = ref(null)
 const coverLetter = ref('')
+const coverLetters = ref([])
 const submitting = ref(false)
 const manualPostingText = ref('')
 
@@ -41,9 +42,17 @@ function onJobSelected({ url, jobId, job, job_posting_text }) {
   currentStep.value = 2
 }
 
-function onCoverLetterDone(text) {
-  coverLetter.value = text
-  currentStep.value = 3
+async function onCoverLetterDone({ cover_letters, text }) {
+  coverLetters.value = cover_letters || []
+  coverLetter.value = text || ''
+  try {
+    if (coverLetters.value.length) {
+      await api.put('/api/profile/', { cover_letters: coverLetters.value })
+    }
+    currentStep.value = 3
+  } catch (e) {
+    alert(e.response?.data?.message || '자기소개서 저장에 실패했습니다.')
+  }
 }
 
 async function onSubmit(interviewTypes) {

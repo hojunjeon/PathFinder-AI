@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "design-mockups/03-roadmap-result.html",
+  "entry": "design-mockups/03-roadmap-result.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-06-22T05:20:25.204Z",
+  "updatedAt": "2026-06-22T05:20:25.204Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

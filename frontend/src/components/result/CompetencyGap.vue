@@ -1,26 +1,36 @@
 <template>
-  <section class="card">
-    <h2>역량 분석</h2>
+  <section class="section-card" id="gap-section">
+    <div class="section-head">
+      <h2>역량 분석</h2>
+      <span class="section-note">공고 요구사항과 자기소개서 기반 갭 분석</span>
+    </div>
+    
     <div v-if="hasData" class="gap-grid">
-      <div>
-        <h3>강점</h3>
-        <ul>
+      <!-- Strengths (Good) -->
+      <div class="gap-card good" v-if="strengths.length">
+        <div class="gap-title">강점 - 즉시 활용 가능</div>
+        <ul class="gap-list">
           <li v-for="item in strengths" :key="item">{{ item }}</li>
         </ul>
       </div>
-      <div>
-        <h3>보완점</h3>
-        <ul>
+
+      <!-- Gaps (Risk) -->
+      <div class="gap-card risk" v-if="gaps.length">
+        <div class="gap-title">보완 필요 - 우선 준비</div>
+        <ul class="gap-list">
           <li v-for="item in gaps" :key="item">{{ item }}</li>
         </ul>
       </div>
-      <div>
-        <h3>요구 역량</h3>
-        <ul>
+
+      <!-- Required Competencies -->
+      <div class="gap-card required" v-if="requiredCompetencies.length">
+        <div class="gap-title">요구 역량 - 채용공고 기준</div>
+        <ul class="gap-list">
           <li v-for="item in requiredCompetencies" :key="item">{{ item }}</li>
         </ul>
       </div>
     </div>
+    
     <p v-else class="empty">역량 분석 결과가 없습니다.</p>
   </section>
 </template>
@@ -41,27 +51,73 @@ const hasData = computed(() =>
 </script>
 
 <style scoped>
+.section-card {
+  background: var(--bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 28px;
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: 1.14;
+}
+.section-note {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
 .gap-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: var(--space-4);
 }
-h3 {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+.gap-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-warm);
+  padding: var(--space-5);
 }
-ul {
-  padding-left: 1.2rem;
+.gap-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
 }
-li {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
+.gap-card.good .gap-title {
+  color: var(--success);
+}
+.gap-card.risk .gap-title {
+  color: var(--danger);
+}
+.gap-card.required .gap-title {
+  color: var(--accent);
+}
+.gap-list {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  padding-left: var(--space-4);
+  margin: 0;
+}
+.gap-list li {
+  line-height: 1.4;
 }
 .empty {
-  color: var(--text-muted);
+  color: var(--muted);
+  text-align: center;
+  padding: var(--space-6);
 }
-@media (max-width: 768px) {
+
+@media (max-width: 900px) {
   .gap-grid {
     grid-template-columns: 1fr;
   }

@@ -68,3 +68,7 @@ logs/
 *.log
 .gjc/
 .antigravitycli/
+.od-skills/
+.agent/
+
+.env

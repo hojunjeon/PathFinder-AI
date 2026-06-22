@@ -162,6 +162,26 @@ watch(url, (val) => {
   gap: var(--space-5);
 }
 
+.field {
+  display: flex;
+  flex-direction: column;
+}
+.field label {
+  display: block;
+  margin-bottom: var(--space-3); /* 라벨과 입력박스 간격 추가 */
+  font-weight: 500;
+  font-size: var(--text-sm);
+  color: var(--fg);
+}
+.url-row {
+  margin-bottom: var(--space-3); /* 입력박스와 힌트 문구 간격 추가 */
+}
+.hint {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
 .manual-toggle {
   display: inline-flex;
   align-items: center;

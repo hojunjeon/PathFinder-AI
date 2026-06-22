@@ -73,6 +73,35 @@ def test_company_jobs(auth_client, company, job):
 
 
 @pytest.mark.django_db
+def test_company_jobs_search_with_pagination(auth_client, company, job):
+    Job.objects.create(
+        company=company,
+        job_title='데이터 엔지니어',
+        required_experience_years=3,
+        required_skills=['ETL', 'Spark'],
+        recommended_study_areas=['데이터 파이프라인'],
+    )
+
+    resp = auth_client.get(f'/api/companies/{company.id}/jobs/?q=백엔드&page_size=1')
+
+    assert resp.status_code == 200
+    assert resp.data['count'] == 1
+    assert resp.data['page_size'] == 1
+    assert resp.data['results'][0]['job_title'] == '주니어 백엔드 엔지니어'
+
+
+@pytest.mark.django_db
+def test_job_search_filters_by_company_industry_and_skill(auth_client, company, job):
+    resp = auth_client.get('/api/jobs/?company=카카오&industry=IT&skill=Python')
+
+    assert resp.status_code == 200
+    assert resp.data['count'] == 1
+    result = resp.data['results'][0]
+    assert result['company']['company_name'] == '카카오'
+    assert result['job_title'] == '주니어 백엔드 엔지니어'
+
+
+@pytest.mark.django_db
 def test_company_resolve_from_backend_alias(auth_client):
     Company.objects.create(company_name='쿠팡', industry='Commerce', size='large')
     resp = auth_client.get('/api/companies/resolve/?url=https://careers.coupang.com/jobs/1')

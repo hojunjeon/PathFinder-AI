@@ -18,6 +18,18 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = ['id', 'company_name', 'industry', 'size', 'talent_description', 'culture_keywords']
 
 
+class JobSearchSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+
+    class Meta:
+        model = Job
+        fields = [
+            'id', 'company', 'job_title', 'annual_salary_krw', 'required_experience_years',
+            'applicant_count', 'interview_stages', 'required_skills',
+            'job_description', 'preferred_qualifications', 'recommended_study_areas',
+        ]
+
+
 class CompanyDetailSerializer(serializers.ModelSerializer):
     jobs = JobSerializer(many=True, read_only=True)
 

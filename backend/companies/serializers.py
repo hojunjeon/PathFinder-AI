@@ -1,8 +1,15 @@
 from rest_framework import serializers
+
+from .job_titles import display_job_title
 from .models import Company, Job, JobPosting
 
 
 class JobSerializer(serializers.ModelSerializer):
+    job_title = serializers.SerializerMethodField()
+
+    def get_job_title(self, obj):
+        return display_job_title(obj.job_title)
+
     class Meta:
         model = Job
         fields = [
@@ -20,6 +27,10 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class JobSearchSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
+    job_title = serializers.SerializerMethodField()
+
+    def get_job_title(self, obj):
+        return display_job_title(obj.job_title)
 
     class Meta:
         model = Job

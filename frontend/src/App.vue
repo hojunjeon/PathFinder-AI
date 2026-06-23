@@ -7,16 +7,17 @@
           <template v-if="authStore.isLoggedIn">
             <router-link to="/analyze/new">로드맵 생성</router-link>
             <router-link to="/history">히스토리</router-link>
+            <router-link to="/community">면접 후기</router-link>
             <router-link to="/profile">프로필</router-link>
             <router-link to="/dashboard">채용시장 분석</router-link>
             <button class="nav-btn theme-toggle" @click="themeStore.toggle">
-              {{ themeStore.isDark ? '☀️' : '🌙' }}
+              {{ themeStore.isDark ? 'Light' : 'Dark' }}
             </button>
             <button class="nav-btn logout-btn" @click="handleLogout">로그아웃</button>
           </template>
           <template v-else>
             <button class="nav-btn theme-toggle" @click="themeStore.toggle">
-              {{ themeStore.isDark ? '☀️' : '🌙' }}
+              {{ themeStore.isDark ? 'Light' : 'Dark' }}
             </button>
           </template>
         </nav>

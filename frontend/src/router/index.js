@@ -7,6 +7,7 @@ const routes = [
   { path: '/analyze/new', component: () => import('../views/AnalyzeCreateView.vue') },
   { path: '/analyze/:id', component: () => import('../views/AnalyzeResultView.vue') },
   { path: '/history', component: () => import('../views/HistoryView.vue') },
+  { path: '/community', component: () => import('../views/CommunityView.vue') },
   { path: '/dashboard', component: () => import('../views/DashboardView.vue') },
 ]
 

@@ -1,0 +1,18 @@
+{
+  "source": "FinanceDataReader StockListing(KRX) and StockListing(KRX-DESC), KRX-derived listing/market data",
+  "generation_note": "KRX 전체 상장종목 시가총액 내림차순 상위 500개 기업 공식/실제 메타데이터 정보 수집 및 정제.",
+  "record_count": 500,
+  "market_counts_top1000": {
+    "KOSPI": 522,
+    "KOSDAQ GLOBAL": 50,
+    "KOSDAQ": 426,
+    "KONEX": 2
+  },
+  "fields_in_jsonl": [
+    "company_name",
+    "culture_keywords",
+    "industry",
+    "size",
+    "talent_description"
+  ]
+}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Company(models.Model):
@@ -37,3 +38,25 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.company.company_name} - {self.job_title}"
+
+
+class JobPosting(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_postings')
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True, related_name='job_postings')
+    source_url = models.URLField(max_length=2048, blank=True, default='')
+    company_name = models.CharField(max_length=100, blank=True, default='')
+    job_title = models.CharField(max_length=200, blank=True, default='')
+    responsibilities = models.TextField(blank=True, default='')
+    requirements = models.TextField(blank=True, default='')
+    preferred_qualifications = models.TextField(blank=True, default='')
+    raw_text = models.TextField(blank=True, default='')
+    resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'job_postings'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        company_name = self.company.company_name if self.company else 'Unsupported'
+        return f"JobPosting({company_name}, {self.source_url})"

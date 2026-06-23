@@ -44,7 +44,17 @@ def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
     user = User.objects.create_user(email='payload@test.com', password='pass1234!')
     Profile.objects.create(user=user, major='CS')
     company = Company.objects.create(company_name='카카오', industry='IT', size='large')
-    job = Job.objects.create(company=company, job_title='백엔드 개발자')
+    job = Job.objects.create(
+        company=company,
+        job_title='백엔드 개발자',
+        annual_salary_krw=60000000,
+        required_experience_years=1,
+        applicant_count=300,
+        job_description='대규모 트래픽을 처리하는 백엔드 시스템 개발',
+        required_skills=['Python', 'Database'],
+        preferred_qualifications=['분산 시스템 경험'],
+        recommended_study_areas=['트랜잭션', '캐시 전략'],
+    )
     monkeypatch.setattr('analysis.services.fetch_job_posting_text', lambda url: '파싱된 채용공고 본문')
 
     payload = build_llm_payload(
@@ -56,6 +66,13 @@ def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
     )
 
     assert payload['job_posting_text'] == '파싱된 채용공고 본문'
+    assert payload['job_posting']['url'] == 'https://careers.kakao.com/jobs/1'
+    assert payload['company_info']['회사명'] == '카카오'
+    assert payload['company_info']['산업'] == 'IT'
+    assert payload['job_info']['직무명'] == '백엔드 개발자'
+    assert payload['job_info']['직무설명'] == '대규모 트래픽을 처리하는 백엔드 시스템 개발'
+    assert payload['job_info']['우대사항'] == ['분산 시스템 경험']
+    assert payload['job_info']['학습추천분야'] == ['트랜잭션', '캐시 전략']
 
 
 def test_job_posting_url_safety_blocks_local_targets():

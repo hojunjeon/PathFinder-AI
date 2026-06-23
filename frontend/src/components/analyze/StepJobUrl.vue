@@ -3,36 +3,41 @@
     <div class="panel-head">
       <p class="eyebrow">Step 1 of 3</p>
       <h2 class="panel-title">어떤 회사에 지원했나요?</h2>
-      <p class="panel-desc">서류 합격한 채용공고 URL을 입력하거나 공고 내용을 직접 붙여 넣으세요.</p>
+      <p class="panel-desc">채용공고의 핵심 내용을 입력하면 기업/직무 DB와 연결합니다.</p>
     </div>
-
-    <!-- Mini Tabs -->
-    <div class="mini-tabs" aria-label="공고 입력 방식">
-      <button :class="['mini-tab', { active: !isManual }]" type="button" @click="isManual = false">URL로 입력</button>
-      <button :class="['mini-tab', { active: isManual }]" type="button" @click="isManual = true">직접 입력</button>
-    </div>
-
-    <label class="manual-toggle">
-      <input type="checkbox" v-model="isManual" />
-      <span>직접 공고 내용 입력하기</span>
-    </label>
 
     <div class="form-card">
-      <div v-if="!isManual" class="field">
-        <label for="job-url-input">채용공고 URL</label>
-        <div class="url-row">
-          <input id="job-url-input" v-model="url" type="url" placeholder="https://careers.kakao.com/..." />
-        </div>
-        <span class="hint">사람인, 잡코리아, 링크드인 링크를 지원합니다.</span>
+      <div class="field">
+        <label for="company-name-input">회사명</label>
+        <input id="company-name-input" v-model="form.company_name" placeholder="예) 삼성전자" />
       </div>
 
-      <div v-if="isManual" class="field">
-        <label for="job-text-input">채용공고 본문 텍스트</label>
-        <textarea id="job-text-input" v-model="manualText" rows="6" placeholder="공고 주요 내용을 여기에 복사해 붙여넣으세요..."></textarea>
+      <div class="field">
+        <label for="job-title-input">직무명</label>
+        <input id="job-title-input" v-model="form.job_title" placeholder="예) 백엔드 개발자" />
       </div>
+
+      <div class="field">
+        <label for="responsibilities-input">담당업무</label>
+        <textarea id="responsibilities-input" v-model="form.responsibilities" rows="4" placeholder="공고의 담당업무 내용을 붙여넣으세요."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="requirements-input">자격요건</label>
+        <textarea id="requirements-input" v-model="form.requirements" rows="4" placeholder="공고의 자격요건 내용을 붙여넣으세요."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="preferred-input">우대사항</label>
+        <textarea id="preferred-input" v-model="form.preferred_qualifications" rows="3" placeholder="공고의 우대사항이 있으면 입력하세요."></textarea>
+      </div>
+
+      <button id="match-job-btn" class="btn-secondary match-btn" type="button" :disabled="!canMatch || checking" @click="matchPosting">
+        {{ checking ? '기업/직무 DB 연결 중...' : '기업/직무 DB 연결' }}
+      </button>
     </div>
 
-    <div v-if="checking" class="status-checking">🔍 기업 DB 확인 중...</div>
+    <div v-if="checking" class="status-checking">기업 DB 확인 중...</div>
     <div v-if="errorMsg" class="error-text">{{ errorMsg }}</div>
 
     <div v-if="company" class="company-found">
@@ -48,19 +53,18 @@
         <p class="company-desc">{{ company.talent_description }}</p>
       </div>
 
-      <div class="field" style="margin-top: var(--space-5);">
-        <label for="job-select">직무 선택</label>
+      <div class="field job-select-field">
+        <label for="job-select">분석 기준 직무 선택</label>
         <select id="job-select" v-model="selectedJobId">
           <option disabled value="">직무를 선택하세요</option>
-          <option v-for="job in jobs" :key="job.id" :value="job.id">{{ job.job_title }}</option>
+          <option v-for="job in jobs" :key="job.id" :value="String(job.id)">{{ job.job_title }}</option>
         </select>
+        <span class="hint">입력한 직무명과 가장 가까운 사전 구축 직무 후보를 선택합니다.</span>
       </div>
     </div>
 
     <div class="actions">
-      <button id="next-step-btn" class="btn-primary"
-        :disabled="!company || !selectedJobId || (isManual && !manualText)"
-        @click="$emit('next', { url, company, jobId: selectedJobId, job: jobs.find(j => j.id === selectedJobId), job_posting_text: isManual ? manualText : '' })">
+      <button id="next-step-btn" class="btn-primary" type="button" :disabled="!company || !selectedJobId" @click="goNext">
         다음 단계
       </button>
     </div>
@@ -68,53 +72,81 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import api from '../../api'
 
 const emit = defineEmits(['next'])
-const url = ref('')
+
+const form = reactive({
+  company_name: '',
+  job_title: '',
+  responsibilities: '',
+  requirements: '',
+  preferred_qualifications: '',
+})
 const company = ref(null)
 const jobs = ref([])
 const selectedJobId = ref('')
 const checking = ref(false)
 const errorMsg = ref('')
-const isManual = ref(false)
-const manualText = ref('')
 
-let debounceTimer = null
-watch(url, (val) => {
+const canMatch = computed(() =>
+  form.company_name.trim()
+  && form.job_title.trim()
+  && form.responsibilities.trim()
+  && form.requirements.trim()
+)
+
+async function matchPosting() {
+  checking.value = true
+  errorMsg.value = ''
   company.value = null
   jobs.value = []
   selectedJobId.value = ''
-  errorMsg.value = ''
-  isManual.value = false
-  manualText.value = ''
-  if (!val) return
-  clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(async () => {
-    try {
-      new URL(val)
-    } catch {
-      errorMsg.value = '올바른 채용공고 URL을 입력해주세요.'
+  try {
+    const { data } = await api.post('/api/job-postings/manual/?page_size=30', form)
+    if (data.supported === false) {
+      errorMsg.value = data.message
       return
     }
-    checking.value = true
-    try {
-      const { data } = await api.get(`/api/companies/resolve/?url=${encodeURIComponent(val)}`)
-      if (data.supported === false) {
-        errorMsg.value = data.message
-        return
-      }
-      company.value = data
-      const jobRes = await api.get(`/api/companies/${data.id}/jobs/`)
-      jobs.value = jobRes.data
-    } catch (e) {
-      errorMsg.value = e.response?.data?.message || '현재 지원하지 않는 기업입니다. 추후 지원 예정입니다.'
-    } finally {
-      checking.value = false
+    company.value = data.company
+    jobs.value = data.jobs || []
+    if (!jobs.value.length) {
+      errorMsg.value = '입력한 직무와 연결할 수 있는 기준 직무가 없습니다. 직무명을 더 일반적인 표현으로 입력해 주세요.'
+      return
     }
-  }, 600)
-})
+    selectedJobId.value = String(data.matched_job?.id || jobs.value[0]?.id || '')
+  } catch (e) {
+    errorMsg.value = e.response?.data?.message || '입력한 회사명을 지원 기업 DB에서 찾지 못했습니다.'
+  } finally {
+    checking.value = false
+  }
+}
+
+function goNext() {
+  const selectedJob = jobs.value.find(j => String(j.id) === String(selectedJobId.value))
+  if (!selectedJob) {
+    errorMsg.value = '분석 기준 직무를 다시 선택해 주세요.'
+    return
+  }
+  emit('next', {
+    url: '',
+    company: company.value,
+    jobId: selectedJobId.value,
+    job: selectedJob,
+    job_posting_text: buildPostingText(),
+  })
+}
+
+function buildPostingText() {
+  return [
+    `회사명: ${form.company_name}`,
+    `직무명: ${form.job_title}`,
+    `담당업무:\n${form.responsibilities}`,
+    `자격요건:\n${form.requirements}`,
+    `우대사항:\n${form.preferred_qualifications || '미입력'}`,
+  ].join('\n\n')
+}
 </script>
 
 <style scoped>
@@ -132,31 +164,6 @@ watch(url, (val) => {
   font-size: var(--text-sm);
 }
 
-.mini-tabs {
-  display: inline-flex;
-  width: fit-content;
-  padding: var(--space-1);
-  background: var(--surface);
-  border-radius: var(--radius-pill);
-  margin-bottom: var(--space-5);
-  border: 1px solid var(--border-soft);
-}
-.mini-tab {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  border-radius: var(--radius-pill);
-  padding: 8px 16px;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
-}
-.mini-tab.active {
-  background: var(--bg);
-  color: var(--fg);
-  box-shadow: var(--elev-ring);
-}
-
 .form-card {
   display: grid;
   gap: var(--space-5);
@@ -168,33 +175,19 @@ watch(url, (val) => {
 }
 .field label {
   display: block;
-  margin-bottom: var(--space-3); /* 라벨과 입력박스 간격 추가 */
+  margin-bottom: var(--space-3);
   font-weight: 500;
   font-size: var(--text-sm);
   color: var(--fg);
-}
-.url-row {
-  margin-bottom: var(--space-3); /* 입력박스와 힌트 문구 간격 추가 */
 }
 .hint {
   display: block;
   font-size: var(--text-xs);
   color: var(--muted);
+  margin-top: var(--space-2);
 }
-
-.manual-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-.manual-toggle input {
-  width: 16px;
-  min-height: 16px;
-  height: 16px;
-  accent-color: var(--accent);
+.match-btn {
+  justify-self: start;
 }
 
 .status-checking {
@@ -248,6 +241,9 @@ watch(url, (val) => {
   font-size: var(--text-sm);
   line-height: 1.5;
   margin-top: var(--space-1);
+}
+.job-select-field {
+  margin-top: var(--space-5);
 }
 
 .actions {

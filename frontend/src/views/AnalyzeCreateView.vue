@@ -12,15 +12,13 @@
     </nav>
 
     <main class="main-container">
-      <!-- Help Modal Trigger Button -->
       <div class="help-trigger-wrapper">
         <button type="button" class="btn-help" @click="showHelp = true">
-          <span class="icon-help">💡</span>
+          <span class="icon-help">?</span>
           로드맵 생성기 사용법 보기
         </button>
       </div>
 
-      <!-- Help Modal -->
       <Transition name="modal">
         <div v-if="showHelp" class="modal-overlay" @click.self="showHelp = false">
           <div class="modal-content card">
@@ -34,21 +32,21 @@
                   <div class="guide-num">1</div>
                   <div class="guide-info">
                     <h3>채용공고 입력</h3>
-                    <p>지원하고자 하는 채용공고의 URL을 붙여넣거나 직접 텍스트를 입력해 요구 역량을 분석합니다.</p>
+                    <p>지원하고자 하는 채용공고 내용을 직접 입력해 기업과 직무 기준 데이터를 연결합니다.</p>
                   </div>
                 </div>
                 <div class="guide-step">
                   <div class="guide-num">2</div>
                   <div class="guide-info">
                     <h3>자기소개서 입력</h3>
-                    <p>본인의 자기소개서 내용을 입력하면 공고 요구 역량과 내 경험이 어떻게 연결되는지 비교 분석합니다.</p>
+                    <p>자기소개서 항목과 답변을 저장하고 공고 요구 역량과 내 경험의 연결성을 비교 분석합니다.</p>
                   </div>
                 </div>
                 <div class="guide-step">
                   <div class="guide-num">3</div>
                   <div class="guide-info">
                     <h3>면접 유형 선택</h3>
-                    <p>최종 면접(기술, 임원 등) 유형을 선택하여 맞춤형 모의 질문과 로드맵을 설계합니다.</p>
+                    <p>최종 면접 유형을 선택하여 맞춤형 모의 질문과 로드맵을 설계합니다.</p>
                   </div>
                 </div>
               </div>
@@ -75,7 +73,6 @@
         </button>
       </section>
 
-      <!-- Panel Section -->
       <section class="panel-container card" data-od-id="analyze-panel">
         <StepJobUrl v-if="currentStep === 1" @next="onJobSelected" />
         <StepCoverLetter v-if="currentStep === 2" :selected-job="selectedJob" :selected-company="selectedCompany" @next="onCoverLetterDone" @back="currentStep = 1" />
@@ -84,7 +81,7 @@
           :loading="submitting"
           @submit="onSubmit"
           @back="currentStep = 2" />
-        
+
         <div class="progress-copy">{{ currentStep }} / 3 단계</div>
       </section>
     </main>
@@ -107,6 +104,7 @@ const selectedJobId = ref(null)
 const selectedJob = ref(null)
 const selectedCompany = ref(null)
 const coverLetter = ref('')
+const coverLetters = ref([])
 const submitting = ref(false)
 const manualPostingText = ref('')
 
@@ -119,9 +117,17 @@ function onJobSelected({ url, company, jobId, job, job_posting_text }) {
   currentStep.value = 2
 }
 
-function onCoverLetterDone(text) {
-  coverLetter.value = text
-  currentStep.value = 3
+async function onCoverLetterDone({ cover_letters, text }) {
+  coverLetters.value = cover_letters || []
+  coverLetter.value = text || ''
+  try {
+    if (coverLetters.value.length) {
+      await api.put('/api/profile/', { cover_letters: coverLetters.value })
+    }
+    currentStep.value = 3
+  } catch (e) {
+    alert(e.response?.data?.message || '자기소개서 저장에 실패했습니다.')
+  }
 }
 
 async function onSubmit(interviewTypes) {
@@ -184,7 +190,6 @@ async function onSubmit(interviewTypes) {
   padding: var(--section-y-tablet) var(--container-gutter-desktop) var(--section-y-desktop);
 }
 
-/* Help Trigger Style */
 .help-trigger-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -209,10 +214,16 @@ async function onSubmit(interviewTypes) {
   color: var(--fg);
 }
 .icon-help {
-  font-size: var(--text-base);
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: var(--text-xs);
+  font-weight: 600;
 }
 
-/* Modal Overlay & Card Style */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -266,7 +277,6 @@ async function onSubmit(interviewTypes) {
   padding: var(--space-6);
 }
 
-/* Guide Steps layout inside modal */
 .guide-steps {
   display: flex;
   flex-direction: column;
@@ -321,7 +331,6 @@ async function onSubmit(interviewTypes) {
   opacity: 0.9;
 }
 
-/* Transition Animations */
 .modal-enter-active, .modal-leave-active {
   transition: opacity 0.25s ease;
 }

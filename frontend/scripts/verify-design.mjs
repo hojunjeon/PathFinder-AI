@@ -36,8 +36,12 @@ assert(profile.includes("api.get('/api/profile/')"), 'ProfileView must use /api/
 assert(profile.includes("api.put('/api/profile/'"), 'ProfileView must use /api/profile/ PUT')
 
 const stepJobUrl = read('src/components/analyze/StepJobUrl.vue')
-assert(stepJobUrl.includes('/api/companies/resolve/'), 'StepJobUrl must resolve companies through backend')
+assert(stepJobUrl.includes('/api/job-postings/manual/'), 'StepJobUrl must save manual postings through backend')
 assert(!stepJobUrl.includes("'kakao':"), 'StepJobUrl must not hard-code company URL aliases')
+
+const analyzeCreate = read('src/views/AnalyzeCreateView.vue')
+assert(analyzeCreate.includes("api.put('/api/profile/'"), 'AnalyzeCreateView must save cover letters through profile API')
+assert(analyzeCreate.includes('cover_letters'), 'AnalyzeCreateView must pass structured cover letters')
 
 const result = read('src/views/AnalyzeResultView.vue')
 assert(result.includes('CompetencyGap'), 'AnalyzeResultView must render CompetencyGap')

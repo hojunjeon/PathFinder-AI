@@ -6,7 +6,6 @@
       <p class="panel-desc">AI가 자기소개서와 채용공고를 교차 분석해 강점과 보완할 역량을 분리합니다.</p>
     </div>
 
-    <!-- Job Summary Card -->
     <div v-if="selectedJob" class="job-summary">
       <div class="job-initial">
         {{ selectedCompany?.company_name?.charAt(0) || 'K' }}
@@ -23,30 +22,91 @@
     </div>
 
     <div class="form-card">
-      <div class="field">
-        <label for="cover-letter-input">자기소개서</label>
-        <textarea id="cover-letter-input" v-model="text" placeholder="서류 접수 시 제출했던 자기소개서 내용을 붙여 넣으세요."></textarea>
-        <span class="hint">면접관 관점에서 답변 근거로 쓰기 좋은 문장과 보완할 설명을 함께 찾습니다.</span>
+      <div v-for="(item, index) in items" :key="index" class="cover-item">
+        <div class="item-header">
+          <strong>자기소개서 {{ index + 1 }}</strong>
+          <button v-if="items.length > 1" type="button" class="btn-text" @click="removeItem(index)">삭제</button>
+        </div>
+
+        <div class="field">
+          <label :for="`cover-question-${index}`">항목</label>
+          <input
+            :id="`cover-question-${index}`"
+            v-model="item.question"
+            class="cover-question-input"
+            placeholder="예) 지원동기와 입사 후 포부를 작성해 주세요."
+          />
+        </div>
+
+        <div class="field">
+          <label :for="`cover-answer-${index}`">답변</label>
+          <textarea
+            :id="`cover-answer-${index}`"
+            v-model="item.answer"
+            class="cover-answer-input"
+            rows="7"
+            placeholder="제출한 자기소개서 답변을 입력하세요."
+          ></textarea>
+          <span class="hint">면접관 관점에서 답변 근거로 쓰기 좋은 문장과 보완할 설명을 함께 찾습니다.</span>
+        </div>
       </div>
+
+      <button type="button" class="btn-secondary add-btn" @click="addItem">항목 추가</button>
+      <p v-if="errorMsg" class="error-text">{{ errorMsg }}</p>
     </div>
 
     <div class="actions">
       <button class="btn-secondary" type="button" @click="$emit('back')">이전</button>
-      <button id="next-cover-letter-btn" class="btn-primary" type="button" @click="$emit('next', text)">다음</button>
+      <button id="next-cover-letter-btn" class="btn-primary" type="button" :disabled="saving" @click="submit">
+        {{ saving ? '저장 중...' : '저장하고 다음 단계' }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 const props = defineProps({
   selectedJob: Object,
   selectedCompany: Object
 })
-defineEmits(['next', 'back'])
+const emit = defineEmits(['next', 'back'])
 
-const text = ref('')
+const items = reactive([{ question: '', answer: '' }])
+const saving = ref(false)
+const errorMsg = ref('')
+
+function addItem() {
+  items.push({ question: '', answer: '' })
+}
+
+function removeItem(index) {
+  items.splice(index, 1)
+}
+
+async function submit() {
+  errorMsg.value = ''
+  const normalized = items
+    .map(item => ({ question: item.question.trim(), answer: item.answer.trim() }))
+    .filter(item => item.question || item.answer)
+
+  const hasIncomplete = normalized.some(item => !item.question || !item.answer)
+  if (hasIncomplete) {
+    errorMsg.value = '자기소개서 항목과 답변을 모두 입력하거나, 둘 다 비워 주세요.'
+    return
+  }
+
+  saving.value = true
+  try {
+    emit('next', {
+      cover_letters: normalized,
+      text: normalized.map(item => `Q. ${item.question}\nA. ${item.answer}`).join('\n\n'),
+    })
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -128,6 +188,37 @@ const text = ref('')
   display: grid;
   gap: var(--space-5);
 }
+.cover-item {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface-warm);
+  border: 1px solid var(--border-soft);
+}
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.btn-text {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: var(--text-xs);
+}
+.btn-text:hover {
+  color: var(--fg);
+}
+.add-btn {
+  justify-self: start;
+}
+.error-text {
+  color: var(--danger);
+  font-size: var(--text-sm);
+}
 
 .actions {
   margin-top: var(--space-8);
@@ -137,6 +228,13 @@ const text = ref('')
 }
 
 @media (max-width: 760px) {
+  .job-summary {
+    grid-template-columns: 44px 1fr;
+  }
+  .status-badge {
+    grid-column: 1 / -1;
+    width: fit-content;
+  }
   .actions {
     flex-direction: column-reverse;
   }

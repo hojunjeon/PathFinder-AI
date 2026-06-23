@@ -80,6 +80,17 @@ def test_roadmap_parses_competency_gap(monkeypatch):
     assert data["timeline_data"][0]["week"] == 1
 
 
+def test_build_prompt_includes_company_and_job_context():
+    prompt = main._build_prompt(main.RoadmapRequest(**_payload()))
+
+    assert "회사명: 삼성전자" in prompt
+    assert "산업: 반도체/전자" in prompt
+    assert "직무명: 백엔드 엔지니어" in prompt
+    assert "직무설명: 대규모 트래픽을 처리하는 플랫폼 서버 개발" in prompt
+    assert "우대사항: ['분산 시스템 경험']" in prompt
+    assert "예상 면접 질문" in prompt
+
+
 def test_roadmap_rejects_oversized_body(monkeypatch):
     client = TestClient(main.app)
     monkeypatch.setattr(main, "MAX_REQUEST_BYTES", 20)
@@ -129,13 +140,21 @@ def _payload():
         "user_profile": {"전공": "컴퓨터공학"},
         "job_posting_text": "채용공고 URL: https://example.com/jobs/1",
         "company_info": {
+            "회사명": "삼성전자",
+            "산업": "반도체/전자",
             "인재상": "도전",
             "기업규모": "대기업",
             "조직문화_키워드": ["자율"],
         },
         "job_info": {
+            "직무명": "백엔드 엔지니어",
+            "직무설명": "대규모 트래픽을 처리하는 플랫폼 서버 개발",
+            "요구경력": 1,
+            "예상지원자수": 300,
+            "예상연봉": 60000000,
             "interview_stages": [{"order": 1, "type": "technical", "desc": "기술 면접"}],
             "요구역량": ["Python"],
+            "우대사항": ["분산 시스템 경험"],
             "학습추천분야": ["시스템 설계"],
         },
         "selected_interview_types": ["technical"],

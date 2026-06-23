@@ -55,6 +55,24 @@ def test_analysis_create_success(auth_client, job):
 
 
 @pytest.mark.django_db
+def test_analysis_create_accepts_manual_posting_without_url(auth_client, job):
+    client, _ = auth_client
+    mock_result = {'text_roadmap': '수동 공고 기반 로드맵', 'timeline_data': []}
+    with patch('analysis.views.call_llm_server', new_callable=AsyncMock, return_value=mock_result):
+        resp = client.post('/api/analyze/', {
+            'job_id': job.id,
+            'job_posting_url': '',
+            'job_posting_text': '회사명: 테스트기업\n직무명: 백엔드 개발자\n담당업무: API 개발',
+            'selected_interview_types': ['technical'],
+        }, format='json')
+
+    assert resp.status_code == 201
+    analysis = Analysis.objects.get(id=resp.data['id'])
+    assert analysis.job_posting_url == ''
+    assert 'API 개발' in analysis.job_posting_text
+
+
+@pytest.mark.django_db
 def test_analysis_create_requires_auth(job):
     client = APIClient()
     resp = client.post('/api/analyze/', {

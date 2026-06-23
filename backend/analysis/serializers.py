@@ -7,7 +7,12 @@ MAX_URL_CHARS = 2048
 
 class AnalysisCreateSerializer(serializers.Serializer):
     job_id = serializers.IntegerField()
-    job_posting_url = serializers.URLField(max_length=MAX_URL_CHARS)
+    job_posting_url = serializers.CharField(
+        allow_blank=True,
+        required=False,
+        default='',
+        max_length=MAX_URL_CHARS,
+    )
     job_posting_text = serializers.CharField(allow_blank=True, required=False, default='')
     submitted_cover_letter = serializers.CharField(
         allow_blank=True,

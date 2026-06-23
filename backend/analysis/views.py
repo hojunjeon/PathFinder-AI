@@ -22,7 +22,7 @@ class AnalysisCreateView(APIView):
         analysis = Analysis.objects.create(
             user=request.user,
             job=job,
-            job_posting_url=data['job_posting_url'],
+            job_posting_url=data.get('job_posting_url', ''),
             job_posting_text=data.get('job_posting_text', ''),
             submitted_cover_letter=data.get('submitted_cover_letter', ''),
             selected_interview_types=data['selected_interview_types'],
@@ -31,7 +31,7 @@ class AnalysisCreateView(APIView):
 
         payload = build_llm_payload(
             request.user, job,
-            data['job_posting_url'],
+            data.get('job_posting_url', ''),
             data.get('submitted_cover_letter', ''),
             data['selected_interview_types'],
             job_posting_text=data.get('job_posting_text', ''),

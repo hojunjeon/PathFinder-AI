@@ -120,24 +120,57 @@ def _build_prompt(req: RoadmapRequest) -> str:
 {req.job_posting_text}
 
 ## 기업 정보 (참고용)
+- 회사명: {req.company_info.get('회사명', '')}
+- 산업: {req.company_info.get('산업', '')}
 - 인재상: {req.company_info.get('인재상', '')}
 - 기업규모: {req.company_info.get('기업규모', '')}
 - 조직문화: {req.company_info.get('조직문화_키워드', [])}
 
-## 직무 요구사항 (참고용)
+## 선택 직무 기준 데이터 (사전 구축 DB)
+- 직무명: {req.job_info.get('직무명', '')}
+- 직무설명: {req.job_info.get('직무설명', '')}
+- 요구경력: {req.job_info.get('요구경력', '')}년
+- 예상지원자수: {req.job_info.get('예상지원자수', '')}
+- 예상연봉: {req.job_info.get('예상연봉', '')}
 - 요구역량: {req.job_info.get('요구역량', [])}
+- 우대사항: {req.job_info.get('우대사항', [])}
 - 학습추천분야: {req.job_info.get('학습추천분야', [])}
 
 ## 면접 단계
 {stages_text}
 선택한 면접 유형: {selected}
 
+## 분석 지시
+1. 채용공고 내용에서 요구 역량을 먼저 추출하세요.
+2. 채용공고 요구 역량과 사전 구축 DB의 직무 기준 데이터를 비교하세요.
+3. 사용자 프로필과 자기소개서에서 이미 드러난 강점을 찾으세요.
+4. 부족한 직무 지식과 개념을 면접 준비 우선순위로 정렬하세요.
+5. 각 추천 개념마다 예상 면접 질문, 답변 방향, 꼬리질문을 포함하세요.
+6. 추천 이유는 회사/산업/직무/채용공고/자소서 중 어떤 근거에서 나온 것인지 명확히 쓰세요.
+
 ## 출력 형식 (반드시 아래 JSON 형식으로만 답변)
 {{
   "competency_gap": {{
     "strengths": ["지원자의 강점"],
     "gaps": ["기업/직무 요구 대비 보완점"],
-    "required_competencies": ["요구 역량"]
+    "required_competencies": ["요구 역량"],
+    "study_priorities": [
+      {{
+        "priority": 1,
+        "concept": "우선 학습 개념",
+        "reason": "추천 이유",
+        "study_points": ["세부 학습 포인트"],
+        "estimated_days": 2
+      }}
+    ],
+    "expected_questions": [
+      {{
+        "concept": "관련 개념",
+        "question": "예상 면접 질문",
+        "answer_guide": "답변 방향",
+        "follow_up_questions": ["꼬리질문"]
+      }}
+    ]
   }},
   "text_roadmap": "주차별 준비 계획 전체 텍스트",
   "timeline_data": [

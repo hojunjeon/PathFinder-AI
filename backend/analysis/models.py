@@ -11,7 +11,7 @@ class Analysis(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='analyses')
     job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True, related_name='analyses')
-    job_posting_url = models.URLField()
+    job_posting_url = models.URLField(blank=True, default='')
     job_posting_text = models.TextField(blank=True, default='')
     submitted_cover_letter = models.TextField(blank=True)
     selected_interview_types = models.JSONField(default=list)

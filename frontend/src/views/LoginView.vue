@@ -103,7 +103,7 @@ async function submit() {
     } else {
       await authStore.signup(email.value, password.value)
     }
-    router.push('/analyze/new')
+    router.push('/')
   } catch (e) {
     errorMsg.value = e.response?.data?.detail
       || Object.values(e.response?.data || {})[0]

@@ -76,16 +76,12 @@
           placeholder="예) 임원 과제 리뷰"
         />
       </div>
-
-      <button id="match-job-btn" class="btn-secondary match-btn" type="button" :disabled="!canMatch || checking" @click="matchPosting">
-        {{ checking ? '기업/직무 DB 연결 중...' : '기업/직무 DB 연결' }}
-      </button>
     </div>
 
     <div v-if="checking" class="status-checking">기업 DB 확인 중...</div>
     <div v-if="errorMsg" class="error-text">{{ errorMsg }}</div>
 
-    <div v-if="company" class="company-found">
+    <div v-if="company && jobs.length" class="company-found">
       <div class="company-profile-card">
         <div class="company-name-row">
           <span class="check-icon">✓</span>
@@ -109,8 +105,8 @@
     </div>
 
     <div class="actions">
-      <button id="next-step-btn" class="btn-primary" type="button" :disabled="!company || !selectedJobId" @click="goNext">
-        다음 단계
+      <button id="next-step-btn" class="btn-primary" type="button" :disabled="!canMatch || checking" @click="goNext">
+        {{ checking ? '기업/직무 확인 중...' : '다음 단계' }}
       </button>
     </div>
   </div>
@@ -186,13 +182,14 @@ function selectCompany(option) {
   form.company_name = option.company_name
   companyQuery.value = option.company_name
   companyOptions.value = []
+  jobs.value = []
+  selectedJobId.value = ''
   errorMsg.value = ''
 }
 
-async function matchPosting() {
+async function matchPosting({ proceed = false } = {}) {
   checking.value = true
   errorMsg.value = ''
-  company.value = null
   jobs.value = []
   selectedJobId.value = ''
   try {
@@ -208,6 +205,9 @@ async function matchPosting() {
       return
     }
     selectedJobId.value = String(data.matched_job?.id || jobs.value[0]?.id || '')
+    if (proceed) {
+      emitNext()
+    }
   } catch (e) {
     errorMsg.value = e.response?.data?.message || '입력한 회사명을 지원 기업 DB에서 찾지 못했습니다.'
   } finally {
@@ -215,7 +215,15 @@ async function matchPosting() {
   }
 }
 
-function goNext() {
+async function goNext() {
+  if (!jobs.value.length || !selectedJobId.value) {
+    await matchPosting({ proceed: true })
+    return
+  }
+  emitNext()
+}
+
+function emitNext() {
   const selectedJob = jobs.value.find(j => String(j.id) === String(selectedJobId.value))
   if (!selectedJob) {
     errorMsg.value = '분석 기준 직무를 다시 선택해 주세요.'
@@ -364,10 +372,6 @@ function buildPostingText() {
   font-size: var(--text-xs);
   line-height: 1.35;
 }
-.match-btn {
-  justify-self: start;
-}
-
 .status-checking {
   margin-top: var(--space-4);
   color: var(--muted);

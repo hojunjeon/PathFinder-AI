@@ -27,7 +27,6 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await mockAnalysisResult(page)
 
   await fillManualPosting(page)
-  await page.locator('#job-select').selectOption('11')
   await page.locator('#next-step-btn').click()
 
   await page.locator('.cover-question-input').fill('지원동기')
@@ -87,7 +86,8 @@ test('analyze flow does not allow arbitrary unsupported company names', async ({
   await page.goto('/analyze/new')
   await page.locator('#company-search-input').fill('없는회사')
   await expect(page.getByRole('option', { name: /없는회사/ })).toHaveCount(0)
-  await expect(page.locator('#match-job-btn')).toBeDisabled()
+  await expect(page.locator('#match-job-btn')).toHaveCount(0)
+  await expect(page.locator('#next-step-btn')).toBeDisabled()
 })
 
 async function fillManualPosting(page) {
@@ -102,8 +102,7 @@ async function fillManualPosting(page) {
   await page.getByLabel(/인성면접/).check()
   await page.getByLabel(/기타/).check()
   await page.locator('#interview-type-etc-input').fill('임원 과제 리뷰')
-  await page.locator('#match-job-btn').click()
-  await expect(page.locator('.company-profile-card').getByText('쿠팡')).toBeVisible()
+  await expect(page.locator('#match-job-btn')).toHaveCount(0)
 }
 
 async function mockCompanySearch(page) {

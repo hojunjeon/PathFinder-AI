@@ -19,13 +19,17 @@ def auth_client(db):
 
 @pytest.fixture
 def company(db):
-    return Company.objects.create(
+    company, _ = Company.objects.update_or_create(
         company_name='카카오',
-        industry='IT',
-        size='large',
-        talent_description='도전적이고 창의적인 인재',
-        culture_keywords=['수평적', '자율']
+        defaults={
+            'industry': 'IT',
+            'size': 'large',
+            'talent_description': '도전적이고 창의적인 인재',
+            'culture_keywords': ['수평적', '자율'],
+        },
     )
+    company.jobs.all().delete()
+    return company
 
 
 @pytest.fixture
@@ -45,7 +49,7 @@ def job(db, company):
 def test_company_list(auth_client, company):
     resp = auth_client.get('/api/companies/')
     assert resp.status_code == 200
-    assert len(resp.data) == 1
+    assert any(item['company_name'] == company.company_name for item in resp.data)
 
 
 @pytest.mark.django_db
@@ -70,6 +74,28 @@ def test_company_jobs(auth_client, company, job):
     assert resp.status_code == 200
     assert len(resp.data) == 1
     assert resp.data[0]['job_title'] == '주니어 백엔드 엔지니어'
+
+
+@pytest.mark.django_db
+def test_company_jobs_hide_internal_job_title_suffix(auth_client, company):
+    Job.objects.create(
+        company=company,
+        job_title='신입 설비기술 엔지니어 트랙 00851',
+        required_skills=['설비'],
+    )
+    Job.objects.create(
+        company=company,
+        job_title='설비 엔지니어 0007',
+        required_skills=['설비'],
+    )
+
+    resp = auth_client.get(f'/api/companies/{company.id}/jobs/?q=설비')
+
+    assert resp.status_code == 200
+    titles = [item['job_title'] for item in resp.data['results']]
+    assert '신입 설비기술 엔지니어' in titles
+    assert '설비 엔지니어' in titles
+    assert all('00851' not in title and '0007' not in title for title in titles)
 
 
 @pytest.mark.django_db
@@ -103,7 +129,11 @@ def test_job_search_filters_by_company_industry_and_skill(auth_client, company, 
 
 @pytest.mark.django_db
 def test_job_posting_resolve_saves_url_and_returns_company_jobs(auth_client):
-    company = Company.objects.create(company_name='삼성전자', industry='반도체/전자', size='large')
+    company, _ = Company.objects.update_or_create(
+        company_name='삼성전자',
+        defaults={'industry': '반도체/전자', 'size': 'large'},
+    )
+    company.jobs.all().delete()
     Job.objects.create(company=company, job_title='신입 백엔드 엔지니어', required_skills=['데이터베이스'])
 
     resp = auth_client.post('/api/job-postings/resolve/', {
@@ -136,7 +166,11 @@ def test_job_posting_resolve_saves_unsupported_url(auth_client):
 
 @pytest.mark.django_db
 def test_manual_job_posting_saves_input_and_matches_jobs(auth_client):
-    company = Company.objects.create(company_name='삼성전자', industry='반도체/전자', size='large')
+    company, _ = Company.objects.update_or_create(
+        company_name='삼성전자',
+        defaults={'industry': '반도체/전자', 'size': 'large'},
+    )
+    company.jobs.all().delete()
     Job.objects.create(company=company, job_title='신입 백엔드 엔지니어', required_skills=['데이터베이스'])
     Job.objects.create(company=company, job_title='신입 품질 엔지니어', required_skills=['품질'])
 
@@ -221,7 +255,10 @@ def test_manual_job_posting_creates_fallback_job_when_company_has_no_jobs(auth_c
 
 @pytest.mark.django_db
 def test_company_resolve_from_backend_alias(auth_client):
-    Company.objects.create(company_name='쿠팡', industry='Commerce', size='large')
+    Company.objects.update_or_create(
+        company_name='쿠팡',
+        defaults={'industry': 'Commerce', 'size': 'large'},
+    )
     resp = auth_client.get('/api/companies/resolve/?url=https://careers.coupang.com/jobs/1')
     assert resp.status_code == 200
     assert resp.data['company_name'] == '쿠팡'

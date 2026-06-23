@@ -43,7 +43,11 @@ def test_call_llm_server_forwards_internal_token_and_current_url():
 def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
     user = User.objects.create_user(email='payload@test.com', password='pass1234!')
     Profile.objects.create(user=user, major='CS')
-    company = Company.objects.create(company_name='카카오', industry='IT', size='large')
+    company, _ = Company.objects.update_or_create(
+        company_name='카카오',
+        defaults={'industry': 'IT', 'size': 'large'},
+    )
+    company.jobs.all().delete()
     job = Job.objects.create(
         company=company,
         job_title='백엔드 개발자',

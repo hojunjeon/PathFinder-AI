@@ -100,12 +100,14 @@ class CompanyListView(APIView):
     def get(self, request):
         name = request.query_params.get('name', '')
         if name:
-            try:
-                company = Company.objects.get(company_name__icontains=name)
+            company = (
+                Company.objects.filter(company_name__iexact=name.strip()).first()
+                or Company.objects.filter(company_name__icontains=name.strip()).order_by('company_name').first()
+            )
+            if company:
                 return Response(CompanySerializer(company).data)
-            except Company.DoesNotExist:
-                return Response({'message': NOT_SUPPORTED_MSG, 'supported': False},
-                                status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': NOT_SUPPORTED_MSG, 'supported': False},
+                            status=status.HTTP_404_NOT_FOUND)
         companies = Company.objects.all().order_by('company_name')
         return Response(CompanySerializer(companies, many=True).data)
 

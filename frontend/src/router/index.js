@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-  { path: '/', redirect: '/analyze/new' },
+  { path: '/', component: () => import('../views/HomeView.vue'), meta: { public: true } },
   { path: '/login', component: () => import('../views/LoginView.vue'), meta: { public: true } },
   { path: '/profile', component: () => import('../views/ProfileView.vue') },
   { path: '/analyze/new', component: () => import('../views/AnalyzeCreateView.vue') },
   { path: '/analyze/:id', component: () => import('../views/AnalyzeResultView.vue') },
   { path: '/history', component: () => import('../views/HistoryView.vue') },
   { path: '/community', component: () => import('../views/CommunityView.vue') },
-  { path: '/dashboard', component: () => import('../views/DashboardView.vue') },
+  { path: '/dashboard', component: () => import('../views/DashboardView.vue'), meta: { public: true } },
 ]
 
 const router = createRouter({

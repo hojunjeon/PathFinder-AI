@@ -5,6 +5,7 @@
         <router-link to="/" class="brand-mark">PathFinder AI</router-link>
         <nav class="global-links" aria-label="주요 메뉴">
           <template v-if="authStore.isLoggedIn">
+            <router-link to="/">홈</router-link>
             <router-link to="/analyze/new">로드맵 생성</router-link>
             <router-link to="/history">히스토리</router-link>
             <router-link to="/community">면접 후기</router-link>
@@ -16,6 +17,8 @@
             <button class="nav-btn logout-btn" @click="handleLogout">로그아웃</button>
           </template>
           <template v-else>
+            <router-link to="/">서비스 소개</router-link>
+            <router-link to="/login">로그인</router-link>
             <button class="nav-btn theme-toggle" @click="themeStore.toggle">
               {{ themeStore.isDark ? 'Light' : 'Dark' }}
             </button>

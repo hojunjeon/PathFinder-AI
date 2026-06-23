@@ -1,7 +1,7 @@
 <template>
   <div class="result-container">
     <div v-if="loading" class="loading-wrap">
-      <div class="loading-indicator">🔍 AI 로드맵 분석 결과를 불러오는 중...</div>
+      <div class="loading-indicator">분석 결과를 불러오는 중...</div>
     </div>
     <div v-else-if="analysis" class="layout">
       <!-- Sticky Sidebar -->
@@ -17,8 +17,8 @@
           <nav class="side-nav">
             <a :class="['side-nav-item', { active: activeSection === 'gap' }]" href="#gap">역량 갭 분석</a>
             <a :class="['side-nav-item', { active: activeSection === 'roadmap' }]" href="#roadmap">
-              준비 로드맵 
-              <span class="count" v-if="analysis.timeline_data">{{ analysis.timeline_data.length }}</span>
+              준비 항목
+              <span class="count" v-if="roadmapItems.length">{{ roadmapItems.length }}</span>
             </a>
             <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">직무 매칭도</a>
           </nav>
@@ -44,13 +44,17 @@
         <div class="content-inner">
           <section class="result-hero" id="gap" data-od-id="result-hero">
             <div>
-              <p class="eyebrow">AI 분석 완료</p>
-              <h1>{{ analysis.company_name }} {{ analysis.job_title }} 면접 준비.</h1>
+              <p class="eyebrow">분석 결과</p>
+              <h1>{{ analysis.company_name }} 면접 준비</h1>
+              <div class="hero-keywords">
+                <span>{{ analysis.job_title }}</span>
+                <span v-for="keyword in heroKeywords" :key="keyword">{{ keyword }}</span>
+              </div>
               <div class="result-meta">
                 <span class="chip" v-for="type in analysis.selected_interview_types" :key="type">
                   {{ typeLabel(type) }}
                 </span>
-                <span class="chip" v-if="analysis.timeline_data">{{ analysis.timeline_data.length }}주 로드맵</span>
+                <span class="chip" v-if="roadmapItems.length">{{ roadmapItems.length }}개 영역</span>
               </div>
             </div>
             <div class="hero-summary">
@@ -66,10 +70,10 @@
               <span class="ring-text">{{ progressPercent }}%</span>
             </div>
             <div class="progress-info">
-              <div class="progress-title">{{ activeWeekText }}</div>
-              <p class="progress-desc">{{ activeWeekDesc }}</p>
+              <div class="progress-title">{{ activeItemText }}</div>
+              <p class="progress-desc">{{ activeItemDesc }}</p>
             </div>
-            <a href="#roadmap" class="content-btn">오늘의 과제 보기</a>
+            <a href="#roadmap" class="content-btn">준비 항목 보기</a>
           </section>
 
           <!-- Competency Gap List -->
@@ -96,15 +100,15 @@
           <section class="section-card" id="roadmap" data-od-id="result-roadmap">
             <div class="section-head">
               <div>
-                <h2>단계별 준비 로드맵</h2>
-                <p class="timeline-label">타임라인 체크리스트</p>
+                <h2>준비 항목</h2>
+                <p class="timeline-label">답변 근거와 보완 개념</p>
               </div>
               <span class="section-note">체크하면 진행 상태가 반영됩니다</span>
             </div>
             <pre v-if="analysis.text_roadmap" class="roadmap-text roadmap-summary">{{ analysis.text_roadmap }}</pre>
-            <div v-if="analysis.timeline_data?.length">
+            <div v-if="roadmapItems.length">
               <RoadmapTimeline 
-                :timeline-data="analysis.timeline_data" 
+                :timeline-data="roadmapItems"
                 :completed-tasks="completedTasks"
                 @toggle-task="toggleTask"
               />
@@ -125,12 +129,23 @@ import { useRoute } from 'vue-router'
 import api from '../api'
 import CompetencyGap from '../components/result/CompetencyGap.vue'
 import RoadmapTimeline from '../components/result/RoadmapTimeline.vue'
+import { useRoadmapProgress } from '../composables/useRoadmapProgress'
 
 const route = useRoute()
 const analysis = ref(null)
 const loading = ref(true)
 const activeSection = ref('gap')
-const completedTasks = ref({})
+const {
+  activeItemDesc,
+  activeItemText,
+  completedTasks,
+  initializeCompletedTasks,
+  progressPercent,
+  progressRingStyle,
+  progressText,
+  roadmapItems,
+  toggleTask,
+} = useRoadmapProgress(analysis)
 
 const TYPE_LABELS = {
   culture_fit: '컬처핏', coding_test: '코딩테스트', pt: 'PT면접',
@@ -144,99 +159,12 @@ function formatDate(dateStr) {
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
 }
 
-function initializeCompletedTasks(timeline) {
-  if (!timeline) return
-  let totalTasks = 0
-  const tasksList = []
-  
-  timeline.forEach((weekData, weekIdx) => {
-    weekData.tasks.forEach((task, taskIdx) => {
-      totalTasks++
-      tasksList.push({ weekIdx, taskIdx })
-    })
-  })
-
-  // Mark ~40% of tasks as completed to start with, matching mockup style
-  const completeCount = Math.round(totalTasks * 0.4)
-  for (let i = 0; i < completeCount; i++) {
-    if (tasksList[i]) {
-      const key = `${tasksList[i].weekIdx}-${tasksList[i].taskIdx}`
-      completedTasks.value[key] = true
-    }
-  }
-}
-
-function toggleTask({ weekIdx, taskIdx }) {
-  const key = `${weekIdx}-${taskIdx}`
-  completedTasks.value[key] = !completedTasks.value[key]
-}
-
-// Computations for progress indicators
-const totalTaskCount = computed(() => {
-  if (!analysis.value?.timeline_data) return 0
-  let count = 0
-  analysis.value.timeline_data.forEach(w => {
-    count += w.tasks?.length || 0
-  })
-  return count
+const heroKeywords = computed(() => {
+  const gap = analysis.value?.competency_gap || {}
+  const required = gap.required_competencies || []
+  return required.slice(0, 3)
 })
 
-const completedTaskCount = computed(() => {
-  return Object.values(completedTasks.value).filter(Boolean).length
-})
-
-const progressPercent = computed(() => {
-  if (totalTaskCount.value === 0) return 0
-  return Math.round((completedTaskCount.value / totalTaskCount.value) * 100)
-})
-
-const progressRingStyle = computed(() => {
-  const percent = progressPercent.value
-  return {
-    background: `conic-gradient(var(--accent) ${percent}%, var(--border-soft) 0)`
-  }
-})
-
-const progressText = computed(() => {
-  const percent = progressPercent.value
-  if (percent >= 100) return '모든 준비 과정을 마쳤습니다!'
-  if (percent >= 80) return '마무리 점검 단계입니다.'
-  if (percent >= 60) return '시뮬레이션과 답변 구조화 단계입니다.'
-  if (percent >= 40) return '기술 개념 정리 및 심화 학습 단계입니다.'
-  if (percent >= 20) return '기반 다지기 및 채용공고 분석 단계입니다.'
-  return '로드맵을 시작할 준비가 되었습니다.'
-})
-
-const activeWeekText = computed(() => {
-  const percent = progressPercent.value
-  const timeline = analysis.value?.timeline_data || []
-  if (!timeline.length) return '로드맵 준비 완료'
-  
-  const activeWeekIdx = Math.min(
-    Math.floor((percent / 100) * timeline.length),
-    timeline.length - 1
-  )
-  const currentWeek = timeline[activeWeekIdx]
-  return `${currentWeek.week}주차 · ${currentWeek.title || '학습 진행'}`
-})
-
-const activeWeekDesc = computed(() => {
-  const percent = progressPercent.value
-  const timeline = analysis.value?.timeline_data || []
-  if (!timeline.length) return ''
-  
-  const activeWeekIdx = Math.min(
-    Math.floor((percent / 100) * timeline.length),
-    timeline.length - 1
-  )
-  const nextWeek = timeline[activeWeekIdx + 1]
-  if (nextWeek) {
-    return `${nextWeek.title} 단계로 넘어갈 차례입니다.`
-  }
-  return '마지막 주차 단계를 진행 중입니다.'
-})
-
-// Deterministic Match Rate score calculations
 function getDeterministicScore(name, minVal, maxVal) {
   let hash = 0
   for (let i = 0; i < name.length; i++) {
@@ -468,6 +396,21 @@ h1 {
   gap: var(--space-2);
   margin-top: var(--space-5);
 }
+.hero-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+}
+.hero-keywords span {
+  padding-right: var(--space-3);
+  border-right: 1px solid var(--border);
+}
+.hero-keywords span:last-child {
+  border-right: 0;
+}
 .result-meta .chip {
   background: var(--surface-warm);
 }
@@ -593,6 +536,7 @@ h2 {
   font-size: var(--text-xl);
   font-weight: 600;
   line-height: 1.14;
+  word-break: keep-all;
 }
 .section-note {
   color: var(--muted);
@@ -689,6 +633,17 @@ h2 {
   }
 }
 @media (max-width: 640px) {
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  h2 {
+    font-size: var(--text-lg);
+    line-height: 1.25;
+  }
+
   .score-row {
     grid-template-columns: 1fr;
     gap: var(--space-2);

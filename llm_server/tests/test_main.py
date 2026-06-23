@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 import asyncio
 import main
+import httpx
 
 
 TEST_TOKEN = "test-internal-token"
@@ -80,6 +81,78 @@ def test_roadmap_parses_competency_gap(monkeypatch):
     assert data["timeline_data"][0]["week"] == 1
 
 
+def test_roadmap_parses_category_subtopic_roadmap(monkeypatch):
+    async def fake_call_gpt(prompt):
+        return """
+        {
+          "competency_gap": {
+            "strengths": ["로봇 팔 제어 프로젝트"],
+            "gaps": ["EtherCAT 실시간 통신"],
+            "required_competencies": ["로봇 제어", "모션 플래닝"]
+          },
+          "text_roadmap": "로보틱스 > 역기구학",
+          "timeline_data": [
+            {
+              "category": "로보틱스",
+              "summary": "프로젝트와 채용공고 제어 요구를 연결합니다.",
+              "sources": ["채용공고", "프로젝트 1"],
+              "subtopics": [
+                {
+                  "title": "역기구학",
+                  "why": "로봇 팔 제어 경험을 좌표계와 관절 제한까지 연결합니다.",
+                  "question": "1번 프로젝트에서 역기구학을 어떻게 사용했나요?",
+                  "answer_guide": "목표 위치 계산과 관절각 산출 흐름을 설명하세요.",
+                  "evidence": "자기소개서의 로봇 팔 제어 정확도 개선 경험",
+                  "study_goal": "FK/IK 차이와 특이점 대응을 설명할 수 있어야 합니다.",
+                  "follow_up_questions": ["관절 제한은 어느 단계에서 반영했나요?"]
+                }
+              ]
+            }
+          ]
+        }
+        """
+
+    client = TestClient(main.app)
+    monkeypatch.setattr(main, "INTERNAL_TOKEN", TEST_TOKEN)
+    monkeypatch.setattr(main, "_call_gpt", fake_call_gpt)
+    resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["timeline_data"][0]["category"] == "로보틱스"
+    assert data["timeline_data"][0]["subtopics"][0]["title"] == "역기구학"
+    assert data["timeline_data"][0]["subtopics"][0]["question"].startswith("1번 프로젝트")
+
+
+def test_roadmap_returns_502_for_gms_status_error(monkeypatch):
+    async def fake_call_gpt(prompt):
+        request = httpx.Request("POST", main.GMS_URL)
+        response = httpx.Response(401, request=request)
+        raise httpx.HTTPStatusError("unauthorized", request=request, response=response)
+
+    client = TestClient(main.app)
+    monkeypatch.setattr(main, "INTERNAL_TOKEN", TEST_TOKEN)
+    monkeypatch.setattr(main, "_call_gpt", fake_call_gpt)
+
+    resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
+
+    assert resp.status_code == 502
+    assert resp.json()["detail"] == "GMS gateway request failed with status 401."
+
+
+def test_roadmap_returns_502_for_gms_transport_error(monkeypatch):
+    async def fake_call_gpt(prompt):
+        raise httpx.ConnectError("connection failed")
+
+    client = TestClient(main.app)
+    monkeypatch.setattr(main, "INTERNAL_TOKEN", TEST_TOKEN)
+    monkeypatch.setattr(main, "_call_gpt", fake_call_gpt)
+
+    resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
+
+    assert resp.status_code == 502
+    assert resp.json()["detail"] == "GMS gateway request failed."
+
+
 def test_build_prompt_includes_company_and_job_context():
     prompt = main._build_prompt(main.RoadmapRequest(**_payload()))
 
@@ -88,7 +161,11 @@ def test_build_prompt_includes_company_and_job_context():
     assert "직무명: 백엔드 엔지니어" in prompt
     assert "직무설명: 대규모 트래픽을 처리하는 플랫폼 서버 개발" in prompt
     assert "우대사항: ['분산 시스템 경험']" in prompt
-    assert "예상 면접 질문" in prompt
+    assert "큰 카테고리" in prompt
+    assert "작은 카테고리" in prompt
+    assert "출제 예측이 아니라" in prompt
+    assert '"category"' in prompt
+    assert '"subtopics"' in prompt
 
 
 def test_roadmap_rejects_oversized_body(monkeypatch):
@@ -110,6 +187,7 @@ def test_call_gpt_sends_gms_bearer_token(monkeypatch):
 
     class DummyAsyncClient:
         def __init__(self, timeout):
+            captured["timeout"] = timeout
             self.timeout = timeout
 
         async def __aenter__(self):
@@ -132,7 +210,9 @@ def test_call_gpt_sends_gms_bearer_token(monkeypatch):
     assert result == "ok"
     assert captured["url"] == main.GMS_URL
     assert captured["headers"]["Authorization"] == "Bearer gms-test-key"
+    assert captured["timeout"] == 120
     assert captured["json"]["model"] == "gpt-5-nano"
+    assert captured["json"]["response_format"] == {"type": "json_object"}
 
 
 def _payload():

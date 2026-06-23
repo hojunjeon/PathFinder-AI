@@ -69,6 +69,7 @@ h2 {
   font-size: var(--text-xl);
   font-weight: 600;
   line-height: 1.14;
+  word-break: keep-all;
 }
 .section-note {
   color: var(--muted);
@@ -120,6 +121,19 @@ h2 {
 @media (max-width: 900px) {
   .gap-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  h2 {
+    font-size: var(--text-lg);
+    line-height: 1.25;
   }
 }
 </style>

@@ -55,6 +55,48 @@ def test_analysis_create_success(auth_client, job):
 
 
 @pytest.mark.django_db
+def test_analysis_persists_category_subtopic_roadmap(auth_client, job):
+    client, _ = auth_client
+    mock_result = {
+        'competency_gap': {
+            'strengths': ['로봇 팔 제어 프로젝트'],
+            'gaps': ['산업용 통신'],
+            'required_competencies': ['로봇 제어', '모션 플래닝'],
+        },
+        'text_roadmap': '로보틱스와 통신 개념을 프로젝트 근거에 연결합니다.',
+        'timeline_data': [
+            {
+                'category': '로보틱스',
+                'summary': '프로젝트와 직무 요구가 겹치는 영역입니다.',
+                'sources': ['프로젝트 1', '채용공고'],
+                'subtopics': [
+                    {
+                        'title': '역기구학',
+                        'done': True,
+                        'question': '1번 프로젝트에서 역기구학을 어떻게 사용했나요?',
+                        'answer_guide': '좌표계 변환과 관절각 산출 흐름을 설명하세요.',
+                    }
+                ],
+            }
+        ],
+    }
+    with patch('analysis.views.call_llm_server', new_callable=AsyncMock, return_value=mock_result):
+        create_resp = client.post('/api/analyze/', {
+            'job_id': job.id,
+            'job_posting_text': '로봇 제어, 모션 플래닝, 산업용 통신',
+            'selected_interview_types': ['technical'],
+        }, format='json')
+
+    detail_resp = client.get(f"/api/analyze/{create_resp.data['id']}/")
+
+    assert create_resp.status_code == 201
+    assert detail_resp.status_code == 200
+    assert detail_resp.data['timeline_data'][0]['category'] == '로보틱스'
+    assert detail_resp.data['timeline_data'][0]['subtopics'][0]['title'] == '역기구학'
+    assert detail_resp.data['timeline_data'][0]['subtopics'][0]['question'].startswith('1번 프로젝트')
+
+
+@pytest.mark.django_db
 def test_analysis_create_accepts_manual_posting_without_url(auth_client, job):
     client, _ = auth_client
     mock_result = {'text_roadmap': '수동 공고 기반 로드맵', 'timeline_data': []}

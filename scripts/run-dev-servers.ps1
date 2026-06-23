@@ -237,6 +237,31 @@ function Wait-Http($Name, $Url, $Headers) {
     throw "$Name did not become ready: $Url"
 }
 
+function Import-DotEnv($Path) {
+    $values = @{}
+    if (-not (Test-Path -LiteralPath $Path)) {
+        return $values
+    }
+
+    foreach ($line in Get-Content -LiteralPath $Path) {
+        $trimmed = $line.Trim()
+        if (-not $trimmed -or $trimmed.StartsWith("#") -or -not $trimmed.Contains("=")) {
+            continue
+        }
+
+        $name, $value = $trimmed.Split("=", 2)
+        $name = $name.Trim()
+        if (-not $name) {
+            continue
+        }
+
+        $cleanValue = $value.Trim().Trim('"').Trim("'")
+        $values[$name] = $cleanValue
+    }
+
+    return $values
+}
+
 if ($Help) {
     Show-LauncherHelp
     exit 0
@@ -256,6 +281,7 @@ $LlmPython = Ensure-PythonEnvironment $LlmDir (Join-Path $LlmDir 'requirements.t
 Ensure-FrontendDependencies $FrontendDir
 Assert-Path $ViteEntrypoint "Run npm install in the frontend directory so Vite is available."
 
+$DotEnvValues = Import-DotEnv (Join-Path $Root ".env")
 
 Assert-PortFree $BackendPort
 Assert-PortFree $LlmPort
@@ -264,15 +290,17 @@ Assert-PortFree $FrontendPort
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
 $oldToken = $env:LLM_INTERNAL_TOKEN
-if (-not $env:LLM_INTERNAL_TOKEN) {
-    $env:LLM_INTERNAL_TOKEN = [Guid]::NewGuid().ToString("N")
-}
+$oldGmsKey = $env:GMS_KEY
+$runtimeToken = if ($oldToken) { $oldToken } else { [Guid]::NewGuid().ToString("N") }
+$gmsKeyForLlm = if ($oldGmsKey) { $oldGmsKey } else { $DotEnvValues["GMS_KEY"] }
 
-if (-not $env:GMS_KEY) {
-    Write-Host "GMS_KEY is not set. The app will start, but roadmap generation will return 503 until GMS_KEY is set."
+if (-not $gmsKeyForLlm) {
+    Write-Host "GMS_KEY is not set. The app will start with mock roadmap generation."
 }
 
 Write-Host "Applying Django migrations..."
+Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
+$env:LLM_INTERNAL_TOKEN = $runtimeToken
 Push-Location $BackendDir
 try {
     & $BackendPython manage.py migrate --noinput
@@ -281,10 +309,13 @@ try {
     }
 } finally {
     Pop-Location
+    Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
 }
 
 $processes = @()
 try {
+    Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
+    $env:LLM_INTERNAL_TOKEN = $runtimeToken
     Write-Host "Starting Django backend..."
     $processes += Start-Process -FilePath $BackendPython `
         -ArgumentList @("manage.py", "runserver", "127.0.0.1:$BackendPort", "--noreload") `
@@ -294,6 +325,11 @@ try {
         -RedirectStandardError (Join-Path $LogDir "backend.err.log") `
         -PassThru
 
+    Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
+    if ($gmsKeyForLlm) {
+        $env:GMS_KEY = $gmsKeyForLlm
+    }
+    $env:LLM_INTERNAL_TOKEN = $runtimeToken
     Write-Host "Starting FastAPI LLM server..."
     $processes += Start-Process -FilePath $LlmPython `
         -ArgumentList @("-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "$LlmPort") `
@@ -303,6 +339,8 @@ try {
         -RedirectStandardError (Join-Path $LogDir "llm.err.log") `
         -PassThru
 
+    Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
+    Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
     Write-Host "Starting Vue/Vite frontend..."
     $processes += Start-Process -FilePath $Node `
         -ArgumentList @($ViteEntrypoint, "--host", "127.0.0.1", "--port", "$FrontendPort") `
@@ -313,7 +351,7 @@ try {
         -PassThru
 
     Wait-Http "Backend" "http://127.0.0.1:$BackendPort/api/health/" @{}
-    Wait-Http "LLM server" "http://127.0.0.1:$LlmPort/health" @{ "X-Internal-Token" = $env:LLM_INTERNAL_TOKEN }
+    Wait-Http "LLM server" "http://127.0.0.1:$LlmPort/health" @{ "X-Internal-Token" = $runtimeToken }
     Wait-Http "Frontend" "http://127.0.0.1:$FrontendPort/health" @{}
 
     Write-Host ""
@@ -343,6 +381,11 @@ try {
         $env:LLM_INTERNAL_TOKEN = $oldToken
     } else {
         Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
+    }
+    if ($oldGmsKey) {
+        $env:GMS_KEY = $oldGmsKey
+    } else {
+        Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
     }
     Write-Host "Stopped."
 }

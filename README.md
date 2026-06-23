@@ -10,7 +10,7 @@
 3. [기술 스택](#-기술-스택)
 4. [프로젝트 구조](#-프로젝트-구조)
 5. [시작 가이드 (설치 및 실행)](#-시작-가이드-설치-및-실행)
-6. [E2E 테스트 실행](#-e2e-테스트-실행)
+6. [테스트 실행 가이드](#-테스트-실행-가이드)
 7. [채용 데이터셋 & 파인튜닝 실습 (`/jobs_careers`)](#-채용-데이터셋--파인튜닝-실습-jobs_careers)
 
 ---
@@ -21,18 +21,22 @@
 ---
 
 ## ✨ 주요 기능
-### 1. 프로필 관리 페이지
+
+### 1. 메인 홈화면 (`/`)
+- 로그인 전/후 상태에 따라 맞춤형 UI와 서비스 바로가기(분석하기, 커뮤니티, 대시보드 등)를 제공합니다.
+
+### 2. 프로필 관리 페이지 (`/profile`)
 - 사용자의 학력, 경력, 수상 내역(Awards) 등 이력 사항을 입력 및 저장하고 관리할 수 있습니다.
 
-### 2. 분석 및 로드맵 생성
+### 3. 분석 및 로드맵 생성 (`/analyze/new`, `/analyze/:id`)
 - **채용공고 입력**: 서류 합격한 기업의 채용공고 URL 또는 본문을 입력합니다.
 - **자소서 정보 입력**: 서류 접수 시 제출했던 자기소개서 등을 입력합니다.
 - **면접 유형 선택**: 기술 면접, 임원 면접, PT 면접 등 준비하고자 하는 면접 유형을 선택합니다.
 - **AI 맞춤형 로드맵 추천**:
   - 제출한 사용자 정보(프로필, 자소서)와 기업 정보(채용공고 요구 역량, 인재상 등)를 종합 분석합니다.
-  - LLM을 통해 면접 성공 확률을 극대화할 수 있는 단계별 로드맵(과제, 추천 학습 콘텐츠 등)을 자동 생성합니다.
+  - SSAFY GMS API를 경유한 LLM 분석을 통해 면접 성공 확률을 극대화할 수 있는 단계별 로드맵(과제, 추천 학습 콘텐츠 등)을 자동 생성합니다.
 
-### 3. 채용시장 경쟁률 분석 대시보드 (`/dashboard`)
+### 4. 채용시장 경쟁률 분석 대시보드 (`/dashboard`)
 구직자가 실시간 채용 시장 트렌드를 다각도 차트로 분석하여 전략적 지원을 수립할 수 있는 시각화 환경을 제공합니다.
 - **산업별 평균 연봉 vs 평균 지원자 수**: 이중 축 혼합 차트(Bar + Line)를 통해 업종별 인기 트렌드와 진입 장벽 파악.
 - **직급별 지원자 분포**: 원형 도넛 차트를 통해 채용 수요가 높은 연차 비중 분석.
@@ -41,37 +45,50 @@
 - **인터랙티브 필터**: 산업군 선택, 경력 범위(Slider), 기업 검색창 조절에 따라 대시보드 차트들이 동적으로 갱신됩니다.
 - **PNG 저장 기능**: 차트 시각화 결과를 텍스트 유실 없이 PNG 파일로 다운로드하여 소장 및 공유할 수 있습니다.
 
+### 5. 면접 후기 커뮤니티 (`/community`)
+구직자들이 직접 다녀온 기업의 면접 경험을 공유하고 나눌 수 있는 소통 공간입니다.
+- **후기 작성 및 상세 조회**: 회사명, 직무, 제목, 면접 유형, 날짜, 난이도, 면접 질문, 준비 팁 및 상세 후기를 기록합니다.
+- **필터링 & 검색**: 다른 사용자들이 작성한 다양한 면접 후기 데이터를 탐색할 수 있습니다.
+
+### 6. 히스토리 목록 페이지 (`/history`)
+- 과거에 분석했던 면접 대비 AI 로드맵의 목록을 확인하고, 생성되었던 상세 추천 정보를 언제든지 다시 조회할 수 있습니다.
+
 ---
 
 ## 🛠 기술 스택
+
 ### Frontend
 - **Framework**: Vue 3 (Vite), Pinia (상태 관리), Vue Router (라우팅)
 - **Styling**: Vanilla CSS & Tailwind CSS
 - **Visualization**: Chart.js
 
 ### Backend
-- **Framework**: Django
+- **Framework**: Django 5.2 (Django REST Framework, SimpleJWT)
 - **DBMS / DB**: SQLite (기본)
+- **Custom User Model**: `accounts.User` (커스텀 인증 모델)
 
 ### LLM Server
 - **Framework**: FastAPI
-- **LLM API**: OpenAI/Gemini API (SSAFY GMS API 경유 호출)
+- **LLM API**: OpenAI/Gemini API (SSAFY GMS API 경유 호출 - `gpt-5-nano` 모델 활용)
 
 ---
 
 ## 📂 프로젝트 구조
 ```text
-GT/
+t08_project/
 ├── backend/            # Django 기반 백엔드 API 서버
-│   ├── accounts/       # 사용자 계정 및 프로필 앱
-│   ├── analysis/       # 채용공고 분석 및 로드맵 생성 앱
+│   ├── accounts/       # 사용자 계정 및 프로필 앱 (Auth 및 Profile)
+│   ├── analysis/       # 채용공고 분석 및 로드맵 생성 앱 (LLM 연동)
+│   ├── community/      # 면접 후기 커뮤니티 앱
 │   ├── companies/      # 기업 정보 앱
 │   └── config/         # Django 설정 폴더
 ├── frontend/           # Vue 3 / Vite 기반 프론트엔드 웹 앱
 │   ├── src/            # 컴포넌트, 뷰, 라우터, 상태관리 소스코드
+│   │   ├── views/      # 주요 뷰 컴포넌트 (Home, Community, Analyze 등)
+│   │   └── api/        # Axios API 통신 (JWT 토큰 자동 갱신 인터셉터 포함)
 │   ├── tests/          # Playwright E2E 테스트 스펙
 │   └── package.json    # 프론트엔드 의존성 및 스크립트 정의
-├── llm_server/         # FastAPI 기반 LLM 추론/로드맵 생성 서버
+├── llm_server/         # FastAPI 기반 LLM 추론/로드맵 생성 서버 (X-Internal-Token 인증 필요)
 │   └── main.py         # LLM 프롬프트 빌드 및 컴플리션 API 엔드포인트
 ├── jobs_careers/       # 10,000건의 채용 공고 데이터셋 및 BERT 파인튜닝 리소스
 ├── scripts/            # 개발 서버 기동 및 빌드 관련 자동화 스크립트
@@ -114,20 +131,34 @@ GT/
 set GMS_KEY="your_gms_api_key"
 .\run-dev.bat
 ```
-*(GMS_KEY가 지정되지 않은 경우 LLM 서버가 Fallback 모드 혹은 오류를 반환할 수 있습니다.)*
+- `GMS_KEY`가 지정되지 않은 경우 LLM 서버가 Fallback 모드로 작동하여 `(Mock)` 데이터가 반환됩니다.
+- 백엔드와 LLM 서버 간의 API 호출 시에는 내부 검증을 위한 `X-Internal-Token` 헤더가 사용되며, 환경 변수 `LLM_INTERNAL_TOKEN`이 없는 경우 실행 스크립트에서 자동 생성하여 로그로 출력합니다.
 
 ---
 
-## 🧪 E2E 테스트 실행
-본 프로젝트는 **Playwright**를 기반으로 E2E(End-to-End) 테스트를 구성하고 있습니다.
+## 🧪 테스트 실행 가이드
 
-### 테스트 실행 명령어 (frontend 디렉토리 진입 후 실행)
+### 1. 백엔드 단위 테스트 (Django)
+`pytest-django`를 이용해 백엔드의 계정, 분석 및 커뮤니티 비즈니스 로직을 검증합니다.
+```bash
+cd backend
+python -m pytest
+```
+
+### 2. LLM 서버 단위 테스트 (FastAPI)
+FastAPI LLM 연동 API의 모킹 및 라우트 처리를 테스트합니다.
+```bash
+cd llm_server
+python -m pytest
+```
+
+### 3. 프론트엔드 E2E 테스트 (Playwright)
+실제 구동 환경과 유사하게 프론트엔드 UI/UX 흐름 및 시각화 동작 등을 전체 검증합니다. *(3개 개발 서버가 실행 중인 상태여야 합니다)*
 ```bash
 cd frontend
 # Playwright 테스트 실행
 npx playwright test
 ```
-
 - **`analyze-flow.spec.js`**: 분석 생성 및 결과 로드맵 추천 흐름 검증
 - **`dashboard.spec.js`**: 채용시장 경쟁률 분석 대시보드 렌더링, 다크모드 전환, 차트 다운로드 기능 검증
 
@@ -138,4 +169,4 @@ npx playwright test
 
 - **데이터셋 (`jobs_careers.jsonl`)**: 총 10,000건의 채용 및 커리어 공고 정보
   - 필드 구성: `job_title`, `industry`, `company_name`, `annual_salary_krw`, `required_experience_years`, `applicant_count`
-- **파인튜닝 예제**: `bert-base-multilingual-cased` 모델을 불러와 JSONL 데이터셋을 기반으로 지원자 수(`applicant_count`)를 예측하는 회귀(Regression) 모델을 학습시키고 추론하는 가이드가 포함되어 있습니다. (상세 내용은 [jobs_careers/README.md](file:///C:/Users/SSAFY/Desktop/GT/jobs_careers/README.md) 참조)
+- **파인튜닝 예제**: `bert-base-multilingual-cased` 모델을 불러와 JSONL 데이터셋을 기반으로 지원자 수(`applicant_count`)를 예측하는 회귀(Regression) 모델을 학습시키고 추론하는 가이드가 포함되어 있습니다. (상세 내용은 [jobs_careers/README.md](file:///C:/Users/SSAFY/Desktop/t08_project/jobs_careers/README.md) 참조)

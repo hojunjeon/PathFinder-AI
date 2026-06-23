@@ -103,6 +103,7 @@ async function fillManualPosting(page) {
   await page.getByLabel(/기타/).check()
   await page.locator('#interview-type-etc-input').fill('임원 과제 리뷰')
   await expect(page.locator('#match-job-btn')).toHaveCount(0)
+  await expect(page.locator('#job-select')).toHaveCount(0)
 }
 
 async function mockCompanySearch(page) {

@@ -2,39 +2,36 @@
   <section class="section-card" id="gap">
     <div class="section-head">
       <h2>역량 분석</h2>
-      <span class="section-note">키워드 중심 요약</span>
+      <span class="section-note">프로필·자기소개서·채용공고 기반</span>
     </div>
     
     <div v-if="hasData" class="gap-grid">
       <!-- Strengths (Good) -->
       <div class="gap-card good" v-if="strengthKeywords.length">
-        <div class="gap-title">강점 키워드</div>
+        <div class="gap-title">나의 강점</div>
         <div class="keyword-list">
           <article v-for="item in strengthKeywords" :key="item.raw" class="keyword-item">
             <h3>{{ item.keyword }}</h3>
-            <p v-if="item.description">{{ item.description }}</p>
           </article>
         </div>
       </div>
 
       <!-- Gaps (Risk) -->
       <div class="gap-card risk" v-if="gapKeywords.length">
-        <div class="gap-title">보완 키워드</div>
+        <div class="gap-title">보완할 점</div>
         <div class="keyword-list">
           <article v-for="item in gapKeywords" :key="item.raw" class="keyword-item">
             <h3>{{ item.keyword }}</h3>
-            <p v-if="item.description">{{ item.description }}</p>
           </article>
         </div>
       </div>
 
       <!-- Required Competencies -->
       <div class="gap-card required" v-if="requiredKeywords.length">
-        <div class="gap-title">요구 역량 키워드</div>
+        <div class="gap-title">지원 직무 필요 역량</div>
         <div class="keyword-list">
           <article v-for="item in requiredKeywords" :key="item.raw" class="keyword-item">
             <h3>{{ item.keyword }}</h3>
-            <p v-if="item.description">{{ item.description }}</p>
           </article>
         </div>
       </div>
@@ -63,43 +60,27 @@ const hasData = computed(() =>
 
 function toKeywordItems(items) {
   return items.map((item) => {
-    const raw = String(item || '').trim()
-    const normalized = raw.replace(/^\(Mock\)\s*/, '').trim()
-    const split = splitKeywordDescription(normalized)
+    const raw = getRawValue(item)
+    const keyword = getKeywordValue(item, raw)
     return {
       raw,
-      keyword: split.keyword || normalized,
-      description: split.description,
+      keyword,
     }
   }).filter(item => item.keyword)
 }
 
-function splitKeywordDescription(text) {
-  const parenMatch = text.match(/^(.+?)\s*\((.+)\)$/)
-  if (parenMatch) {
-    return {
-      keyword: parenMatch[1].trim(),
-      description: parenMatch[2].trim(),
-    }
+function getRawValue(item) {
+  if (item && typeof item === 'object') {
+    return String(item.keyword || item.title || item.name || item.concept || '').trim()
   }
+  return String(item || '').trim()
+}
 
-  const separatorMatch = text.match(/^(.{2,28}?)(?:\s*[:：\-–—]\s+|\s+-\s+)(.+)$/)
-  if (separatorMatch) {
-    return {
-      keyword: separatorMatch[1].trim(),
-      description: separatorMatch[2].trim(),
-    }
+function getKeywordValue(item, raw) {
+  if (item && typeof item === 'object') {
+    return String(item.keyword || item.title || item.name || item.concept || '').replace(/^\(Mock\)\s*/, '').trim()
   }
-
-  const words = text.split(/\s+/).filter(Boolean)
-  if (words.length >= 4 && text.length > 18) {
-    return {
-      keyword: words.slice(0, 2).join(' '),
-      description: words.slice(2).join(' '),
-    }
-  }
-
-  return { keyword: text, description: '' }
+  return raw.replace(/^\(Mock\)\s*/, '').replace(/\s+/g, ' ').trim()
 }
 </script>
 
@@ -159,8 +140,6 @@ h2 {
   gap: var(--space-3);
 }
 .keyword-item {
-  display: grid;
-  gap: 4px;
   border-top: 1px solid var(--border-soft);
   padding-top: var(--space-3);
 }
@@ -173,13 +152,6 @@ h2 {
   font-weight: 700;
   color: var(--fg);
   line-height: 1.35;
-  word-break: keep-all;
-}
-.keyword-item p {
-  color: var(--fg-2);
-  font-size: var(--text-sm);
-  margin: 0;
-  line-height: 1.55;
   word-break: keep-all;
 }
 .empty {

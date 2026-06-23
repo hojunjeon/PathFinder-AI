@@ -1,9 +1,7 @@
 <template>
   <section class="subtopic">
     <header class="subtopic-head">
-      <span class="subtopic-kicker">개념 키워드</span>
       <h4>{{ subtopic.title }}</h4>
-      <p v-if="subtopic.why" class="subtopic-why">{{ subtopic.why }}</p>
     </header>
 
     <div class="question-cards">
@@ -80,25 +78,11 @@ function isCompleted(questionIdx) {
   margin-bottom: var(--space-4);
 }
 
-.subtopic-kicker {
-  color: var(--meta);
-  font-size: var(--text-xs);
-  font-weight: 700;
-}
-
 h4 {
   color: var(--fg);
   font-size: var(--text-base);
   font-weight: 700;
   line-height: 1.35;
-  word-break: keep-all;
-}
-
-.subtopic-why {
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  margin: 0;
   word-break: keep-all;
 }
 

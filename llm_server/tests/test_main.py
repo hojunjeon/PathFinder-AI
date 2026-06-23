@@ -163,7 +163,9 @@ def test_build_prompt_includes_company_and_job_context():
     assert "우대사항: ['분산 시스템 경험']" in prompt
     assert "질문 묶음" in prompt
     assert "개인 맞춤 면접 질문과 답변 팁" in prompt
-    assert "학습 기준, 세부 근거, 출처 나열은 출력하지 말고" in prompt
+    assert "나의 강점" in prompt
+    assert "단순히 긴 문장을 앞부분만 자른 청킹 결과가 아니어야 합니다" in prompt
+    assert "summary, why, evidence, study_goal은 빈 문자열" in prompt
     assert '"category"' in prompt
     assert '"subtopics"' in prompt
 

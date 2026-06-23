@@ -49,10 +49,6 @@
             <div>
               <p class="eyebrow">분석 결과</p>
               <h1>{{ analysis.company_name }} 면접 준비</h1>
-              <div class="hero-keywords">
-                <span>{{ analysis.job_title }}</span>
-                <span v-for="keyword in heroKeywords" :key="keyword">{{ keyword }}</span>
-              </div>
               <div class="result-meta">
                 <span class="chip" v-for="type in analysis.selected_interview_types" :key="type">
                   {{ typeLabel(type) }}
@@ -105,11 +101,7 @@
           <!-- Roadmap Checklist Timeline -->
           <section class="section-card" id="roadmap" data-od-id="result-roadmap">
             <div class="section-head">
-              <div>
-                <h2>준비 항목</h2>
-                <p class="timeline-label">프로필·자기소개서·기업 정보·채용공고 기반 개인 맞춤 질문</p>
-              </div>
-              <span class="section-note">체크하면 진행 상태가 반영됩니다</span>
+              <h2>준비 항목</h2>
             </div>
             <div v-if="roadmapItems.length">
               <RoadmapTimeline 
@@ -169,12 +161,6 @@ function formatDate(dateStr) {
   const d = new Date(dateStr)
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
 }
-
-const heroKeywords = computed(() => {
-  const gap = analysis.value?.competency_gap || {}
-  const required = gap.required_competencies || []
-  return required.slice(0, 3)
-})
 
 function getDeterministicScore(name, minVal, maxVal) {
   let hash = 0
@@ -467,21 +453,6 @@ h1 {
   gap: var(--space-2);
   margin-top: var(--space-5);
 }
-.hero-keywords {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
-  color: var(--fg-2);
-  font-size: var(--text-sm);
-}
-.hero-keywords span {
-  padding-right: var(--space-3);
-  border-right: 1px solid var(--border);
-}
-.hero-keywords span:last-child {
-  border-right: 0;
-}
 .result-meta .chip {
   background: var(--surface-warm);
 }
@@ -614,12 +585,6 @@ h2 {
   color: var(--muted);
   font-size: var(--text-sm);
 }
-.timeline-label {
-  margin-top: var(--space-1);
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
 .roadmap-summary {
   margin-bottom: var(--space-5);
 }

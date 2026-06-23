@@ -1,8 +1,8 @@
 MOCK_ROADMAP_RESPONSE = """{
   "competency_gap": {
-    "strengths": ["(Mock) 로봇 팔 제어", "(Mock) 수치 기반 문제 해결"],
-    "gaps": ["(Mock) 산업용 통신", "(Mock) 모션 플래닝"],
-    "required_competencies": ["(Mock) 로봇 제어", "(Mock) 모션 플래닝", "(Mock) 산업용 통신"],
+    "strengths": ["(Mock) 로봇 팔 제어 프로젝트", "(Mock) 수치 기반 문제 해결"],
+    "gaps": ["(Mock) 산업용 통신 이해", "(Mock) 모션 플래닝 설명 보완"],
+    "required_competencies": ["(Mock) 로봇 제어 SW", "(Mock) 모션 플래닝", "(Mock) 산업용 통신"],
     "study_priorities": [
       {
         "priority": 1,
@@ -25,12 +25,12 @@ MOCK_ROADMAP_RESPONSE = """{
   "timeline_data": [
     {
       "category": "로보틱스",
-      "summary": "프로젝트 경험과 제어 소프트웨어 직무 요구가 겹치는 영역입니다.",
+      "summary": "",
       "sources": [],
       "subtopics": [
         {
           "title": "역기구학",
-          "why": "로봇 팔 제어 경험을 좌표계와 관절 제한까지 연결합니다.",
+          "why": "",
           "questions": [
             {
               "question": "1번 프로젝트에서 역기구학을 어떻게 사용했나요?",
@@ -42,7 +42,7 @@ MOCK_ROADMAP_RESPONSE = """{
         },
         {
           "title": "모션 플래닝",
-          "why": "물류 로봇 경로 최적화 요구와 프로젝트 경험을 연결합니다.",
+          "why": "",
           "questions": [
             {
               "question": "A가 아니라 B 방식을 채택한 이유는 무엇인가요?",
@@ -56,12 +56,12 @@ MOCK_ROADMAP_RESPONSE = """{
     },
     {
       "category": "통신",
-      "summary": "제어 주기와 안정성 관점에서 프로토콜 선택 기준을 정리합니다.",
+      "summary": "",
       "sources": [],
       "subtopics": [
         {
           "title": "EtherCAT",
-          "why": "고속 제어와 다축 동기화가 필요한 장비에서 역할을 정리합니다.",
+          "why": "",
           "questions": [
             {
               "question": "EtherCAT을 사용하는 이유를 설명할 수 있나요?",
@@ -73,7 +73,7 @@ MOCK_ROADMAP_RESPONSE = """{
         },
         {
           "title": "CAN",
-          "why": "센서/액추에이터 통신에서 장점과 병목을 구분합니다.",
+          "why": "",
           "questions": [
             {
               "question": "CAN 통신의 장점과 병목은 무엇인가요?",
@@ -87,12 +87,12 @@ MOCK_ROADMAP_RESPONSE = """{
     },
     {
       "category": "Rust",
-      "summary": "시스템 언어 학습 이력을 제어 모듈 안정성 관점으로 연결합니다.",
+      "summary": "",
       "sources": [],
       "subtopics": [
         {
           "title": "메모리 안전성과 실시간 제약",
-          "why": "시스템 언어 경험을 제어 소프트웨어 관점으로 확장합니다.",
+          "why": "",
           "questions": [
             {
               "question": "로봇 제어 모듈에 Rust를 적용한다면 장점과 비용은 무엇인가요?",

@@ -2,13 +2,10 @@
   <article :class="['category-card', { current }]">
     <div class="category-head">
       <div>
-        <p class="category-label">역량·분야·업무</p>
         <h3>{{ category.category }}</h3>
       </div>
       <span :class="['status', statusClass]">{{ statusText }}</span>
     </div>
-
-    <p v-if="category.summary" class="category-summary">{{ category.summary }}</p>
 
     <div class="subtopics">
       <RoadmapSubtopicCard
@@ -92,13 +89,6 @@ const statusClass = computed(() => {
   gap: var(--space-4);
 }
 
-.category-label {
-  color: var(--meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  margin-bottom: var(--space-1);
-}
-
 h3 {
   font-size: var(--text-lg);
   font-weight: 600;
@@ -123,13 +113,6 @@ h3 {
 .status.done {
   color: var(--success);
   border-color: color-mix(in oklab, var(--success), transparent 55%);
-}
-
-.category-summary {
-  margin-top: var(--space-3);
-  color: var(--fg-2);
-  font-size: var(--text-sm);
-  line-height: 1.55;
 }
 
 .subtopics {

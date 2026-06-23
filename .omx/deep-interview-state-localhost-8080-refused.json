@@ -1,0 +1,24 @@
+{
+    "mode":  "deep-interview",
+    "active":  true,
+    "current_phase":  "deep-interview",
+    "state":  {
+                  "interview_id":  "29fb715c-e5f9-4277-ac9b-b10de937e583",
+                  "profile":  "standard",
+                  "type":  "brownfield",
+                  "initial_idea":  "localhost:8080 API net::ERR_CONNECTION_REFUSED during /analyze/new company/job DB connection",
+                  "rounds":  [
+
+                             ],
+                  "current_ambiguity":  0.35,
+                  "threshold":  0.2,
+                  "max_rounds":  12,
+                  "challenge_modes_used":  [
+
+                                           ],
+                  "current_stage":  "intent-first",
+                  "current_focus":  "scope",
+                  "context_snapshot_path":  "C:\\Users\\SSAFY\\Desktop\\t08_project\\.omx\\context\\localhost-8080-refused-20260623T024620Z.md",
+                  "codebase_context":  "Frontend running on 5173; backend configured for 8080 but not listening; diagnostic backend health check succeeds when started."
+              }
+}

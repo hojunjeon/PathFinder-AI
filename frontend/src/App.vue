@@ -38,6 +38,6 @@ const router = useRouter()
 
 function handleLogout() {
   authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 </script>

@@ -161,7 +161,7 @@ def test_manual_job_posting_saves_input_and_matches_jobs(auth_client):
 
 
 @pytest.mark.django_db
-def test_manual_job_posting_saves_unsupported_company(auth_client):
+def test_manual_job_posting_saves_manual_company_when_company_is_unknown(auth_client):
     resp = auth_client.post('/api/job-postings/manual/', {
         'company_name': '없는회사',
         'job_title': '백엔드 개발자',
@@ -170,11 +170,53 @@ def test_manual_job_posting_saves_unsupported_company(auth_client):
         'preferred_qualifications': '',
     }, format='json')
 
-    assert resp.status_code == 404
-    assert resp.data['supported'] is False
+    assert resp.status_code == 201
+    assert resp.data['supported'] is True
+    assert resp.data['company']['company_name'] == '없는회사'
+    assert resp.data['matched_job']['job_title'] == '백엔드 개발자'
     posting = JobPosting.objects.get(company_name='없는회사')
-    assert posting.company is None
+    assert posting.company.company_name == '없는회사'
     assert posting.resolved is False
+
+
+@pytest.mark.django_db
+def test_manual_job_posting_creates_fallback_company_and_job(auth_client):
+    resp = auth_client.post('/api/job-postings/manual/', {
+        'company_name': '삼성전자',
+        'job_title': '백엔드 개발자',
+        'responsibilities': 'API 개발',
+        'requirements': 'Python',
+        'preferred_qualifications': '',
+    }, format='json')
+
+    assert resp.status_code == 201
+    assert resp.data['supported'] is True
+    assert resp.data['company']['company_name'] == '삼성전자'
+    assert resp.data['matched_job']['job_title'] == '백엔드 개발자'
+    assert resp.data['jobs'][0]['job_description'] == 'API 개발'
+    posting = JobPosting.objects.get(company_name='삼성전자')
+    assert posting.resolved is False
+    assert posting.company.company_name == '삼성전자'
+
+
+@pytest.mark.django_db
+def test_manual_job_posting_creates_fallback_job_when_company_has_no_jobs(auth_client):
+    company = Company.objects.create(company_name='삼성전자', industry='반도체/전자', size='large')
+
+    resp = auth_client.post('/api/job-postings/manual/', {
+        'company_name': '삼성전자',
+        'job_title': '백엔드 개발자',
+        'responsibilities': 'API 개발',
+        'requirements': 'Python, Django',
+        'preferred_qualifications': '분산 시스템 경험',
+    }, format='json')
+
+    assert resp.status_code == 201
+    assert resp.data['supported'] is True
+    assert resp.data['company']['id'] == company.id
+    assert resp.data['matched_job']['job_title'] == '백엔드 개발자'
+    assert resp.data['jobs'][0]['required_skills'] == ['Python', 'Django']
+    assert Job.objects.filter(company=company, job_title='백엔드 개발자').exists()
 
 
 @pytest.mark.django_db

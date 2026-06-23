@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-23T05:40:47.207Z",
+  "updatedAt": "2026-06-23T05:53:48.408Z",
+  "briefPath": ".omo/ulw-loop/verify-analysis-gms-20260623/brief.md",
+  "goalsPath": ".omo/ulw-loop/verify-analysis-gms-20260623/goals.json",
+  "ledgerPath": ".omo/ulw-loop/verify-analysis-gms-20260623/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-ui-gms-key-llm",
+      "title": "사용자 요청: 분석 결과 페이지의 UI 개편과 GMS_KEY 기반 LLM 연결 작업이 정상 완료됐는지 확인한다. 완료되지 않...",
+      "objective": "사용자 요청: 분석 결과 페이지의 UI 개편과 GMS_KEY 기반 LLM 연결 작업이 정상 완료됐는지 확인한다. 완료되지 않았다면 관련 Codex 세션 정보와 로컬 변경을 확인해 실제 동작까지 완성하고, 브라우저/HTTP 증거로 검증한다.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "Browser Playwright: open http://127.0.0.1:5175/analyze/99 with mocked analysis API, verify category/subtopic result UI, check EtherCAT, reload, and assert 60 percent progress persists.",
+          "userModel": "happy",
+          "expectedEvidence": "C:\\Users\\SSAFY\\Desktop\\t08_project\\.worktrees\\roadmap-result-revamp\\.omo\\ulw-loop\\verify-analysis-gms-20260623\\evidence\\browser-qa.json plus result screenshots.",
+          "essential": true,
+          "capturedEvidence": "browser-qa.json: 40% initial, EtherCAT check -> 60%, reload persists checked/60%; screenshots result-desktop-initial.png, result-desktop-checked-reload.png, result-mobile.png | cleanup: killed QA Vite pid 11660; 5175 no LISTENING",
+          "status": "pass",
+          "capturedAt": "2026-06-23T05:53:47.233Z"
+        },
+        {
+          "id": "C002",
+          "scenario": "HTTP curl: start llm_server on 127.0.0.1:18081 with LLM_INTERNAL_TOKEN and parent .env GMS_KEY, POST live-gms-payload.json to /llm/roadmap, require HTTP 200, non-mock JSON, timeline_data/subtopics/question, and no Authorization/Bearer leak.",
+          "userModel": "edge",
+          "expectedEvidence": "C:\\Users\\SSAFY\\Desktop\\t08_project\\.worktrees\\roadmap-result-revamp\\.omo\\ulw-loop\\verify-analysis-gms-20260623\\evidence\\live-gms-checks-rerun.json and live-gms-http-rerun.txt.",
+          "essential": true,
+          "capturedEvidence": "live-gms-checks-rerun.json: HTTP/1.1 200 OK, is_mock false, competency_gap true, timeline_data true, subtopic question true, no replacement char, no Authorization/Bearer leak | cleanup: uvicorn 18081 stopped; only TIME_WAIT remains",
+          "status": "pass",
+          "capturedAt": "2026-06-23T05:53:47.792Z"
+        },
+        {
+          "id": "C003",
+          "scenario": "Regression commands in worktree: llm_server pytest, backend pytest, frontend build, full Playwright E2E on isolated 5174 port.",
+          "userModel": "regression",
+          "expectedEvidence": "Command outputs: 13 LLM tests passed, 38 backend tests passed, Vite build passed, 5 E2E passed.",
+          "essential": false,
+          "capturedEvidence": "llm_server pytest: 13 passed; backend pytest: 38 passed; frontend build passed; frontend E2E isolated 5174: 5 passed | cleanup: Playwright webServer exited; 5174 no LISTENING, only TIME_WAIT",
+          "status": "pass",
+          "capturedAt": "2026-06-23T05:53:48.408Z"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-23T05:40:47.207Z",
+      "updatedAt": "2026-06-23T05:53:48.408Z"
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/verify-analysis-gms-20260623/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/verify-analysis-gms-20260623/ledger.jsonl as the audit trail."
+}

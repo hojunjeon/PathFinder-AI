@@ -165,6 +165,10 @@ class ManualJobPostingView(APIView):
         data = serializer.validated_data
 
         company = resolve_company_from_name(data['company_name'])
+        resolved = bool(company)
+        if not company:
+            company = create_manual_company(data['company_name'])
+
         raw_text = build_manual_job_posting_text(data)
         posting = JobPosting.objects.create(
             user=request.user,
@@ -175,17 +179,14 @@ class ManualJobPostingView(APIView):
             requirements=data['requirements'],
             preferred_qualifications=data.get('preferred_qualifications', ''),
             raw_text=raw_text,
-            resolved=bool(company),
+            resolved=resolved,
         )
 
-        if not company:
-            return Response({
-                'message': NOT_SUPPORTED_MSG,
-                'supported': False,
-                'job_posting': JobPostingSerializer(posting).data,
-            }, status=status.HTTP_404_NOT_FOUND)
-
         jobs = match_jobs_for_manual_posting(company, data['job_title'])
+        if not jobs.exists():
+            create_manual_job(company, data)
+            jobs = match_jobs_for_manual_posting(company, data['job_title'])
+
         job_page = paginated_payload(jobs, request, JobSerializer)
         matched_job = job_page['results'][0] if job_page['results'] else None
         return Response({
@@ -301,6 +302,39 @@ def build_manual_job_posting_text(data):
         f"자격요건:\n{data['requirements']}",
         f"우대사항:\n{data.get('preferred_qualifications', '') or '미입력'}",
     ])
+
+
+def create_manual_company(company_name: str):
+    company, _ = Company.objects.get_or_create(
+        company_name=company_name.strip(),
+        defaults={
+            'industry': '직접 입력',
+            'size': Company.Size.LARGE,
+            'talent_description': '사용자가 직접 입력한 채용공고 기반 기업입니다.',
+            'culture_keywords': [],
+        },
+    )
+    return company
+
+
+def create_manual_job(company: Company, data):
+    return Job.objects.create(
+        company=company,
+        job_title=data['job_title'],
+        required_skills=parse_skills(data['requirements']),
+        job_description=data['responsibilities'],
+        preferred_qualifications=parse_skills(data.get('preferred_qualifications', '')),
+        recommended_study_areas=parse_skills(data['requirements']) or ['직무 요구사항 분석'],
+        interview_stages=[{'order': 1, 'type': 'technical', 'desc': '기술 면접'}],
+    )
+
+
+def parse_skills(text: str):
+    return [
+        item.strip()
+        for item in text.replace('\n', ',').split(',')
+        if item.strip()
+    ]
 
 
 def resolve_company_from_name(company_name: str):

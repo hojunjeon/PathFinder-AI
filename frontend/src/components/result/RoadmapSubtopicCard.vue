@@ -5,47 +5,49 @@
         <input
           type="checkbox"
           :checked="completed"
+          :aria-label="subtopic.title"
           @change="$emit('toggle')"
         >
         <span class="checkmark" aria-hidden="true"></span>
       </span>
-      <span class="subtopic-title">{{ subtopic.title }}</span>
+      <span class="subtopic-title">예상 질문 {{ subtopicIdx + 1 }}</span>
     </label>
 
     <div class="subtopic-body">
-      <div v-if="subtopic.question" class="detail-block">
-        <span class="detail-label">질문</span>
-        <p>{{ subtopic.question }}</p>
+      <div v-if="questions.length" class="detail-block question-block">
+        <span class="detail-label">개인 맞춤 질문</span>
+        <ul class="question-list">
+          <li v-for="question in questions" :key="question">{{ question }}</li>
+        </ul>
       </div>
       <div v-if="subtopic.answer_guide" class="detail-block">
-        <span class="detail-label">답변 방향</span>
+        <span class="detail-label">답변 팁</span>
         <p>{{ subtopic.answer_guide }}</p>
-      </div>
-      <div v-if="subtopic.evidence" class="detail-block compact">
-        <span class="detail-label">근거</span>
-        <p>{{ subtopic.evidence }}</p>
-      </div>
-      <div v-if="subtopic.study_goal" class="detail-block compact">
-        <span class="detail-label">학습 기준</span>
-        <p>{{ subtopic.study_goal }}</p>
-      </div>
-      <div v-if="subtopic.follow_up_questions?.length" class="followups">
-        <span class="detail-label">꼬리질문</span>
-        <ul>
-          <li v-for="question in subtopic.follow_up_questions" :key="question">{{ question }}</li>
-        </ul>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   subtopic: { type: Object, required: true },
+  subtopicIdx: { type: Number, default: 0 },
   completed: { type: Boolean, default: false },
 })
 
 defineEmits(['toggle'])
+
+const questions = computed(() => {
+  const mainQuestion = props.subtopic.question || props.subtopic.title
+  const followUps = Array.isArray(props.subtopic.follow_up_questions)
+    ? props.subtopic.follow_up_questions
+    : []
+  return [mainQuestion, ...followUps]
+    .map(question => String(question || '').trim())
+    .filter(Boolean)
+})
 </script>
 
 <style scoped>
@@ -125,22 +127,15 @@ defineEmits(['toggle'])
 
 .subtopic-body {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
   margin-top: var(--space-4);
   padding-left: 34px;
 }
 
-.detail-block,
-.followups {
+.detail-block {
   display: grid;
   gap: var(--space-1);
   min-width: 0;
-}
-
-.detail-block:not(.compact),
-.followups {
-  grid-column: 1 / -1;
 }
 
 .detail-label {
@@ -150,26 +145,21 @@ defineEmits(['toggle'])
 }
 
 .detail-block p,
-.followups li {
+.question-list li {
   color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.55;
   word-break: keep-all;
 }
 
-.followups ul {
+.question-list {
   margin: 0;
   padding-left: var(--space-5);
 }
 
 @media (max-width: 720px) {
   .subtopic-body {
-    grid-template-columns: 1fr;
     padding-left: 0;
-  }
-
-  .detail-block.compact {
-    grid-column: 1;
   }
 }
 </style>

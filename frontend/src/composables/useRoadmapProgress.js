@@ -28,7 +28,7 @@ export function useRoadmapProgress(analysis) {
   const activeItemDesc = computed(() => {
     const nextItem = nextIncompleteSubtopic.value
     if (!nextItem) return '면접 전 최종 점검만 남았습니다.'
-    return nextItem.study_goal || nextItem.question || '답변 기준을 정리하세요.'
+    return nextItem.answer_guide || nextItem.question || '개인 맞춤 질문의 답변 방향을 정리하세요.'
   })
 
   function initializeCompletedTasks(timeline) {

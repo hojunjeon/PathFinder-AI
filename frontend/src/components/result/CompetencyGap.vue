@@ -1,33 +1,42 @@
 <template>
-  <section class="section-card" id="gap-section">
+  <section class="section-card" id="gap">
     <div class="section-head">
       <h2>역량 분석</h2>
-      <span class="section-note">공고 요구사항과 자기소개서 기반 갭 분석</span>
+      <span class="section-note">키워드 중심 요약</span>
     </div>
     
     <div v-if="hasData" class="gap-grid">
       <!-- Strengths (Good) -->
-      <div class="gap-card good" v-if="strengths.length">
-        <div class="gap-title">강점 - 즉시 활용 가능</div>
-        <ul class="gap-list">
-          <li v-for="item in strengths" :key="item">{{ item }}</li>
-        </ul>
+      <div class="gap-card good" v-if="strengthKeywords.length">
+        <div class="gap-title">강점 키워드</div>
+        <div class="keyword-list">
+          <article v-for="item in strengthKeywords" :key="item.raw" class="keyword-item">
+            <h3>{{ item.keyword }}</h3>
+            <p v-if="item.description">{{ item.description }}</p>
+          </article>
+        </div>
       </div>
 
       <!-- Gaps (Risk) -->
-      <div class="gap-card risk" v-if="gaps.length">
-        <div class="gap-title">보완 필요 - 우선 준비</div>
-        <ul class="gap-list">
-          <li v-for="item in gaps" :key="item">{{ item }}</li>
-        </ul>
+      <div class="gap-card risk" v-if="gapKeywords.length">
+        <div class="gap-title">보완 키워드</div>
+        <div class="keyword-list">
+          <article v-for="item in gapKeywords" :key="item.raw" class="keyword-item">
+            <h3>{{ item.keyword }}</h3>
+            <p v-if="item.description">{{ item.description }}</p>
+          </article>
+        </div>
       </div>
 
       <!-- Required Competencies -->
-      <div class="gap-card required" v-if="requiredCompetencies.length">
-        <div class="gap-title">요구 역량 - 채용공고 기준</div>
-        <ul class="gap-list">
-          <li v-for="item in requiredCompetencies" :key="item">{{ item }}</li>
-        </ul>
+      <div class="gap-card required" v-if="requiredKeywords.length">
+        <div class="gap-title">요구 역량 키워드</div>
+        <div class="keyword-list">
+          <article v-for="item in requiredKeywords" :key="item.raw" class="keyword-item">
+            <h3>{{ item.keyword }}</h3>
+            <p v-if="item.description">{{ item.description }}</p>
+          </article>
+        </div>
       </div>
     </div>
     
@@ -45,9 +54,53 @@ const props = defineProps({
 const strengths = computed(() => props.gap.strengths || [])
 const gaps = computed(() => props.gap.gaps || [])
 const requiredCompetencies = computed(() => props.gap.required_competencies || [])
+const strengthKeywords = computed(() => toKeywordItems(strengths.value))
+const gapKeywords = computed(() => toKeywordItems(gaps.value))
+const requiredKeywords = computed(() => toKeywordItems(requiredCompetencies.value))
 const hasData = computed(() =>
-  strengths.value.length || gaps.value.length || requiredCompetencies.value.length
+  strengthKeywords.value.length || gapKeywords.value.length || requiredKeywords.value.length
 )
+
+function toKeywordItems(items) {
+  return items.map((item) => {
+    const raw = String(item || '').trim()
+    const normalized = raw.replace(/^\(Mock\)\s*/, '').trim()
+    const split = splitKeywordDescription(normalized)
+    return {
+      raw,
+      keyword: split.keyword || normalized,
+      description: split.description,
+    }
+  }).filter(item => item.keyword)
+}
+
+function splitKeywordDescription(text) {
+  const parenMatch = text.match(/^(.+?)\s*\((.+)\)$/)
+  if (parenMatch) {
+    return {
+      keyword: parenMatch[1].trim(),
+      description: parenMatch[2].trim(),
+    }
+  }
+
+  const separatorMatch = text.match(/^(.{2,28}?)(?:\s*[:：\-–—]\s+|\s+-\s+)(.+)$/)
+  if (separatorMatch) {
+    return {
+      keyword: separatorMatch[1].trim(),
+      description: separatorMatch[2].trim(),
+    }
+  }
+
+  const words = text.split(/\s+/).filter(Boolean)
+  if (words.length >= 4 && text.length > 18) {
+    return {
+      keyword: words.slice(0, 2).join(' '),
+      description: words.slice(2).join(' '),
+    }
+  }
+
+  return { keyword: text, description: '' }
+}
 </script>
 
 <style scoped>
@@ -101,16 +154,33 @@ h2 {
 .gap-card.required .gap-title {
   color: var(--accent);
 }
-.gap-list {
+.keyword-list {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
+}
+.keyword-item {
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid var(--border-soft);
+  padding-top: var(--space-3);
+}
+.keyword-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.keyword-item h3 {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.keyword-item p {
   color: var(--fg-2);
   font-size: var(--text-sm);
-  padding-left: var(--space-4);
   margin: 0;
-}
-.gap-list li {
-  line-height: 1.4;
+  line-height: 1.55;
+  word-break: keep-all;
 }
 .empty {
   color: var(--muted);

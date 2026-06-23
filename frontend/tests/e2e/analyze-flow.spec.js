@@ -35,7 +35,7 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('#submit-analyze-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
-  await expect(page.getByText('역량 분석')).toBeVisible()
+  await expect(page.getByRole('heading', { name: '역량 분석' })).toBeVisible()
   await expect(page.getByText('시스템 설계').first()).toBeVisible()
   await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()

@@ -2,7 +2,7 @@
   <article :class="['category-card', { current }]">
     <div class="category-head">
       <div>
-        <p class="category-label">큰 카테고리</p>
+        <p class="category-label">질문 묶음</p>
         <h3>{{ category.category }}</h3>
       </div>
       <span :class="['status', statusClass]">{{ statusText }}</span>
@@ -10,15 +10,12 @@
 
     <p v-if="category.summary" class="category-summary">{{ category.summary }}</p>
 
-    <div v-if="category.sources?.length" class="sources">
-      <span v-for="source in category.sources" :key="source" class="source-chip">{{ source }}</span>
-    </div>
-
     <div class="subtopics">
       <RoadmapSubtopicCard
         v-for="(subtopic, subtopicIdx) in category.subtopics"
         :key="`${category.category}-${subtopic.title}-${subtopicIdx}`"
         :subtopic="subtopic"
+        :subtopic-idx="subtopicIdx"
         :completed="isCompleted(subtopicIdx)"
         @toggle="$emit('toggle-subtopic', subtopicIdx)"
       />
@@ -124,22 +121,6 @@ h3 {
   color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.55;
-}
-
-.sources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
-
-.source-chip {
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--bg);
-  color: var(--muted);
-  font-size: var(--text-xs);
-  padding: 3px 9px;
 }
 
 .subtopics {

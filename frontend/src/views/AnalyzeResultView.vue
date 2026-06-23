@@ -7,7 +7,6 @@
       <!-- Sticky Sidebar -->
       <aside class="sidebar" aria-label="로드맵 사이드바">
         <div class="company-card">
-          <div class="company-initial">{{ analysis.company_name?.charAt(0) || 'K' }}</div>
           <div class="company-name">{{ analysis.company_name }}</div>
           <div class="company-role">{{ analysis.job_title }}</div>
         </div>
@@ -15,12 +14,15 @@
         <section class="side-block" data-od-id="result-side-nav">
           <div class="side-label">섹션 이동</div>
           <nav class="side-nav">
-            <a :class="['side-nav-item', { active: activeSection === 'gap' }]" href="#gap">역량 갭 분석</a>
-            <a :class="['side-nav-item', { active: activeSection === 'roadmap' }]" href="#roadmap">
-              준비 항목
-              <span class="count" v-if="roadmapItems.length">{{ roadmapItems.length }}</span>
+            <a
+              v-for="(section, sectionIdx) in pageSections"
+              :key="section.id"
+              :class="['side-nav-item', { active: activeSection === section.id }]"
+              :href="`#${section.id}`"
+            >
+              <span class="nav-order">{{ String(sectionIdx + 1).padStart(2, '0') }}</span>
+              <span class="nav-label">{{ section.label }}</span>
             </a>
-            <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">직무 매칭도</a>
           </nav>
         </section>
 
@@ -42,7 +44,7 @@
       <!-- Main Content -->
       <main class="content">
         <div class="content-inner">
-          <section class="result-hero" id="gap" data-od-id="result-hero">
+          <section class="result-hero" id="summary" data-od-id="result-hero">
             <div>
               <p class="eyebrow">분석 결과</p>
               <h1>{{ analysis.company_name }} 면접 준비</h1>
@@ -101,11 +103,10 @@
             <div class="section-head">
               <div>
                 <h2>준비 항목</h2>
-                <p class="timeline-label">답변 근거와 보완 개념</p>
+                <p class="timeline-label">프로필·자기소개서·기업 정보·채용공고 기반 개인 맞춤 질문</p>
               </div>
               <span class="section-note">체크하면 진행 상태가 반영됩니다</span>
             </div>
-            <pre v-if="analysis.text_roadmap" class="roadmap-text roadmap-summary">{{ analysis.text_roadmap }}</pre>
             <div v-if="roadmapItems.length">
               <RoadmapTimeline 
                 :timeline-data="roadmapItems"
@@ -134,7 +135,13 @@ import { useRoadmapProgress } from '../composables/useRoadmapProgress'
 const route = useRoute()
 const analysis = ref(null)
 const loading = ref(true)
-const activeSection = ref('gap')
+const activeSection = ref('summary')
+const pageSections = [
+  { id: 'summary', label: '분석 요약' },
+  { id: 'gap', label: '역량 분석' },
+  { id: 'scores', label: '직무 매칭도' },
+  { id: 'roadmap', label: '준비 항목' },
+]
 const {
   activeItemDesc,
   activeItemText,
@@ -206,9 +213,8 @@ const computedScores = computed(() => {
 
 // Sidebar Active Navigation on Scroll
 function handleScroll() {
-  const sections = ['gap', 'roadmap', 'scores']
-  let current = 'gap'
-  sections.forEach((id) => {
+  let current = pageSections[0].id
+  pageSections.forEach(({ id }) => {
     const el = document.getElementById(id)
     if (el && window.scrollY >= el.offsetTop - 180) {
       current = id
@@ -274,18 +280,6 @@ onBeforeUnmount(() => {
   margin-bottom: var(--space-8);
   box-shadow: var(--elev-ring);
 }
-.company-initial {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  display: grid;
-  place-items: center;
-  background: color-mix(in oklab, var(--fg), transparent 92%);
-  color: var(--fg);
-  font-weight: 700;
-  font-size: var(--text-lg);
-  margin-bottom: var(--space-4);
-}
 .company-name {
   font-weight: 600;
   font-size: var(--text-base);
@@ -313,9 +307,10 @@ onBeforeUnmount(() => {
   gap: var(--space-1);
 }
 .side-nav-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 34px 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-2);
   padding: 9px 12px;
   border-radius: var(--radius-md);
   color: var(--muted);
@@ -329,17 +324,17 @@ onBeforeUnmount(() => {
   color: var(--fg);
   box-shadow: var(--elev-ring);
 }
-.count {
-  min-width: 22px;
-  height: 22px;
-  border-radius: var(--radius-pill);
-  display: grid;
-  place-items: center;
-  background: var(--accent);
-  color: var(--accent-on);
+.nav-order {
+  color: var(--meta);
   font-size: var(--text-xs);
   font-family: var(--font-mono);
   font-weight: 600;
+}
+.side-nav-item.active .nav-order {
+  color: var(--accent);
+}
+.nav-label {
+  min-width: 0;
 }
 .chip-list {
   display: flex;

@@ -46,6 +46,7 @@ def test_seed_engineering_jobs_creates_and_updates_companies_only(tmp_path):
     assert company.size == Company.Size.LARGE
     assert company.talent_description == "더 빠른 실행과 협업을 중시합니다."
     assert company.culture_keywords == ["실행", "협업", "도전"]
+    assert company.roadmap_supported is True
     assert Job.objects.count() == 0
 
 
@@ -105,6 +106,7 @@ def test_seed_engineering_jobs_creates_optional_job_records(tmp_path):
 
     company = Company.objects.get(company_name="테스트전자")
     job = Job.objects.get(company=company, job_title="백엔드 엔지니어")
+    assert company.roadmap_supported is True
     assert job.annual_salary_krw == 65000000
     assert job.required_experience_years == 2
     assert job.required_skills == ["Python", "Django"]

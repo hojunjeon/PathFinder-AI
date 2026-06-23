@@ -13,6 +13,7 @@ class Company(models.Model):
     size = models.CharField(max_length=20, choices=Size.choices, default=Size.LARGE)
     talent_description = models.TextField(blank=True)
     culture_keywords = models.JSONField(default=list)
+    roadmap_supported = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         db_table = 'companies'

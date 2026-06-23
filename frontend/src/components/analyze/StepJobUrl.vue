@@ -1,15 +1,36 @@
 <template>
   <div>
     <div class="panel-head">
-      <p class="eyebrow">Step 1 of 3</p>
+      <p class="eyebrow">Step 1 of 2</p>
       <h2 class="panel-title">어떤 회사에 지원했나요?</h2>
-      <p class="panel-desc">채용공고의 핵심 내용을 입력하면 기업/직무 DB와 연결합니다.</p>
+      <p class="panel-desc">채용공고 핵심 내용을 기업/직무 DB와 매칭합니다.</p>
     </div>
 
     <div class="form-card">
       <div class="field">
-        <label for="company-name-input">회사명</label>
-        <input id="company-name-input" v-model="form.company_name" placeholder="예) 삼성전자" />
+        <label for="company-search-input">지원 기업</label>
+        <input
+          id="company-search-input"
+          v-model="companyQuery"
+          autocomplete="off"
+          placeholder="예) 삼성전자"
+          @input="onCompanyInput"
+        />
+        <div v-if="companyOptions.length" class="company-options" role="listbox" aria-label="지원 기업 검색 결과">
+          <button
+            v-for="option in companyOptions"
+            :key="option.id"
+            type="button"
+            class="company-option"
+            role="option"
+            @click="selectCompany(option)"
+          >
+            <span class="option-name">{{ option.company_name }}</span>
+            <span class="option-meta">{{ option.industry }} · {{ option.size === 'large' ? '대기업' : option.size }}</span>
+          </button>
+        </div>
+        <span v-if="searchingCompanies" class="hint">지원 기업 DB를 검색 중입니다.</span>
+        <span v-else class="hint">검색 결과에서 지원 기업을 선택하세요.</span>
       </div>
 
       <div class="field">
@@ -30,6 +51,30 @@
       <div class="field">
         <label for="preferred-input">우대사항</label>
         <textarea id="preferred-input" v-model="form.preferred_qualifications" rows="3" placeholder="공고의 우대사항이 있으면 입력하세요."></textarea>
+      </div>
+
+      <div class="field interview-field">
+        <span class="field-label">면접 유형</span>
+        <div class="type-grid">
+          <label
+            v-for="type in interviewTypeOptions"
+            :key="type.value"
+            :class="['type-card', { selected: selectedInterviewTypes.includes(type.value) }]"
+          >
+            <input class="type-check" type="checkbox" :value="type.value" v-model="selectedInterviewTypes" />
+            <span class="type-copy">
+              <span class="type-name">{{ type.label }}</span>
+              <span class="type-desc">{{ type.desc }}</span>
+            </span>
+          </label>
+        </div>
+        <input
+          v-if="selectedInterviewTypes.includes('etc')"
+          id="interview-type-etc-input"
+          v-model="interviewTypeEtcText"
+          maxlength="100"
+          placeholder="예) 임원 과제 리뷰"
+        />
       </div>
 
       <button id="match-job-btn" class="btn-secondary match-btn" type="button" :disabled="!canMatch || checking" @click="matchPosting">
@@ -85,17 +130,64 @@ const form = reactive({
   preferred_qualifications: '',
 })
 const company = ref(null)
+const companyQuery = ref('')
+const companyOptions = ref([])
 const jobs = ref([])
 const selectedJobId = ref('')
 const checking = ref(false)
+const searchingCompanies = ref(false)
 const errorMsg = ref('')
+const selectedInterviewTypes = ref([])
+const interviewTypeEtcText = ref('')
+
+const interviewTypeOptions = [
+  { value: 'technical', label: '기술면접', desc: 'CS, 시스템 설계, 직무 기술 질문' },
+  { value: 'personality', label: '인성면접', desc: '협업, 갈등 해결, 성장 과정' },
+  { value: 'practical', label: '과제면접', desc: '실무 과제와 프로젝트 리뷰' },
+  { value: 'pt', label: 'PT면접', desc: '문제 정의와 발표 구조' },
+  { value: 'etc', label: '기타', desc: '기업별 특별 전형' },
+]
 
 const canMatch = computed(() =>
-  form.company_name.trim()
+  company.value
   && form.job_title.trim()
   && form.responsibilities.trim()
   && form.requirements.trim()
+  && selectedInterviewTypes.value.length > 0
+  && (!selectedInterviewTypes.value.includes('etc') || interviewTypeEtcText.value.trim())
 )
+
+async function onCompanyInput() {
+  form.company_name = ''
+  company.value = null
+  companyOptions.value = []
+  jobs.value = []
+  selectedJobId.value = ''
+  errorMsg.value = ''
+
+  const query = companyQuery.value.trim()
+  if (!query) {
+    return
+  }
+
+  searchingCompanies.value = true
+  try {
+    const { data } = await api.get('/api/companies/', { params: { name: query } })
+    companyOptions.value = Array.isArray(data) ? data : []
+  } catch {
+    companyOptions.value = []
+  } finally {
+    searchingCompanies.value = false
+  }
+}
+
+function selectCompany(option) {
+  company.value = option
+  form.company_name = option.company_name
+  companyQuery.value = option.company_name
+  companyOptions.value = []
+  errorMsg.value = ''
+}
 
 async function matchPosting() {
   checking.value = true
@@ -104,7 +196,7 @@ async function matchPosting() {
   jobs.value = []
   selectedJobId.value = ''
   try {
-    const { data } = await api.post('/api/job-postings/manual/?page_size=30', form)
+    const { data } = await api.post('/api/job-postings/manual/?page_size=30', { ...form })
     if (data.supported === false) {
       errorMsg.value = data.message
       return
@@ -135,6 +227,8 @@ function goNext() {
     jobId: selectedJobId.value,
     job: selectedJob,
     job_posting_text: buildPostingText(),
+    selected_interview_types: [...selectedInterviewTypes.value],
+    interview_type_etc_text: selectedInterviewTypes.value.includes('etc') ? interviewTypeEtcText.value.trim() : '',
   })
 }
 
@@ -173,7 +267,8 @@ function buildPostingText() {
   display: flex;
   flex-direction: column;
 }
-.field label {
+.field label,
+.field-label {
   display: block;
   margin-bottom: var(--space-3);
   font-weight: 500;
@@ -185,6 +280,89 @@ function buildPostingText() {
   font-size: var(--text-xs);
   color: var(--muted);
   margin-top: var(--space-2);
+}
+.company-options {
+  margin-top: var(--space-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  overflow: hidden;
+}
+.company-option {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+}
+.company-option:last-child {
+  border-bottom: 0;
+}
+.company-option:hover {
+  background: var(--surface-warm);
+}
+.option-name {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+.option-meta {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.interview-field {
+  gap: var(--space-3);
+}
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.type-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  padding: var(--space-4);
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+.type-card:hover {
+  border-color: var(--border);
+}
+.type-card.selected {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  background: var(--surface-warm);
+}
+.type-check {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+.type-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.type-name {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+.type-desc {
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.35;
 }
 .match-btn {
   justify-self: start;
@@ -250,5 +428,15 @@ function buildPostingText() {
   margin-top: var(--space-8);
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+  .company-option {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

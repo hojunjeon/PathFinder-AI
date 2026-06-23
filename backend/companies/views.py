@@ -100,14 +100,17 @@ class CompanyListView(APIView):
     def get(self, request):
         name = request.query_params.get('name', '')
         if name:
-            company = (
-                Company.objects.filter(company_name__iexact=name.strip()).first()
-                or Company.objects.filter(company_name__icontains=name.strip()).order_by('company_name').first()
+            query = name.strip()
+            supported = Company.objects.filter(roadmap_supported=True)
+            exact = list(supported.filter(company_name__iexact=query))
+            partial = list(
+                supported
+                .filter(company_name__icontains=query)
+                .exclude(pk__in=[company.pk for company in exact])
+                .order_by('company_name')[:20 - len(exact)]
             )
-            if company:
-                return Response(CompanySerializer(company).data)
-            return Response({'message': NOT_SUPPORTED_MSG, 'supported': False},
-                            status=status.HTTP_404_NOT_FOUND)
+            companies = exact + partial
+            return Response(CompanySerializer(companies, many=True).data)
         companies = Company.objects.all().order_by('company_name')
         return Response(CompanySerializer(companies, many=True).data)
 
@@ -167,9 +170,18 @@ class ManualJobPostingView(APIView):
         data = serializer.validated_data
 
         company = resolve_company_from_name(data['company_name'])
-        resolved = bool(company)
         if not company:
-            company = create_manual_company(data['company_name'])
+            return Response({
+                'message': '입력한 회사명을 지원 기업 DB에서 찾지 못했습니다.',
+                'supported': False,
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        jobs = match_jobs_for_manual_posting(company, data['job_title'])
+        if not jobs.exists():
+            return Response({
+                'message': '선택한 회사에 연결할 수 있는 기준 직무가 없습니다.',
+                'supported': False,
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         raw_text = build_manual_job_posting_text(data)
         posting = JobPosting.objects.create(
@@ -181,13 +193,8 @@ class ManualJobPostingView(APIView):
             requirements=data['requirements'],
             preferred_qualifications=data.get('preferred_qualifications', ''),
             raw_text=raw_text,
-            resolved=resolved,
+            resolved=True,
         )
-
-        jobs = match_jobs_for_manual_posting(company, data['job_title'])
-        if not jobs.exists():
-            create_manual_job(company, data)
-            jobs = match_jobs_for_manual_posting(company, data['job_title'])
 
         job_page = paginated_payload(jobs, request, JobSerializer)
         matched_job = job_page['results'][0] if job_page['results'] else None
@@ -306,47 +313,20 @@ def build_manual_job_posting_text(data):
     ])
 
 
-def create_manual_company(company_name: str):
-    company, _ = Company.objects.get_or_create(
-        company_name=company_name.strip(),
-        defaults={
-            'industry': '직접 입력',
-            'size': Company.Size.LARGE,
-            'talent_description': '사용자가 직접 입력한 채용공고 기반 기업입니다.',
-            'culture_keywords': [],
-        },
-    )
-    return company
-
-
-def create_manual_job(company: Company, data):
-    return Job.objects.create(
-        company=company,
-        job_title=data['job_title'],
-        required_skills=parse_skills(data['requirements']),
-        job_description=data['responsibilities'],
-        preferred_qualifications=parse_skills(data.get('preferred_qualifications', '')),
-        recommended_study_areas=parse_skills(data['requirements']) or ['직무 요구사항 분석'],
-        interview_stages=[{'order': 1, 'type': 'technical', 'desc': '기술 면접'}],
-    )
-
-
-def parse_skills(text: str):
-    return [
-        item.strip()
-        for item in text.replace('\n', ',').split(',')
-        if item.strip()
-    ]
-
-
 def resolve_company_from_name(company_name: str):
     normalized = company_name.strip().lower()
     if not normalized:
         return None
-    company = Company.objects.filter(company_name__icontains=company_name.strip()).first()
+    if Company.objects.filter(company_name__iexact=company_name.strip(), roadmap_supported=False).exists():
+        return None
+    supported = Company.objects.filter(roadmap_supported=True)
+    company = (
+        supported.filter(company_name__iexact=company_name.strip()).first()
+        or supported.filter(company_name__icontains=company_name.strip()).order_by('company_name').first()
+    )
     if company:
         return company
-    for candidate in Company.objects.all():
+    for candidate in supported:
         if candidate.company_name.lower() in normalized:
             return candidate
     return None
@@ -406,7 +386,10 @@ def resolve_company_from_url(raw_url: str):
 
     normalized_url = unquote(raw_url).lower()
     hostname = (parsed.hostname or '').lower()
-    companies = {company.company_name: company for company in Company.objects.all()}
+    companies = {
+        company.company_name: company
+        for company in Company.objects.filter(roadmap_supported=True)
+    }
 
     for company_name, aliases in COMPANY_URL_ALIASES.items():
         company = companies.get(company_name)

@@ -4,6 +4,7 @@ def build_prompt(req) -> str:
         [f"  {stage['order']}차: {stage['type']} - {stage.get('desc', '')}" for stage in interview_stages]
     )
     selected = ", ".join(req.selected_interview_types)
+    interview_type_etc_text = req.interview_type_etc_text.strip() or "미입력"
     cv_text = _cover_letter_text(req.user_profile.get("자소서", []))
     awards_text = _awards_text(req.user_profile.get("수상내역", []))
 
@@ -44,6 +45,7 @@ def build_prompt(req) -> str:
 ## 면접 단계
 {stages_text}
 선택한 면접 유형: {selected}
+기타 면접 유형 상세: {interview_type_etc_text}
 
 ## 분석 지시
 1. 채용공고 내용에서 요구 역량을 먼저 추출하세요.

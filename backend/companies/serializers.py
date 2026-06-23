@@ -22,7 +22,10 @@ class JobSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
-        fields = ['id', 'company_name', 'industry', 'size', 'talent_description', 'culture_keywords']
+        fields = [
+            'id', 'company_name', 'industry', 'size', 'talent_description',
+            'culture_keywords', 'roadmap_supported',
+        ]
 
 
 class JobSearchSerializer(serializers.ModelSerializer):

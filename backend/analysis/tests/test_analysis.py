@@ -46,12 +46,18 @@ def test_analysis_create_success(auth_client, job):
         resp = client.post('/api/analyze/', {
             'job_id': job.id,
             'job_posting_url': 'https://careers.kakao.com/jobs/1',
-            'selected_interview_types': ['coding_test'],
+            'selected_interview_types': ['coding_test', 'etc'],
+            'interview_type_etc_text': '임원 과제 리뷰',
         }, format='json')
     assert resp.status_code == 201
     assert resp.data['status'] == 'done'
     assert resp.data['competency_gap']['gaps'] == ['시스템 설계']
+    assert resp.data['selected_interview_types'] == ['coding_test', 'etc']
+    assert resp.data['interview_type_etc_text'] == '임원 과제 리뷰'
     assert '1주차' in resp.data['text_roadmap']
+    analysis = Analysis.objects.get(id=resp.data['id'])
+    assert analysis.selected_interview_types == ['coding_test', 'etc']
+    assert analysis.interview_type_etc_text == '임원 과제 리뷰'
 
 
 @pytest.mark.django_db
@@ -112,6 +118,24 @@ def test_analysis_create_accepts_manual_posting_without_url(auth_client, job):
     analysis = Analysis.objects.get(id=resp.data['id'])
     assert analysis.job_posting_url == ''
     assert 'API 개발' in analysis.job_posting_text
+
+
+@pytest.mark.django_db
+def test_analysis_create_ignores_etc_text_when_etc_is_not_selected(auth_client, job):
+    client, _ = auth_client
+    mock_result = {'text_roadmap': '수동 공고 기반 로드맵', 'timeline_data': []}
+    with patch('analysis.views.call_llm_server', new_callable=AsyncMock, return_value=mock_result):
+        resp = client.post('/api/analyze/', {
+            'job_id': job.id,
+            'job_posting_text': '회사명: 테스트기업\n직무명: 백엔드 개발자',
+            'selected_interview_types': ['technical', 'personality'],
+            'interview_type_etc_text': '임원 과제 리뷰',
+        }, format='json')
+
+    assert resp.status_code == 201
+    analysis = Analysis.objects.get(id=resp.data['id'])
+    assert analysis.selected_interview_types == ['technical', 'personality']
+    assert analysis.interview_type_etc_text == ''
 
 
 @pytest.mark.django_db
@@ -178,6 +202,20 @@ def test_analysis_rejects_oversized_cover_letter(auth_client, job):
     }, format='json')
     assert resp.status_code == 400
     assert 'submitted_cover_letter' in resp.data
+
+
+@pytest.mark.django_db
+def test_analysis_rejects_oversized_interview_type_etc_text(auth_client, job):
+    client, _ = auth_client
+    resp = client.post('/api/analyze/', {
+        'job_id': job.id,
+        'job_posting_url': 'https://careers.kakao.com/jobs/1',
+        'selected_interview_types': ['technical', 'etc'],
+        'interview_type_etc_text': '가' * 101,
+    }, format='json')
+
+    assert resp.status_code == 400
+    assert 'interview_type_etc_text' in resp.data
 
 
 @pytest.mark.django_db

@@ -67,16 +67,21 @@ def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
         'https://careers.kakao.com/jobs/1',
         '',
         ['technical'],
+        interview_type_etc_text='임원 과제 리뷰',
     )
 
     assert payload['job_posting_text'] == '파싱된 채용공고 본문'
     assert payload['job_posting']['url'] == 'https://careers.kakao.com/jobs/1'
     assert payload['company_info']['회사명'] == '카카오'
     assert payload['company_info']['산업'] == 'IT'
+    assert payload['company_info']['인재상'] == company.talent_description
+    assert payload['company_info']['조직문화_키워드'] == company.culture_keywords
     assert payload['job_info']['직무명'] == '백엔드 개발자'
     assert payload['job_info']['직무설명'] == '대규모 트래픽을 처리하는 백엔드 시스템 개발'
     assert payload['job_info']['우대사항'] == ['분산 시스템 경험']
     assert payload['job_info']['학습추천분야'] == ['트랜잭션', '캐시 전략']
+    assert payload['selected_interview_types'] == ['technical']
+    assert payload['interview_type_etc_text'] == '임원 과제 리뷰'
 
 
 @pytest.mark.django_db

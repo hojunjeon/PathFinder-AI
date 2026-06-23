@@ -12,7 +12,8 @@ MAX_JOB_POSTING_TEXT_CHARS = 8000
 
 def build_llm_payload(user, job: Job, job_posting_url: str,
                       submitted_cover_letter: str, selected_interview_types: list,
-                      job_posting_text: str = '') -> dict:
+                      job_posting_text: str = '',
+                      interview_type_etc_text: str = '') -> dict:
     try:
         profile = user.profile
         user_profile = {
@@ -57,6 +58,7 @@ def build_llm_payload(user, job: Job, job_posting_url: str,
             '학습추천분야': job.recommended_study_areas,
         },
         'selected_interview_types': selected_interview_types,
+        'interview_type_etc_text': interview_type_etc_text,
     }
 
 

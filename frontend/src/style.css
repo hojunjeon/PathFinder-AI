@@ -264,11 +264,16 @@ input:focus, select:focus, textarea:focus {
 
 @media (max-width: 760px) {
   .global-nav {
+    height: auto;
+    min-height: 44px;
     justify-content: flex-start;
-    overflow: hidden;
+    overflow: visible;
+    padding-block: var(--space-2);
   }
 
   .global-nav-inner {
+    align-items: flex-start;
+    flex-wrap: wrap;
     gap: var(--space-3);
     padding-inline: var(--container-gutter-phone);
     min-width: 0;
@@ -279,11 +284,11 @@ input:focus, select:focus, textarea:focus {
   }
 
   .global-links {
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow-x: auto;
+    flex: 0 0 100%;
+    min-width: 100%;
+    overflow: visible;
+    flex-wrap: wrap;
     gap: var(--space-3);
-    scrollbar-width: none;
   }
 
   .global-links::-webkit-scrollbar {

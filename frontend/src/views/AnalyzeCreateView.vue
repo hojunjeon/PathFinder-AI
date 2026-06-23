@@ -6,7 +6,6 @@
         <div class="subnav-links">
           <span :class="{ active: currentStep === 1 }">채용공고</span>
           <span :class="{ active: currentStep === 2 }">자기소개서</span>
-          <span :class="{ active: currentStep === 3 }">면접 유형</span>
         </div>
       </div>
     </nav>
@@ -42,13 +41,6 @@
                     <p>자기소개서 항목과 답변을 저장하고 공고 요구 역량과 내 경험의 연결성을 비교 분석합니다.</p>
                   </div>
                 </div>
-                <div class="guide-step">
-                  <div class="guide-num">3</div>
-                  <div class="guide-info">
-                    <h3>면접 유형 선택</h3>
-                    <p>최종 면접 유형을 선택하여 맞춤형 모의 질문과 로드맵을 설계합니다.</p>
-                  </div>
-                </div>
               </div>
             </div>
             <footer class="modal-footer">
@@ -63,26 +55,23 @@
           <span class="step-num">{{ currentStep > 1 ? '✓' : '1' }}</span>
           <span class="step-label">채용공고 입력</span>
         </button>
-        <button :class="['step-item', { active: currentStep === 2, done: currentStep > 2 }]" id="step2" type="button" :disabled="currentStep < 2" @click="currentStep = 2">
-          <span class="step-num">{{ currentStep > 2 ? '✓' : '2' }}</span>
+        <button :class="['step-item', { active: currentStep === 2 }]" id="step2" type="button" :disabled="currentStep < 2" @click="currentStep = 2">
+          <span class="step-num">2</span>
           <span class="step-label">자기소개서</span>
-        </button>
-        <button :class="['step-item', { active: currentStep === 3 }]" id="step3" type="button" :disabled="currentStep < 3">
-          <span class="step-num">3</span>
-          <span class="step-label">면접 유형</span>
         </button>
       </section>
 
       <section class="panel-container card" data-od-id="analyze-panel">
         <StepJobUrl v-if="currentStep === 1" @next="onJobSelected" />
-        <StepCoverLetter v-if="currentStep === 2" :selected-job="selectedJob" :selected-company="selectedCompany" @next="onCoverLetterDone" @back="currentStep = 1" />
-        <StepInterviewType v-if="currentStep === 3"
-          :stages="selectedJob?.interview_stages || []"
-          :loading="submitting"
-          @submit="onSubmit"
-          @back="currentStep = 2" />
+        <StepCoverLetter
+          v-if="currentStep === 2"
+          :selected-job="selectedJob"
+          :selected-company="selectedCompany"
+          :loading="coverLetterPending || submitting"
+          @next="onCoverLetterDone"
+          @back="currentStep = 1" />
 
-        <div class="progress-copy">{{ currentStep }} / 3 단계</div>
+        <div class="progress-copy">{{ currentStep }} / 2 단계</div>
       </section>
     </main>
   </div>
@@ -94,7 +83,6 @@ import { useRouter } from 'vue-router'
 import api from '../api'
 import StepJobUrl from '../components/analyze/StepJobUrl.vue'
 import StepCoverLetter from '../components/analyze/StepCoverLetter.vue'
-import StepInterviewType from '../components/analyze/StepInterviewType.vue'
 
 const router = useRouter()
 const currentStep = ref(1)
@@ -106,31 +94,42 @@ const selectedCompany = ref(null)
 const coverLetter = ref('')
 const coverLetters = ref([])
 const submitting = ref(false)
+const coverLetterPending = ref(false)
 const manualPostingText = ref('')
+const selectedInterviewTypes = ref([])
+const interviewTypeEtcText = ref('')
 
-function onJobSelected({ url, company, jobId, job, job_posting_text }) {
+function onJobSelected({ url, company, jobId, job, job_posting_text, selected_interview_types, interview_type_etc_text }) {
   jobUrl.value = url
   selectedCompany.value = company
   selectedJobId.value = jobId
   selectedJob.value = job
   manualPostingText.value = job_posting_text || ''
+  selectedInterviewTypes.value = selected_interview_types || []
+  interviewTypeEtcText.value = interview_type_etc_text || ''
   currentStep.value = 2
 }
 
 async function onCoverLetterDone({ cover_letters, text }) {
+  if (coverLetterPending.value || submitting.value) {
+    return
+  }
+  coverLetterPending.value = true
   coverLetters.value = cover_letters || []
   coverLetter.value = text || ''
   try {
     if (coverLetters.value.length) {
       await api.put('/api/profile/', { cover_letters: coverLetters.value })
     }
-    currentStep.value = 3
+    await onSubmit()
   } catch (e) {
     alert(e.response?.data?.message || '자기소개서 저장에 실패했습니다.')
+  } finally {
+    coverLetterPending.value = false
   }
 }
 
-async function onSubmit(interviewTypes) {
+async function onSubmit() {
   submitting.value = true
   try {
     const numericJobId = Number(selectedJobId.value)
@@ -139,7 +138,8 @@ async function onSubmit(interviewTypes) {
       job_posting_url: jobUrl.value,
       job_posting_text: manualPostingText.value,
       submitted_cover_letter: coverLetter.value,
-      selected_interview_types: interviewTypes,
+      selected_interview_types: selectedInterviewTypes.value,
+      interview_type_etc_text: interviewTypeEtcText.value,
     })
     router.push(`/analyze/${data.id}`)
   } catch (e) {
@@ -356,7 +356,7 @@ async function onSubmit(interviewTypes) {
 
 .stepper {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-3);
   margin-bottom: var(--space-6);
 }

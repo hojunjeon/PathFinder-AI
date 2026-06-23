@@ -26,6 +26,7 @@ class AnalysisCreateView(APIView):
             job_posting_text=data.get('job_posting_text', ''),
             submitted_cover_letter=data.get('submitted_cover_letter', ''),
             selected_interview_types=data['selected_interview_types'],
+            interview_type_etc_text=data.get('interview_type_etc_text', ''),
             status=Analysis.Status.PENDING,
         )
 
@@ -35,6 +36,7 @@ class AnalysisCreateView(APIView):
             data.get('submitted_cover_letter', ''),
             data['selected_interview_types'],
             job_posting_text=data.get('job_posting_text', ''),
+            interview_type_etc_text=data.get('interview_type_etc_text', ''),
         )
 
         try:

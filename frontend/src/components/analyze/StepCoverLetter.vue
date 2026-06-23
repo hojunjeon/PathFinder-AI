@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="panel-head">
-      <p class="eyebrow">Step 2 of 3</p>
+      <p class="eyebrow">Step 2 of 2</p>
       <h2 class="panel-title">제출한 자기소개서를 붙여 넣으세요.</h2>
       <p class="panel-desc">AI가 자기소개서와 채용공고를 교차 분석해 강점과 보완할 역량을 분리합니다.</p>
     </div>
@@ -57,8 +57,8 @@
 
     <div class="actions">
       <button class="btn-secondary" type="button" @click="$emit('back')">이전</button>
-      <button id="next-cover-letter-btn" class="btn-primary" type="button" :disabled="saving" @click="submit">
-        {{ saving ? '저장 중...' : '저장하고 다음 단계' }}
+      <button id="next-cover-letter-btn" class="btn-primary" type="button" :disabled="saving || loading" @click="submit">
+        {{ saving || loading ? '로드맵 생성 중...' : 'AI 로드맵 생성' }}
       </button>
     </div>
   </div>
@@ -69,7 +69,8 @@ import { reactive, ref } from 'vue'
 
 const props = defineProps({
   selectedJob: Object,
-  selectedCompany: Object
+  selectedCompany: Object,
+  loading: Boolean,
 })
 const emit = defineEmits(['next', 'back'])
 

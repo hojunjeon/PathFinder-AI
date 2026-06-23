@@ -5,6 +5,7 @@ from .models import Analysis
 
 MAX_COVER_LETTER_CHARS = 12000
 MAX_URL_CHARS = 2048
+MAX_INTERVIEW_TYPE_ETC_TEXT_CHARS = 100
 
 
 class AnalysisCreateSerializer(serializers.Serializer):
@@ -29,6 +30,17 @@ class AnalysisCreateSerializer(serializers.Serializer):
         min_length=1,
         max_length=7,
     )
+    interview_type_etc_text = serializers.CharField(
+        allow_blank=True,
+        required=False,
+        default='',
+        max_length=MAX_INTERVIEW_TYPE_ETC_TEXT_CHARS,
+    )
+
+    def validate(self, attrs):
+        if 'etc' not in attrs['selected_interview_types']:
+            attrs['interview_type_etc_text'] = ''
+        return attrs
 
 
 class AnalysisResultSerializer(serializers.ModelSerializer):
@@ -42,6 +54,6 @@ class AnalysisResultSerializer(serializers.ModelSerializer):
         model = Analysis
         fields = [
             'id', 'company_name', 'job_title', 'job_posting_url',
-            'selected_interview_types', 'competency_gap', 'text_roadmap', 'timeline_data',
-            'status', 'created_at',
+            'selected_interview_types', 'interview_type_etc_text', 'competency_gap',
+            'text_roadmap', 'timeline_data', 'status', 'created_at',
         ]

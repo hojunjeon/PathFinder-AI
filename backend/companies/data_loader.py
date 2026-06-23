@@ -88,14 +88,18 @@ def seed_company_job_records(company_model, job_model=None, paths=None):
             if not isinstance(record["culture_keywords"], list):
                 raise CommandError(f"{path.name}:{line_no} culture_keywords는 배열이어야 합니다.")
 
+            company_defaults = {
+                "industry": record["industry"],
+                "size": "large",
+                "talent_description": record["talent_description"],
+                "culture_keywords": record["culture_keywords"],
+            }
+            if _model_has_field(company_model, "roadmap_supported"):
+                company_defaults["roadmap_supported"] = True
+
             company, company_created = company_model.objects.update_or_create(
                 company_name=record["company_name"],
-                defaults={
-                    "industry": record["industry"],
-                    "size": "large",
-                    "talent_description": record["talent_description"],
-                    "culture_keywords": record["culture_keywords"],
-                },
+                defaults=company_defaults,
             )
             if company_created:
                 created_companies += 1
@@ -132,6 +136,10 @@ def seed_company_job_records(company_model, job_model=None, paths=None):
         "created_jobs": created_jobs,
         "updated_jobs": updated_jobs,
     }
+
+
+def _model_has_field(model, field_name):
+    return any(field.name == field_name for field in model._meta.fields)
 
 
 def seed_jobs_careers_records(company_model, job_model, path=JOBS_CAREERS_DATA_PATH, skip_if_jobs_exist=False):

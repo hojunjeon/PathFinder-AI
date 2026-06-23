@@ -161,6 +161,8 @@ def test_build_prompt_includes_company_and_job_context():
     assert "직무명: 백엔드 엔지니어" in prompt
     assert "직무설명: 대규모 트래픽을 처리하는 플랫폼 서버 개발" in prompt
     assert "우대사항: ['분산 시스템 경험']" in prompt
+    assert "선택한 면접 유형: technical, etc" in prompt
+    assert "기타 면접 유형 상세: 임원 과제 리뷰" in prompt
     assert "큰 카테고리" in prompt
     assert "작은 카테고리" in prompt
     assert "출제 예측이 아니라" in prompt
@@ -237,5 +239,6 @@ def _payload():
             "우대사항": ["분산 시스템 경험"],
             "학습추천분야": ["시스템 설계"],
         },
-        "selected_interview_types": ["technical"],
+        "selected_interview_types": ["technical", "etc"],
+        "interview_type_etc_text": "임원 과제 리뷰",
     }

@@ -36,6 +36,7 @@ class RoadmapRequest(BaseModel):
     company_info: dict
     job_info: dict
     selected_interview_types: list[str] = Field(min_length=1, max_length=7)
+    interview_type_etc_text: str = Field(default="", max_length=100)
 
 
 class RoadmapResponse(BaseModel):

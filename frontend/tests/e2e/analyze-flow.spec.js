@@ -7,6 +7,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('analyze flow saves manual posting, cover letter, submits, and renders result', async ({ page }) => {
+  await mockCompanySearch(page)
   await mockManualPosting(page)
   await mockProfileSave(page)
   await page.route('**/api/analyze/', async route => {
@@ -16,6 +17,8 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
+      expect(body.selected_interview_types).toEqual(['technical', 'personality', 'etc'])
+      expect(body.interview_type_etc_text).toBe('임원 과제 리뷰')
       await route.fulfill({ status: 201, json: { id: 99 } })
     } else {
       await route.fallback()
@@ -30,9 +33,6 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('.cover-question-input').fill('지원동기')
   await page.locator('.cover-answer-input').fill('제출했던 자기소개서 답변')
   await page.locator('#next-cover-letter-btn').click()
-
-  await page.getByLabel(/기술면접/).check()
-  await page.locator('#submit-analyze-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
   await expect(page.getByText('역량 분석')).toBeVisible()
@@ -50,7 +50,11 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
 })
 
 test('cover letter profile save request contains question and answer', async ({ page }) => {
+  await mockCompanySearch(page)
   await mockManualPosting(page)
+  await page.route('**/api/analyze/', async route => {
+    await route.fulfill({ status: 201, json: { id: 99 } })
+  })
   let savedCoverLetters = null
   await page.route('**/api/profile/', async route => {
     if (route.request().method() === 'PUT') {
@@ -75,15 +79,48 @@ test('cover letter profile save request contains question and answer', async ({ 
   ])
 })
 
+test('analyze flow does not allow arbitrary unsupported company names', async ({ page }) => {
+  await page.route('**/api/companies/?name=*', async route => {
+    await route.fulfill({ status: 200, json: [] })
+  })
+
+  await page.goto('/analyze/new')
+  await page.locator('#company-search-input').fill('없는회사')
+  await expect(page.getByRole('option', { name: /없는회사/ })).toHaveCount(0)
+  await expect(page.locator('#match-job-btn')).toBeDisabled()
+})
+
 async function fillManualPosting(page) {
   await page.goto('/analyze/new')
-  await page.locator('#company-name-input').fill('쿠팡')
+  await page.locator('#company-search-input').fill('쿠팡')
+  await page.getByRole('option', { name: /쿠팡/ }).click()
   await page.locator('#job-title-input').fill('백엔드 개발자')
   await page.locator('#responsibilities-input').fill('주문/배송 API 개발과 대규모 트래픽 처리')
   await page.locator('#requirements-input').fill('Python, Database, REST API 경험')
   await page.locator('#preferred-input').fill('분산 시스템 경험')
+  await page.getByLabel(/기술면접/).check()
+  await page.getByLabel(/인성면접/).check()
+  await page.getByLabel(/기타/).check()
+  await page.locator('#interview-type-etc-input').fill('임원 과제 리뷰')
   await page.locator('#match-job-btn').click()
   await expect(page.locator('.company-profile-card').getByText('쿠팡')).toBeVisible()
+}
+
+async function mockCompanySearch(page) {
+  await page.route('**/api/companies/?name=*', async route => {
+    await route.fulfill({
+      status: 200,
+      json: [{
+        id: 1,
+        company_name: '쿠팡',
+        industry: 'Commerce',
+        size: 'large',
+        talent_description: '고객 중심',
+        culture_keywords: ['실험', '속도'],
+        roadmap_supported: true,
+      }],
+    })
+  })
 }
 
 async function mockManualPosting(page) {
@@ -134,6 +171,7 @@ async function mockAnalysisResult(page) {
         company_name: '쿠팡',
         job_title: '백엔드 개발자',
         selected_interview_types: ['technical'],
+        interview_type_etc_text: '임원 과제 리뷰',
         competency_gap: {
           strengths: ['프로젝트 경험'],
           gaps: ['시스템 설계'],

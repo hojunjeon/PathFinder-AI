@@ -6,6 +6,7 @@ from django.core.management.base import CommandError
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 ENGINEERING_JOBS_DATA_PATH = DATA_DIR / "large_company_engineering_jobs.jsonl"
+JOBS_CAREERS_DATA_PATH = Path(__file__).resolve().parents[2] / "jobs_careers" / "jobs_careers.jsonl"
 
 REQUIRED_COMPANY_KEYS = {
     "company_name",
@@ -130,4 +131,84 @@ def seed_company_job_records(company_model, job_model=None, paths=None):
         "updated_companies": updated_companies,
         "created_jobs": created_jobs,
         "updated_jobs": updated_jobs,
+    }
+
+
+def seed_jobs_careers_records(company_model, job_model, path=JOBS_CAREERS_DATA_PATH, skip_if_jobs_exist=False):
+    """Load the legacy 10k jobs_careers dataset into Company/Job tables.
+
+    The dataset contains only compact job facts, so it is used as a fallback
+    seed for empty databases. Existing Job rows are not overwritten when
+    skip_if_jobs_exist=True.
+    """
+    if skip_if_jobs_exist and job_model.objects.exists():
+        return {
+            "processed_records": 0,
+            "created_companies": 0,
+            "created_jobs": 0,
+            "skipped": True,
+        }
+
+    path = Path(path)
+    if not path.exists():
+        raise CommandError(f"직무 데이터 파일을 찾을 수 없습니다: {path}")
+
+    required_keys = {
+        "company_name",
+        "industry",
+        "job_title",
+        "annual_salary_krw",
+        "required_experience_years",
+        "applicant_count",
+    }
+    default_stages = [
+        {"order": 1, "type": "practical", "desc": "직무 면접"},
+        {"order": 2, "type": "personality", "desc": "인성 면접"},
+    ]
+
+    processed_records = 0
+    created_companies = 0
+    created_jobs = 0
+
+    for line_no, record in iter_json_records(path):
+        missing_keys = required_keys - record.keys()
+        if missing_keys:
+            missing = ", ".join(sorted(missing_keys))
+            raise CommandError(f"{path.name}:{line_no} 필수 키가 없습니다: {missing}")
+
+        company, company_created = company_model.objects.get_or_create(
+            company_name=record["company_name"],
+            defaults={
+                "industry": record["industry"],
+                "size": "large",
+                "talent_description": "",
+                "culture_keywords": [],
+            },
+        )
+        if company_created:
+            created_companies += 1
+
+        _, job_created = job_model.objects.get_or_create(
+            company=company,
+            job_title=record["job_title"],
+            defaults={
+                "annual_salary_krw": record["annual_salary_krw"],
+                "required_experience_years": record["required_experience_years"],
+                "applicant_count": record["applicant_count"],
+                "interview_stages": default_stages,
+                "required_skills": [],
+                "job_description": "",
+                "preferred_qualifications": [],
+                "recommended_study_areas": [],
+            },
+        )
+        if job_created:
+            created_jobs += 1
+        processed_records += 1
+
+    return {
+        "processed_records": processed_records,
+        "created_companies": created_companies,
+        "created_jobs": created_jobs,
+        "skipped": False,
     }

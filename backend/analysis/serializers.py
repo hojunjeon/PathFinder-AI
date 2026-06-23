@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from companies.job_titles import display_job_title
 from .models import Analysis
 
 MAX_COVER_LETTER_CHARS = 12000
@@ -30,8 +32,11 @@ class AnalysisCreateSerializer(serializers.Serializer):
 
 
 class AnalysisResultSerializer(serializers.ModelSerializer):
-    job_title = serializers.CharField(source='job.job_title', read_only=True)
+    job_title = serializers.SerializerMethodField()
     company_name = serializers.CharField(source='job.company.company_name', read_only=True)
+
+    def get_job_title(self, obj):
+        return display_job_title(obj.job.job_title)
 
     class Meta:
         model = Analysis

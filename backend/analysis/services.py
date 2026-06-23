@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from django.conf import settings
 from accounts.models import Profile
+from companies.job_titles import display_job_title
 from companies.models import Job
 from urllib.parse import urlparse
 
@@ -27,6 +28,7 @@ def build_llm_payload(user, job: Job, job_posting_url: str,
         user_profile = {}
 
     company = job.company
+    job_title = display_job_title(job.job_title)
     if not job_posting_text:
         job_posting_text = fetch_job_posting_text(job_posting_url)
     return {
@@ -44,7 +46,7 @@ def build_llm_payload(user, job: Job, job_posting_url: str,
             '조직문화_키워드': company.culture_keywords,
         },
         'job_info': {
-            '직무명': job.job_title,
+            '직무명': job_title,
             '직무설명': job.job_description,
             '요구경력': job.required_experience_years,
             '예상지원자수': job.applicant_count,

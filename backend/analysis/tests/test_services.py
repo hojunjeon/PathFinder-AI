@@ -79,6 +79,30 @@ def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
     assert payload['job_info']['학습추천분야'] == ['트랜잭션', '캐시 전략']
 
 
+@pytest.mark.django_db
+def test_build_llm_payload_uses_display_job_title_without_internal_suffix(monkeypatch):
+    user = User.objects.create_user(email='suffix@test.com', password='pass1234!')
+    Profile.objects.create(user=user, major='Mechanical Engineering')
+    company = Company.objects.create(company_name='테스트설비', industry='제조', size='large')
+    job = Job.objects.create(
+        company=company,
+        job_title='신입 설비기술 엔지니어 트랙 00851',
+        required_skills=['설비'],
+    )
+    monkeypatch.setattr('analysis.services.fetch_job_posting_text', lambda url: '채용공고 본문')
+
+    payload = build_llm_payload(
+        user,
+        job,
+        '',
+        '',
+        ['technical'],
+        job_posting_text='채용공고 본문',
+    )
+
+    assert payload['job_info']['직무명'] == '신입 설비기술 엔지니어'
+
+
 def test_job_posting_url_safety_blocks_local_targets():
     assert not is_safe_job_posting_url('http://127.0.0.1:8080/admin')
     assert not is_safe_job_posting_url('http://localhost:8080/admin')

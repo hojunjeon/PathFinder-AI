@@ -70,4 +70,12 @@ logs/
 .antigravitycli/
 .od-skills/
 
+# Local agent / orchestration runtime state
+.omx/
+.agent/
+.agents/
+.codex/agents/
+.codex/skills/
+.codex/prompts/
+
 .env

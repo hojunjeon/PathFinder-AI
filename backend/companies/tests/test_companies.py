@@ -77,6 +77,28 @@ def test_company_jobs(auth_client, company, job):
 
 
 @pytest.mark.django_db
+def test_company_jobs_hide_internal_job_title_suffix(auth_client, company):
+    Job.objects.create(
+        company=company,
+        job_title='신입 설비기술 엔지니어 트랙 00851',
+        required_skills=['설비'],
+    )
+    Job.objects.create(
+        company=company,
+        job_title='설비 엔지니어 0007',
+        required_skills=['설비'],
+    )
+
+    resp = auth_client.get(f'/api/companies/{company.id}/jobs/?q=설비')
+
+    assert resp.status_code == 200
+    titles = [item['job_title'] for item in resp.data['results']]
+    assert '신입 설비기술 엔지니어' in titles
+    assert '설비 엔지니어' in titles
+    assert all('00851' not in title and '0007' not in title for title in titles)
+
+
+@pytest.mark.django_db
 def test_company_jobs_search_with_pagination(auth_client, company, job):
     Job.objects.create(
         company=company,
@@ -191,7 +213,10 @@ def test_manual_job_posting_saves_unsupported_company(auth_client):
 
 @pytest.mark.django_db
 def test_company_resolve_from_backend_alias(auth_client):
-    Company.objects.create(company_name='쿠팡', industry='Commerce', size='large')
+    Company.objects.update_or_create(
+        company_name='쿠팡',
+        defaults={'industry': 'Commerce', 'size': 'large'},
+    )
     resp = auth_client.get('/api/companies/resolve/?url=https://careers.coupang.com/jobs/1')
     assert resp.status_code == 200
     assert resp.data['company_name'] == '쿠팡'

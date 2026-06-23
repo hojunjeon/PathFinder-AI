@@ -1,7 +1,7 @@
 {
   "source": "FinanceDataReader StockListing(KRX) and StockListing(KRX-DESC), KRX-derived listing/market data",
-  "generation_note": "KRX 전체 상장종목 시가총액 내림차순 상위 1000개. KOSPI 단독 현행 종목 수는 1000개 미만이라 KRX 상위 1000 기준으로 생성.",
-  "record_count": 1000,
+  "generation_note": "KRX 전체 상장종목 시가총액 내림차순 상위 500개 기업 공식/실제 메타데이터 정보 수집 및 정제.",
+  "record_count": 500,
   "market_counts_top1000": {
     "KOSPI": 522,
     "KOSDAQ GLOBAL": 50,

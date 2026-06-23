@@ -78,6 +78,41 @@ test('cover letter profile save request contains question and answer', async ({ 
   ])
 })
 
+test('analyze flow accepts company-only fallback job without criterion warning', async ({ page }) => {
+  await mockCompanySearch(page)
+  await page.route('**/api/job-postings/manual/**', async route => {
+    await route.fulfill({
+      status: 201,
+      json: {
+        supported: true,
+        company: {
+          id: 1,
+          company_name: '쿠팡',
+          industry: 'Commerce',
+          size: 'large',
+          talent_description: '고객 중심',
+          culture_keywords: ['실험', '속도'],
+        },
+        job_posting: { id: 7, resolved: true },
+        matched_job: { id: 77, job_title: '우주선 조종사' },
+        jobs: [{
+          id: 77,
+          job_title: '우주선 조종사',
+          interview_stages: [],
+        }],
+        jobs_meta: { count: 1, page: 1, page_size: 30 },
+      },
+    })
+  })
+
+  await fillManualPosting(page)
+  await page.locator('#job-title-input').fill('우주선 조종사')
+  await page.locator('#next-step-btn').click()
+
+  await expect(page.getByText('선택한 회사에 연결할 수 있는 기준 직무가 없습니다.')).toHaveCount(0)
+  await expect(page.locator('.cover-question-input')).toBeVisible()
+})
+
 test('analyze flow does not allow arbitrary unsupported company names', async ({ page }) => {
   await page.route('**/api/companies/?name=*', async route => {
     await route.fulfill({ status: 200, json: [] })

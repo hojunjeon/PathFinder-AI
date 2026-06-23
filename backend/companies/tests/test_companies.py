@@ -251,7 +251,7 @@ def test_manual_job_posting_rejects_unsupported_company_row(auth_client):
 
 
 @pytest.mark.django_db
-def test_manual_job_posting_rejects_supported_company_with_no_jobs(auth_client):
+def test_manual_job_posting_accepts_supported_company_with_no_jobs(auth_client):
     company, _ = Company.objects.update_or_create(
         company_name='삼성전자',
         defaults={'industry': '반도체/전자', 'size': 'large', 'roadmap_supported': True},
@@ -266,11 +266,13 @@ def test_manual_job_posting_rejects_supported_company_with_no_jobs(auth_client):
         'preferred_qualifications': '분산 시스템 경험',
     }, format='json')
 
-    assert resp.status_code == 400
-    assert resp.data['supported'] is False
-    assert '기준 직무' in resp.data['message']
-    assert not Job.objects.filter(company=company, job_title='백엔드 개발자').exists()
-    assert not JobPosting.objects.filter(company_name='삼성전자').exists()
+    assert resp.status_code == 201
+    assert resp.data['supported'] is True
+    assert 'message' not in resp.data
+    assert resp.data['matched_job']['job_title'] == '백엔드 개발자'
+    assert resp.data['jobs'][0]['job_title'] == '백엔드 개발자'
+    assert Job.objects.filter(company=company, job_title='백엔드 개발자').exists()
+    assert JobPosting.objects.filter(company_name='삼성전자').exists()
 
 
 @pytest.mark.django_db

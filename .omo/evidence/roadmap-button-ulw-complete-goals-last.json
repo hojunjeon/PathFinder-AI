@@ -1,0 +1,277 @@
+﻿{
+  "ok": true,
+  "resumed": false,
+  "goal": {
+    "id": "G005-browser-screenshot-artifacts-for-cri",
+    "title": "Browser screenshot artifacts for criterion 3.",
+    "objective": "Browser screenshot artifacts for criterion 3.",
+    "status": "in_progress",
+    "successCriteria": [
+      {
+        "id": "C001",
+        "scenario": "happy path for: Browser screenshot artifacts for criterion 3.",
+        "userModel": "happy",
+        "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 5.",
+        "essential": true,
+        "capturedEvidence": "Browser screenshots recorded in .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; .omo/evidence/roadmap-button-visual-qa.json ok=true, matchButtonCount 0, dropdown visible; cleanup: stopped temporary Vite PID after screenshots.",
+        "status": "pass",
+        "capturedAt": "2026-06-23T12:48:46.006Z"
+      },
+      {
+        "id": "C002",
+        "scenario": "edge case (boundary/empty/malformed)",
+        "userModel": "edge",
+        "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Browser screenshot artifacts for criterion 3..",
+        "essential": true,
+        "capturedEvidence": "Browser screenshots recorded in .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; .omo/evidence/roadmap-button-visual-qa.json ok=true, matchButtonCount 0, dropdown visible; cleanup: stopped temporary Vite PID after screenshots.",
+        "status": "pass",
+        "capturedAt": "2026-06-23T12:48:46.085Z"
+      },
+      {
+        "id": "C003",
+        "scenario": "regression: adjacent surface still works",
+        "userModel": "regression",
+        "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Browser screenshot artifacts for criterion 3..",
+        "essential": false,
+        "capturedEvidence": null,
+        "status": "pending"
+      }
+    ],
+    "attempt": 1,
+    "createdAt": "2026-06-23T12:43:46.947Z",
+    "updatedAt": "2026-06-23T12:58:01.149Z",
+    "startedAt": "2026-06-23T12:58:01.149Z"
+  },
+  "instruction": {
+    "text": "UlwLoop aggregate-goal handoff\nMode: aggregate\nPlan: .omo/ulw-loop/roadmap-button-removal-20260623/goals.json\nLedger: .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl\nGoal: G005-browser-screenshot-artifacts-for-cri — Browser screenshot artifacts for criterion 3.\n\nActive goal:\n- id: G005-browser-screenshot-artifacts-for-cri\n- title: Browser screenshot artifacts for criterion 3.\n- objective: Browser screenshot artifacts for criterion 3.\n\nSuccess criteria:\n- [C001] [essential] (happy) happy path for: Browser screenshot artifacts for criterion 3. — expect: Replace via revise_criterion with observable happy-path proof for goal 5. — status: pass\n- [C002] [essential] (edge) edge case (boundary/empty/malformed) — expect: Replace via revise_criterion with boundary or malformed-input proof for: Browser screenshot artifacts for criterion 3.. — status: pass\n- remaining work: [C003] [non-essential] (regression) regression: adjacent surface still works — expect: Replace via revise_criterion with regression proof for neighboring behavior after: Browser screenshot artifacts for criterion 3.. — status: pending\n\nCodex goal integration constraints:\n- Use the create_goal payload exactly as rendered: objective only.\n- Goals are unlimited. Do not add numeric limits.\n- Codex goal = the whole omo ulw-loop run; OMO G001/G002/etc. = ledger stories.\n- First call get_goal. If no active goal exists, call create_goal with the aggregate payload below.\n- If get_goal reports the same aggregate objective as active, continue this OMO story without creating a new Codex goal.\n- If a different active or incomplete Codex goal exists, finish/checkpoint that goal before starting this ulw-loop.\n- This is the final story; update_goal is allowed only after the mandatory quality gate passes.\nFinal story — run mandatory quality gate before update_goal:\n- Run targeted verification for changed behavior.\n- Confirm every manualQa artifact path exists and has non-zero size.\n- Spawn final reviewers with fork_context=false: lazycodex-code-reviewer, lazycodex-qa-executor, and lazycodex-gate-reviewer. Include the original brief, goal objectives, desired user-visible outcome, diff, and evidence.\n- Require clean codeReview, manualQa, gateReview, iteration, and criteriaCoverage. criteriaCoverage must summarize originalIntent, desiredOutcome, and userOutcomeReview; counts alone are not approval.\n- If any reviewer is blocked/inconclusive or the quality gate is not clean, do not call update_goal. Record blocker work first:\n  omo ulw-loop record-review-blockers --session-id roadmap-button-removal-20260623 --goal-id G005-browser-screenshot-artifacts-for-cri --title \"Resolve final code-review blockers\" --objective \"<blocker-resolution objective>\" --evidence \"<review findings>\" --codex-goal-json \"<active get_goal JSON or path>\"\n- If the quality gate is clean, call update_goal({status: \"complete\"}), call get_goal again, then checkpoint the aggregate story:\n  omo ulw-loop checkpoint --session-id roadmap-button-removal-20260623 --goal-id G005-browser-screenshot-artifacts-for-cri --status complete --evidence \"<targeted verification/manualQa/gateReview evidence>\" --codex-goal-json \"<fresh complete get_goal JSON or path>\" --quality-gate-json \"<quality gate JSON or path>\"\n- Checkpoint this OMO story with a fresh get_goal snapshot whose objective matches the aggregate payload.\n- If blocked or failed, checkpoint with --status failed and the failure evidence; rerun complete-goals --session-id roadmap-button-removal-20260623 --retry-failed to resume.\n\ncreate_goal payload:\n{\n  \"objective\": \"Complete the durable ulw-loop plan in .omo/ulw-loop/roadmap-button-removal-20260623/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl as the audit trail.\"\n}",
+    "json": {
+      "objective": "Complete the durable ulw-loop plan in .omo/ulw-loop/roadmap-button-removal-20260623/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl as the audit trail."
+    }
+  },
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-23T12:43:46.947Z",
+    "updatedAt": "2026-06-23T12:58:01.149Z",
+    "briefPath": ".omo/ulw-loop/roadmap-button-removal-20260623/brief.md",
+    "goalsPath": ".omo/ulw-loop/roadmap-button-removal-20260623/goals.json",
+    "ledgerPath": ".omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-happy-path-no-match-job-btn-exists-s",
+        "title": "Happy path: no `#match-job-btn` exists; selecting a supported company...",
+        "objective": "Happy path: no `#match-job-btn` exists; selecting a supported company from the dropdown and clicking `#next-step-btn` reaches the cover-letter step after matching.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: Happy path: no `#match-job-btn` exists; selecting a supported company from th...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+            "essential": true,
+            "capturedEvidence": "RED .omo/evidence/roadmap-button-red-e2e.log failed because #match-job-btn count was 1; GREEN .omo/evidence/roadmap-button-green-e2e.log passed 3 Playwright e2e tests; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.398Z"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Happy path: no `#match-job-btn` exists; selecting a supported company from th....",
+            "essential": true,
+            "capturedEvidence": "Unsupported/free-typed company e2e in .omo/evidence/roadmap-button-green-e2e.log passed: #match-job-btn count 0 and #next-step-btn disabled; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.494Z"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Happy path: no `#match-job-btn` exists; selecting a supported company from th....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-23T12:43:46.947Z",
+        "updatedAt": "2026-06-23T12:51:06.630Z",
+        "startedAt": "2026-06-23T12:48:46.162Z",
+        "completedAt": "2026-06-23T12:51:06.630Z",
+        "evidence": "G001 essential criteria passed via .omo/evidence/roadmap-button-green-e2e.log and visual QA artifacts; .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl records pass evidence."
+      },
+      {
+        "id": "G002-edge-regression-unsupported-free-typ",
+        "title": "Edge/regression: unsupported/free-typed company text cannot bypass dr...",
+        "objective": "Edge/regression: unsupported/free-typed company text cannot bypass dropdown selection and cannot proceed.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: Edge/regression: unsupported/free-typed company text cannot bypass dropdown s...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 2.",
+            "essential": true,
+            "capturedEvidence": "Unsupported/free-typed company e2e in .omo/evidence/roadmap-button-green-e2e.log passed: #match-job-btn count 0 and #next-step-btn disabled; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.588Z"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Edge/regression: unsupported/free-typed company text cannot bypass dropdown s....",
+            "essential": true,
+            "capturedEvidence": "Unsupported/free-typed company e2e in .omo/evidence/roadmap-button-green-e2e.log passed: #match-job-btn count 0 and #next-step-btn disabled; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.699Z"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Edge/regression: unsupported/free-typed company text cannot bypass dropdown s....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-23T12:43:46.947Z",
+        "updatedAt": "2026-06-23T12:51:24.766Z",
+        "startedAt": "2026-06-23T12:51:24.687Z",
+        "completedAt": "2026-06-23T12:51:24.766Z",
+        "evidence": "Essential criteria passed and recorded in .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl; green Playwright evidence .omo/evidence/roadmap-button-green-e2e.log and browser evidence .omo/evidence/roadmap-button-visual-qa.json."
+      },
+      {
+        "id": "G003-visual-surface-desktop-and-mobile-sc",
+        "title": "Visual surface: desktop and mobile screenshots of `/analyze/new` show...",
+        "objective": "Visual surface: desktop and mobile screenshots of `/analyze/new` show the company search/dropdown path without the removed DB-connection button and without overlapping or clipped text.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: Visual surface: desktop and mobile screenshots of `/analyze/new` show the com...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 3.",
+            "essential": true,
+            "capturedEvidence": "Browser QA .omo/evidence/roadmap-button-visual-qa.json ok=true with desktop/mobile screenshots .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; cleanup: stopped temporary Vite PID after screenshots.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.786Z"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Visual surface: desktop and mobile screenshots of `/analyze/new` show the com....",
+            "essential": true,
+            "capturedEvidence": "Browser QA .omo/evidence/roadmap-button-visual-qa.json ok=true with desktop/mobile screenshots .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; cleanup: stopped temporary Vite PID after screenshots.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:32.888Z"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Visual surface: desktop and mobile screenshots of `/analyze/new` show the com....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-23T12:43:46.947Z",
+        "updatedAt": "2026-06-23T12:51:24.915Z",
+        "startedAt": "2026-06-23T12:51:24.839Z",
+        "completedAt": "2026-06-23T12:51:24.915Z",
+        "evidence": "Essential criteria passed and recorded in .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl; green Playwright evidence .omo/evidence/roadmap-button-green-e2e.log and browser evidence .omo/evidence/roadmap-button-visual-qa.json."
+      },
+      {
+        "id": "G004-playwright-e2e-stdout-for-criteria-1",
+        "title": "Playwright e2e stdout for criteria 1 and 2.",
+        "objective": "Playwright e2e stdout for criteria 1 and 2.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: Playwright e2e stdout for criteria 1 and 2.",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 4.",
+            "essential": true,
+            "capturedEvidence": "Playwright stdout .omo/evidence/roadmap-button-green-e2e.log: 3 passed; RED proof .omo/evidence/roadmap-button-red-e2e.log failed on #match-job-btn count 1 before implementation; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:45.836Z"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Playwright e2e stdout for criteria 1 and 2..",
+            "essential": true,
+            "capturedEvidence": "Playwright stdout .omo/evidence/roadmap-button-green-e2e.log: 3 passed; RED proof .omo/evidence/roadmap-button-red-e2e.log failed on #match-job-btn count 1 before implementation; cleanup: Playwright webServer exited after test run.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:45.916Z"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Playwright e2e stdout for criteria 1 and 2..",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-23T12:43:46.947Z",
+        "updatedAt": "2026-06-23T12:51:25.059Z",
+        "startedAt": "2026-06-23T12:51:24.984Z",
+        "completedAt": "2026-06-23T12:51:25.059Z",
+        "evidence": "Essential criteria passed and recorded in .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl; green Playwright evidence .omo/evidence/roadmap-button-green-e2e.log and browser evidence .omo/evidence/roadmap-button-visual-qa.json."
+      },
+      {
+        "id": "G005-browser-screenshot-artifacts-for-cri",
+        "title": "Browser screenshot artifacts for criterion 3.",
+        "objective": "Browser screenshot artifacts for criterion 3.",
+        "status": "in_progress",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: Browser screenshot artifacts for criterion 3.",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 5.",
+            "essential": true,
+            "capturedEvidence": "Browser screenshots recorded in .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; .omo/evidence/roadmap-button-visual-qa.json ok=true, matchButtonCount 0, dropdown visible; cleanup: stopped temporary Vite PID after screenshots.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:46.006Z"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Browser screenshot artifacts for criterion 3..",
+            "essential": true,
+            "capturedEvidence": "Browser screenshots recorded in .omo/evidence/roadmap-button-visual-desktop.png and .omo/evidence/roadmap-button-visual-mobile.png; .omo/evidence/roadmap-button-visual-qa.json ok=true, matchButtonCount 0, dropdown visible; cleanup: stopped temporary Vite PID after screenshots.",
+            "status": "pass",
+            "capturedAt": "2026-06-23T12:48:46.085Z"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Browser screenshot artifacts for criterion 3..",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-23T12:43:46.947Z",
+        "updatedAt": "2026-06-23T12:58:01.149Z",
+        "startedAt": "2026-06-23T12:58:01.149Z"
+      }
+    ],
+    "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/roadmap-button-removal-20260623/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/roadmap-button-removal-20260623/ledger.jsonl as the audit trail.",
+    "activeGoalId": "G005-browser-screenshot-artifacts-for-cri"
+  }
+}

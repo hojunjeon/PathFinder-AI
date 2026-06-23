@@ -37,9 +37,10 @@ function Show-LauncherHelp {
     Write-Host "  1. Creates missing Python virtual environments on first run."
     Write-Host "  2. Installs missing Python and npm dependencies on first run."
     Write-Host "  3. Runs Django migrations."
-    Write-Host "  4. Starts all three servers together."
-    Write-Host "  5. Waits until each server answers its health check."
-    Write-Host "  6. Keeps this console attached so Ctrl+C stops everything."
+    Write-Host "  4. Loads the company fixture into the default DB on first run."
+    Write-Host "  5. Starts all three servers together."
+    Write-Host "  6. Waits until each server answers its health check."
+    Write-Host "  7. Keeps this console attached so Ctrl+C stops everything."
     Write-Host ""
     Write-Host "Prerequisites"
     Write-Host "  - Python 3.11 available as py -3.11, py -3, or python"
@@ -195,6 +196,52 @@ function Ensure-FrontendDependencies($ProjectDir) {
     }
 }
 
+function Get-DjangoCompanyCount($BackendPython, $ProjectDir) {
+    Push-Location $ProjectDir
+    try {
+        $output = & $BackendPython manage.py shell -v 0 -c "from companies.models import Company; print(Company.objects.count())" 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to check company fixture state.`n$output"
+        }
+    } finally {
+        Pop-Location
+    }
+
+    $countLine = $output | Where-Object { $_ -match '^\d+$' } | Select-Object -Last 1
+    if (-not $countLine) {
+        throw "Failed to parse company count from Django output.`n$output"
+    }
+
+    return [int]$countLine
+}
+
+function Ensure-CompanyFixtureLoaded($BackendPython, $ProjectDir, $LoadOnFirstRun) {
+    $fixturePath = Join-Path $ProjectDir "companies\fixtures\companies.json"
+    if (-not (Test-Path -LiteralPath $fixturePath)) {
+        throw "Company fixture not found: $fixturePath"
+    }
+
+    $companyCount = Get-DjangoCompanyCount $BackendPython $ProjectDir
+    if (-not $LoadOnFirstRun -and $companyCount -gt 0) {
+        Write-Host "Company fixture already loaded ($companyCount companies)."
+        return
+    }
+
+    Write-Host "Loading company fixture into default database..."
+    Push-Location $ProjectDir
+    try {
+        & $BackendPython manage.py loaddata companies
+        if ($LASTEXITCODE -ne 0) {
+            throw "Django loaddata companies failed with exit code $LASTEXITCODE"
+        }
+    } finally {
+        Pop-Location
+    }
+
+    $companyCount = Get-DjangoCompanyCount $BackendPython $ProjectDir
+    Write-Host "Company fixture ready ($companyCount companies)."
+}
+
 
 function Assert-PortFree($Port) {
     $listener = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
@@ -301,6 +348,8 @@ if (-not $gmsKeyForLlm) {
 Write-Host "Applying Django migrations..."
 Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
 $env:LLM_INTERNAL_TOKEN = $runtimeToken
+$DatabasePath = Join-Path $BackendDir "db.sqlite3"
+$DatabaseExistedBeforeMigrate = Test-Path -LiteralPath $DatabasePath
 Push-Location $BackendDir
 try {
     & $BackendPython manage.py migrate --noinput
@@ -309,6 +358,13 @@ try {
     }
 } finally {
     Pop-Location
+    Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
+}
+
+$env:LLM_INTERNAL_TOKEN = $runtimeToken
+try {
+    Ensure-CompanyFixtureLoaded $BackendPython $BackendDir (-not $DatabaseExistedBeforeMigrate)
+} finally {
     Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
 }
 

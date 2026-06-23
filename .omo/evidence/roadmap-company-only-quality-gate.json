@@ -1,0 +1,93 @@
+{
+    "iteration":  {
+                      "status":  "passed",
+                      "evidence":  "All focused verification passed.",
+                      "fullRerun":  true,
+                      "rerunCommands":  [
+                                            "cd backend \u0026\u0026 .\\venv\\Scripts\\python.exe -m pytest companies/tests/test_companies.py",
+                                            "cd frontend \u0026\u0026 npx playwright test tests/e2e/analyze-flow.spec.js",
+                                            "cd frontend \u0026\u0026 npm run build",
+                                            "node .omo/evidence/roadmap-company-only-visual-qa.mjs"
+                                        ]
+                  },
+    "criteriaCoverage":  {
+                             "passCount":  24,
+                             "desiredOutcome":  "Supported company proceeds with fallback job; unsupported company remains blocked.",
+                             "totalCriteria":  24,
+                             "originalIntent":  "Do not show no 疫꿸퀣? 筌욊낮龜 message; select by company DB only, ignoring job-title matching.",
+                             "adversarialClassesCovered":  [
+                                                               "no_company_jobs",
+                                                               "unsupported_company",
+                                                               "job_title_mismatch"
+                                                           ],
+                             "userOutcomeReview":  "Matches requested behavior."
+                         },
+    "codeReview":  {
+                       "reportPath":  ".omo/ulw-loop/roadmap-company-only-20260623/notepad.md",
+                       "blockers":  [
+
+                                    ],
+                       "evidence":  "Diff reviewed; scoped backend fallback plus tests only.",
+                       "codeQualityStatus":  "CLEAR",
+                       "by":  "lazycodex-code-reviewer",
+                       "recommendation":  "APPROVE"
+                   },
+    "manualQa":  {
+                     "adversarialCases":  [
+                                              {
+                                                  "id":  "unsupported-company",
+                                                  "expectedBehavior":  "disabled next step and no option",
+                                                  "verdict":  "passed",
+                                                  "scenario":  "unsupported free-typed company cannot proceed",
+                                                  "artifactRefs":  [
+                                                                       "artifact-e2e"
+                                                                   ],
+                                                  "criterionRef":  "C002"
+                                              }
+                                          ],
+                     "artifactRefs":  [
+                                          {
+                                              "path":  ".omo/evidence/roadmap-company-only-green-e2e.log",
+                                              "description":  "Playwright analyze flow",
+                                              "id":  "artifact-e2e",
+                                              "kind":  "log"
+                                          },
+                                          {
+                                              "path":  ".omo/evidence/roadmap-company-only-visual-qa.json",
+                                              "description":  "Browser visual QA JSON",
+                                              "id":  "artifact-visual-json",
+                                              "kind":  "log"
+                                          },
+                                          {
+                                              "path":  ".omo/evidence/roadmap-company-only-green-backend-companies.log",
+                                              "description":  "Backend company tests",
+                                              "id":  "artifact-backend",
+                                              "kind":  "log"
+                                          }
+                                      ],
+                     "surfaceEvidence":  [
+                                             {
+                                                 "id":  "surface-browser",
+                                                 "surface":  "cli",
+                                                 "verdict":  "passed",
+                                                 "invocation":  "node .omo/evidence/roadmap-company-only-visual-qa.mjs",
+                                                 "artifactRefs":  [
+                                                                      "artifact-visual-json"
+                                                                  ],
+                                                 "criterionRef":  "C001"
+                                             }
+                                         ],
+                     "evidence":  "Backend, E2E, build, and browser QA passed.",
+                     "by":  "lazycodex-qa-executor",
+                     "status":  "passed"
+                 },
+    "gateReview":  {
+                       "by":  "lazycodex-gate-reviewer",
+                       "evidence":  "LIGHT tier self-review passed; no reviewer loop required.",
+                       "blockers":  [
+
+                                    ],
+                       "recommendation":  "APPROVE",
+                       "reportPath":  ".omo/ulw-loop/roadmap-company-only-20260623/notepad.md"
+                   }
+}

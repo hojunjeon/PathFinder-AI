@@ -1,0 +1,5 @@
+﻿31606e4d505161bc6c94934feef36923fc866f8e refactor(analyze): split roadmap posting form controls
+frontend/src/components/analyze/CompanySearchField.vue
+frontend/src/components/analyze/InterviewTypeSelector.vue
+frontend/src/components/analyze/StepJobUrl.vue
+frontend/tests/e2e/analyze-flow.spec.js

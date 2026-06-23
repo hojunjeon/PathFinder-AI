@@ -74,7 +74,7 @@ async function fillManualPosting(page) {
   await page.locator('#requirements-input').fill('Python, Database, REST API 경험')
   await page.locator('#preferred-input').fill('분산 시스템 경험')
   await page.locator('#match-job-btn').click()
-  await expect(page.getByText('매칭된 기업: 쿠팡')).toBeVisible()
+  await expect(page.locator('.company-profile-card').getByText('쿠팡')).toBeVisible()
 }
 
 async function mockManualPosting(page) {

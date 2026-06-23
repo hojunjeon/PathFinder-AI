@@ -133,8 +133,9 @@ async function onCoverLetterDone({ cover_letters, text }) {
 async function onSubmit(interviewTypes) {
   submitting.value = true
   try {
+    const numericJobId = Number(selectedJobId.value)
     const { data } = await api.post('/api/analyze/', {
-      job_id: selectedJobId.value,
+      job_id: Number.isNaN(numericJobId) ? selectedJobId.value : numericJobId,
       job_posting_url: jobUrl.value,
       job_posting_text: manualPostingText.value,
       submitted_cover_letter: coverLetter.value,

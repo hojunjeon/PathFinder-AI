@@ -19,6 +19,7 @@
               :key="section.id"
               :class="['side-nav-item', { active: activeSection === section.id }]"
               :href="`#${section.id}`"
+              @click.prevent="scrollToSection(section.id)"
             >
               <span class="nav-order">{{ String(sectionIdx + 1).padStart(2, '0') }}</span>
               <span class="nav-label">{{ section.label }}</span>
@@ -75,7 +76,7 @@
               <div class="progress-title">{{ activeItemText }}</div>
               <p class="progress-desc">{{ activeItemDesc }}</p>
             </div>
-            <a href="#roadmap" class="content-btn">준비 항목 보기</a>
+            <a href="#roadmap" class="content-btn" @click.prevent="scrollToSection('roadmap')">준비 항목 보기</a>
           </section>
 
           <!-- Competency Gap List -->
@@ -88,8 +89,11 @@
               <span class="section-note">면접 대비 우선순위</span>
             </div>
             <div class="scores">
-              <div class="score-row" v-for="score in computedScores" :key="score.name">
-                <span class="score-name">{{ score.name }}</span>
+              <div class="score-row" v-for="score in computedScores" :key="score.source">
+                <span class="score-name">
+                  <span class="score-keyword">{{ score.name }}</span>
+                  <span class="score-kind">{{ score.kind }}</span>
+                </span>
                 <div class="bar">
                   <div :class="['bar-fill', score.colorClass]" :style="{ width: score.value + '%' }"></div>
                 </div>
@@ -181,6 +185,37 @@ function getDeterministicScore(name, minVal, maxVal) {
   return minVal + Math.abs(hash % range)
 }
 
+function toKeywordLabel(value) {
+  const text = String(value || '')
+    .replace(/^\(Mock\)\s*/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!text) return ''
+
+  const parenMatch = text.match(/^(.+?)\s*\(.+\)$/)
+  if (parenMatch) return compactKeyword(parenMatch[1])
+
+  const separatorMatch = text.match(/^(.{2,32}?)(?:\s*[:：]\s+|\s+-\s+|\s+대비\s+|\s+보완\s+)(.+)$/)
+  if (separatorMatch) return compactKeyword(separatorMatch[1])
+
+  return compactKeyword(text)
+}
+
+function compactKeyword(text) {
+  const cleaned = String(text || '')
+    .replace(/[.,;!?]$/g, '')
+    .trim()
+  if (cleaned.length <= 18) return cleaned
+
+  const tokens = cleaned
+    .split(/[\s/·,]+/)
+    .map(token => token.trim())
+    .filter(Boolean)
+
+  if (tokens.length <= 2) return cleaned.slice(0, 18)
+  return tokens.slice(0, 3).join(' ')
+}
+
 const computedScores = computed(() => {
   const gap = analysis.value?.competency_gap || {}
   const strengths = gap.strengths || []
@@ -190,37 +225,77 @@ const computedScores = computed(() => {
   const scores = []
   
   strengths.slice(0, 2).forEach(s => {
-    scores.push({ name: s, value: getDeterministicScore(s, 75, 95), colorClass: '' })
+    scores.push({
+      source: `strength-${s}`,
+      name: toKeywordLabel(s),
+      kind: '강점',
+      value: getDeterministicScore(s, 75, 95),
+      colorClass: '',
+    })
   })
   
   reqs.slice(0, 2).forEach(r => {
-    scores.push({ name: r, value: getDeterministicScore(r, 45, 70), colorClass: 'mid' })
+    scores.push({
+      source: `required-${r}`,
+      name: toKeywordLabel(r),
+      kind: '요구',
+      value: getDeterministicScore(r, 45, 70),
+      colorClass: 'mid',
+    })
   })
 
   gaps.slice(0, 2).forEach(g => {
-    scores.push({ name: g, value: getDeterministicScore(g, 15, 40), colorClass: 'low' })
+    scores.push({
+      source: `gap-${g}`,
+      name: toKeywordLabel(g),
+      kind: '보완',
+      value: getDeterministicScore(g, 15, 40),
+      colorClass: 'low',
+    })
   })
 
   if (scores.length === 0) {
-    scores.push({ name: 'Java / Spring', value: 78, colorClass: '' })
-    scores.push({ name: '알고리즘', value: 65, colorClass: '' })
-    scores.push({ name: '시스템 설계', value: 42, colorClass: 'mid' })
-    scores.push({ name: 'Kotlin', value: 24, colorClass: 'low' })
+    scores.push({ source: 'fallback-java', name: 'Java / Spring', kind: '강점', value: 78, colorClass: '' })
+    scores.push({ source: 'fallback-algorithm', name: '알고리즘', kind: '요구', value: 65, colorClass: '' })
+    scores.push({ source: 'fallback-system-design', name: '시스템 설계', kind: '보완', value: 42, colorClass: 'mid' })
+    scores.push({ source: 'fallback-kotlin', name: 'Kotlin', kind: '보완', value: 24, colorClass: 'low' })
   }
 
-  return scores
+  return scores.filter(score => score.name)
 })
 
 // Sidebar Active Navigation on Scroll
 function handleScroll() {
+  const anchorOffset = 72
   let current = pageSections[0].id
+  let closestDistance = Number.POSITIVE_INFINITY
+
   pageSections.forEach(({ id }) => {
     const el = document.getElementById(id)
-    if (el && window.scrollY >= el.offsetTop - 180) {
+    if (!el) return
+    const distance = Math.abs(el.getBoundingClientRect().top - anchorOffset)
+    if (el.getBoundingClientRect().top <= anchorOffset + 8 && distance < closestDistance) {
+      closestDistance = distance
       current = id
     }
   })
+
+  const lastSection = pageSections[pageSections.length - 1]
+  const scrollBottom = window.innerHeight + window.scrollY
+  const documentHeight = document.documentElement.scrollHeight
+  if (documentHeight - scrollBottom < 8) {
+    current = lastSection.id
+  }
+
   activeSection.value = current
+}
+
+function scrollToSection(id) {
+  const el = document.getElementById(id)
+  if (!el) return
+  activeSection.value = id
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  history.replaceState(null, '', `#${id}`)
 }
 
 onMounted(async () => {
@@ -371,6 +446,7 @@ onBeforeUnmount(() => {
   gap: var(--space-8);
   align-items: end;
   margin-bottom: var(--space-8);
+  scroll-margin-top: 64px;
 }
 .eyebrow {
   color: var(--muted);
@@ -519,6 +595,7 @@ h1 {
   padding: var(--space-6);
   margin-bottom: var(--space-6);
   box-shadow: var(--elev-ring);
+  scroll-margin-top: 64px;
 }
 .section-head {
   display: flex;
@@ -559,15 +636,33 @@ h2 {
 }
 .score-row {
   display: grid;
-  grid-template-columns: 240px 1fr 44px;
+  grid-template-columns: 220px 1fr 44px;
   gap: var(--space-4);
   align-items: center;
   color: var(--fg-2);
   font-size: var(--text-sm);
 }
 .score-name {
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-weight: 600;
   word-break: keep-all;
+}
+.score-keyword {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.score-kind {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  padding: 2px 7px;
+  color: var(--meta);
+  background: var(--surface-warm);
+  font-size: var(--text-xs);
+  font-weight: 600;
 }
 .bar {
   height: 8px;

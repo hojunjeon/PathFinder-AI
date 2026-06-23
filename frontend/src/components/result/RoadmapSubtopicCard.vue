@@ -1,29 +1,46 @@
 <template>
-  <section :class="['subtopic', { done: completed }]">
-    <label class="subtopic-check">
-      <span class="checkbox-control">
-        <input
-          type="checkbox"
-          :checked="completed"
-          :aria-label="subtopic.title"
-          @change="$emit('toggle')"
-        >
-        <span class="checkmark" aria-hidden="true"></span>
-      </span>
-      <span class="subtopic-title">예상 질문 {{ subtopicIdx + 1 }}</span>
-    </label>
+  <section class="subtopic">
+    <header class="subtopic-head">
+      <span class="subtopic-kicker">개념 키워드</span>
+      <h4>{{ subtopic.title }}</h4>
+      <p v-if="subtopic.why" class="subtopic-why">{{ subtopic.why }}</p>
+    </header>
 
-    <div class="subtopic-body">
-      <div v-if="questions.length" class="detail-block question-block">
-        <span class="detail-label">개인 맞춤 질문</span>
-        <ul class="question-list">
-          <li v-for="question in questions" :key="question">{{ question }}</li>
-        </ul>
-      </div>
-      <div v-if="subtopic.answer_guide" class="detail-block">
-        <span class="detail-label">답변 팁</span>
-        <p>{{ subtopic.answer_guide }}</p>
-      </div>
+    <div class="question-cards">
+      <article
+        v-for="(questionItem, questionIdx) in questionItems"
+        :key="`${subtopic.title}-${questionIdx}-${questionItem.question}`"
+        :class="['question-card', { done: isCompleted(questionIdx) }]"
+      >
+        <label class="question-check">
+          <span class="checkbox-control">
+            <input
+              type="checkbox"
+              :checked="isCompleted(questionIdx)"
+              :aria-label="questionItem.question"
+              @change="$emit('toggle-question', { subtopicIdx, questionIdx })"
+            >
+            <span class="checkmark" aria-hidden="true"></span>
+          </span>
+          <span class="question-label">질문 {{ questionIdx + 1 }}</span>
+        </label>
+
+        <div class="question-body">
+          <p class="question-text">{{ questionItem.question }}</p>
+
+          <div v-if="questionItem.follow_up_questions.length" class="detail-block">
+            <span class="detail-label">꼬리질문</span>
+            <ul class="follow-up-list">
+              <li v-for="followUp in questionItem.follow_up_questions" :key="followUp">{{ followUp }}</li>
+            </ul>
+          </div>
+
+          <div v-if="questionItem.answer_guide" class="detail-block answer-tip">
+            <span class="detail-label">답변 팁</span>
+            <p>{{ questionItem.answer_guide }}</p>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 </template>
@@ -34,20 +51,19 @@ import { computed } from 'vue'
 const props = defineProps({
   subtopic: { type: Object, required: true },
   subtopicIdx: { type: Number, default: 0 },
-  completed: { type: Boolean, default: false },
+  categoryIdx: { type: Number, required: true },
+  completedTasks: { type: Object, required: true },
 })
 
-defineEmits(['toggle'])
+defineEmits(['toggle-question'])
 
-const questions = computed(() => {
-  const mainQuestion = props.subtopic.question || props.subtopic.title
-  const followUps = Array.isArray(props.subtopic.follow_up_questions)
-    ? props.subtopic.follow_up_questions
-    : []
-  return [mainQuestion, ...followUps]
-    .map(question => String(question || '').trim())
-    .filter(Boolean)
+const questionItems = computed(() => {
+  return Array.isArray(props.subtopic.questions) ? props.subtopic.questions : []
 })
+
+function isCompleted(questionIdx) {
+  return !!props.completedTasks[`${props.categoryIdx}-${props.subtopicIdx}-${questionIdx}`]
+}
 </script>
 
 <style scoped>
@@ -58,11 +74,53 @@ const questions = computed(() => {
   padding: var(--space-4);
 }
 
-.subtopic.done {
+.subtopic-head {
+  display: grid;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.subtopic-kicker {
+  color: var(--meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+h4 {
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.subtopic-why {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.question-cards {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.question-card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-4);
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+
+.question-card.done {
+  border-color: color-mix(in oklab, var(--success), transparent 65%);
   background: color-mix(in oklab, var(--success), white 96%);
 }
 
-.subtopic-check {
+.question-check {
   display: grid;
   grid-template-columns: 22px 1fr;
   gap: var(--space-3);
@@ -121,15 +179,26 @@ const questions = computed(() => {
   box-shadow: var(--focus-ring);
 }
 
-.subtopic-title {
-  font-size: var(--text-base);
+.question-label {
+  color: var(--meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
 }
 
-.subtopic-body {
+.question-body {
   display: grid;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   padding-left: 34px;
+}
+
+.question-text {
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.55;
+  margin: 0;
+  word-break: keep-all;
 }
 
 .detail-block {
@@ -141,24 +210,33 @@ const questions = computed(() => {
 .detail-label {
   color: var(--meta);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.detail-block p,
-.question-list li {
+.answer-tip {
+  border-left: 3px solid var(--accent);
+  padding-left: var(--space-3);
+}
+
+.answer-tip p,
+.follow-up-list li {
   color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.55;
   word-break: keep-all;
 }
 
-.question-list {
+.answer-tip p {
+  margin: 0;
+}
+
+.follow-up-list {
   margin: 0;
   padding-left: var(--space-5);
 }
 
 @media (max-width: 720px) {
-  .subtopic-body {
+  .question-body {
     padding-left: 0;
   }
 }

@@ -11,9 +11,9 @@ $FrontendDir = Join-Path $Root "frontend"
 $LlmDir = Join-Path $Root "llm_server"
 $LogDir = Join-Path $Root "logs\dev-servers"
 
-$BackendPort = 8080
-$LlmPort = 8081
-$FrontendPort = 5173
+$BackendPort = if ($env:BACKEND_PORT) { [int]$env:BACKEND_PORT } else { 8080 }
+$LlmPort = if ($env:LLM_PORT) { [int]$env:LLM_PORT } else { 8081 }
+$FrontendPort = if ($env:FRONTEND_PORT) { [int]$env:FRONTEND_PORT } else { 5173 }
 $Node = $null
 $ViteEntrypoint = Join-Path $FrontendDir 'node_modules\vite\bin\vite.js'
 
@@ -51,6 +51,9 @@ function Show-LauncherHelp {
     Write-Host "Optional environment variables"
     Write-Host "  - GMS_KEY             Required only for real roadmap generation."
     Write-Host "  - LLM_INTERNAL_TOKEN  Auto-generated when missing."
+    Write-Host "  - BACKEND_PORT        Default: 8080. Uses next free port if occupied."
+    Write-Host "  - LLM_PORT            Default: 8081. Uses next free port if occupied."
+    Write-Host "  - FRONTEND_PORT       Default: 5173. Uses next free port if occupied."
     Write-Host ""
     Write-Host "Logs"
     Write-Host "  - logs\dev-servers\backend.out.log"
@@ -195,6 +198,32 @@ function Ensure-FrontendDependencies($ProjectDir) {
     }
 }
 
+function Test-PortInUse($Port) {
+    return [bool](Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+}
+
+function Resolve-AvailablePort($Name, $PreferredPort, $ReservedPorts = @()) {
+    if (($ReservedPorts -notcontains $PreferredPort) -and -not (Test-PortInUse $PreferredPort)) {
+        return $PreferredPort
+    }
+
+    if ($ReservedPorts -contains $PreferredPort) {
+        Write-Host "$Name port $PreferredPort is already reserved by another dev server."
+    } else {
+        $listener = Get-NetTCPConnection -LocalPort $PreferredPort -State Listen -ErrorAction SilentlyContinue
+        $owners = ($listener | Select-Object -ExpandProperty OwningProcess -Unique) -join ", "
+        Write-Host "$Name port $PreferredPort is already in use by process id(s): $owners"
+    }
+
+    for ($candidate = $PreferredPort + 1; $candidate -le $PreferredPort + 50; $candidate++) {
+        if (($ReservedPorts -notcontains $candidate) -and -not (Test-PortInUse $candidate)) {
+            Write-Host "$Name will use fallback port $candidate."
+            return $candidate
+        }
+    }
+
+    throw "No free $Name port found from $PreferredPort to $($PreferredPort + 50)."
+}
 
 function Assert-PortFree($Port) {
     $listener = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
@@ -283,14 +312,17 @@ Assert-Path $ViteEntrypoint "Run npm install in the frontend directory so Vite i
 
 $DotEnvValues = Import-DotEnv (Join-Path $Root ".env")
 
-Assert-PortFree $BackendPort
-Assert-PortFree $LlmPort
-Assert-PortFree $FrontendPort
+$BackendPort = Resolve-AvailablePort "Backend" $BackendPort
+$LlmPort = Resolve-AvailablePort "LLM server" $LlmPort @($BackendPort)
+$FrontendPort = Resolve-AvailablePort "Frontend" $FrontendPort @($BackendPort, $LlmPort)
 
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
 $oldToken = $env:LLM_INTERNAL_TOKEN
 $oldGmsKey = $env:GMS_KEY
+$oldLlmServerUrl = $env:LLM_SERVER_URL
+$oldCorsAllowedOrigins = $env:DJANGO_CORS_ALLOWED_ORIGINS
+$oldViteApiBaseUrl = $env:VITE_API_BASE_URL
 $runtimeToken = if ($oldToken) { $oldToken } else { [Guid]::NewGuid().ToString("N") }
 $gmsKeyForLlm = if ($oldGmsKey) { $oldGmsKey } else { $DotEnvValues["GMS_KEY"] }
 
@@ -301,6 +333,7 @@ if (-not $gmsKeyForLlm) {
 Write-Host "Applying Django migrations..."
 Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
 $env:LLM_INTERNAL_TOKEN = $runtimeToken
+$env:LLM_SERVER_URL = "http://127.0.0.1:$LlmPort"
 Push-Location $BackendDir
 try {
     & $BackendPython manage.py migrate --noinput
@@ -316,6 +349,8 @@ $processes = @()
 try {
     Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
     $env:LLM_INTERNAL_TOKEN = $runtimeToken
+    $env:LLM_SERVER_URL = "http://127.0.0.1:$LlmPort"
+    $env:DJANGO_CORS_ALLOWED_ORIGINS = "http://localhost:$FrontendPort,http://127.0.0.1:$FrontendPort"
     Write-Host "Starting Django backend..."
     $processes += Start-Process -FilePath $BackendPython `
         -ArgumentList @("manage.py", "runserver", "127.0.0.1:$BackendPort", "--noreload") `
@@ -341,6 +376,9 @@ try {
 
     Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
     Remove-Item Env:\LLM_INTERNAL_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:\LLM_SERVER_URL -ErrorAction SilentlyContinue
+    Remove-Item Env:\DJANGO_CORS_ALLOWED_ORIGINS -ErrorAction SilentlyContinue
+    $env:VITE_API_BASE_URL = "http://localhost:$BackendPort"
     Write-Host "Starting Vue/Vite frontend..."
     $processes += Start-Process -FilePath $Node `
         -ArgumentList @($ViteEntrypoint, "--host", "127.0.0.1", "--port", "$FrontendPort") `
@@ -386,6 +424,21 @@ try {
         $env:GMS_KEY = $oldGmsKey
     } else {
         Remove-Item Env:\GMS_KEY -ErrorAction SilentlyContinue
+    }
+    if ($oldLlmServerUrl) {
+        $env:LLM_SERVER_URL = $oldLlmServerUrl
+    } else {
+        Remove-Item Env:\LLM_SERVER_URL -ErrorAction SilentlyContinue
+    }
+    if ($oldCorsAllowedOrigins) {
+        $env:DJANGO_CORS_ALLOWED_ORIGINS = $oldCorsAllowedOrigins
+    } else {
+        Remove-Item Env:\DJANGO_CORS_ALLOWED_ORIGINS -ErrorAction SilentlyContinue
+    }
+    if ($oldViteApiBaseUrl) {
+        $env:VITE_API_BASE_URL = $oldViteApiBaseUrl
+    } else {
+        Remove-Item Env:\VITE_API_BASE_URL -ErrorAction SilentlyContinue
     }
     Write-Host "Stopped."
 }

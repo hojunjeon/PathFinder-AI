@@ -2,7 +2,7 @@
   <article :class="['category-card', { current }]">
     <div class="category-head">
       <div>
-        <p class="category-label">질문 묶음</p>
+        <p class="category-label">역량·분야·업무</p>
         <h3>{{ category.category }}</h3>
       </div>
       <span :class="['status', statusClass]">{{ statusText }}</span>
@@ -16,8 +16,9 @@
         :key="`${category.category}-${subtopic.title}-${subtopicIdx}`"
         :subtopic="subtopic"
         :subtopic-idx="subtopicIdx"
-        :completed="isCompleted(subtopicIdx)"
-        @toggle="$emit('toggle-subtopic', subtopicIdx)"
+        :category-idx="categoryIdx"
+        :completed-tasks="completedTasks"
+        @toggle-question="payload => $emit('toggle-question', payload)"
       />
     </div>
   </article>
@@ -34,27 +35,35 @@ const props = defineProps({
   current: { type: Boolean, default: false },
 })
 
-defineEmits(['toggle-subtopic'])
+defineEmits(['toggle-question'])
 
-function isCompleted(subtopicIdx) {
-  return !!props.completedTasks[`${props.categoryIdx}-${subtopicIdx}`]
+function isQuestionCompleted(subtopicIdx, questionIdx) {
+  return !!props.completedTasks[`${props.categoryIdx}-${subtopicIdx}-${questionIdx}`]
 }
 
 const completedCount = computed(() => {
-  return props.category.subtopics.filter((_, subtopicIdx) => isCompleted(subtopicIdx)).length
+  return props.category.subtopics.reduce((count, subtopic, subtopicIdx) => {
+    return count + subtopic.questions.filter((_, questionIdx) => isQuestionCompleted(subtopicIdx, questionIdx)).length
+  }, 0)
+})
+
+const totalQuestionCount = computed(() => {
+  return props.category.subtopics.reduce((count, subtopic) => count + subtopic.questions.length, 0)
 })
 
 const statusText = computed(() => {
-  const total = props.category.subtopics.length
+  const total = totalQuestionCount.value
   const completed = completedCount.value
+  if (total === 0) return '대기'
   if (completed === total) return '완료'
   if (completed > 0 || props.current) return `${completed}/${total}`
   return '대기'
 })
 
 const statusClass = computed(() => {
-  const total = props.category.subtopics.length
+  const total = totalQuestionCount.value
   const completed = completedCount.value
+  if (total === 0) return ''
   if (completed === total) return 'done'
   if (completed > 0 || props.current) return 'now'
   return ''

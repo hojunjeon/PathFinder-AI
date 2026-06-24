@@ -102,6 +102,7 @@ async function submit() {
   try {
     emit('next', {
       text: normalized.map(item => `Q. ${item.question}\nA. ${item.answer}`).join('\n\n'),
+      items: normalized,
     })
   } finally {
     saving.value = false

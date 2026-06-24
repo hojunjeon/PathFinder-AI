@@ -35,6 +35,7 @@ class Analysis(models.Model):
     job_posting_url = models.URLField(blank=True, default='')
     job_posting_text = models.TextField(blank=True, default='')
     submitted_cover_letter = models.TextField(blank=True)
+    submitted_cover_letter_items = models.JSONField(default=list, blank=True)
     selected_interview_types = models.JSONField(default=list)
     interview_type_etc_text = models.CharField(max_length=100, blank=True, default='')
     competency_gap = models.JSONField(default=dict)

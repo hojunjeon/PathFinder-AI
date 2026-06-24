@@ -55,6 +55,11 @@ assert(analyzeCreate.includes('job_posting:'), 'AnalyzeCreateView must submit st
 const result = read('src/views/AnalyzeResultView.vue')
 assert(result.includes('CompetencyGap'), 'AnalyzeResultView must render CompetencyGap')
 assert(result.includes('RoadmapTimeline'), 'AnalyzeResultView must render RoadmapTimeline')
+assert(result.includes('제출 자기소개서 확인'), 'AnalyzeResultView must offer read-only cover letter review')
+assert(result.includes('showModal()'), 'AnalyzeResultView must show the cover letter without route navigation')
+assert(!result.includes('자기소개서 입력 화면'), 'AnalyzeResultView must not route users to a new analysis for review')
+assert(result.includes('submitted_cover_letter_items'), 'AnalyzeResultView must render stored question and answer fields')
+assert(result.includes('analysis.submitted_cover_letter'), 'AnalyzeResultView must retain a legacy raw-text fallback')
 
 const jobsData = read('public/data/jobs_careers.jsonl').trim().split('\n')
 assert(jobsData.length > 0, 'jobs_careers.jsonl must not be empty')

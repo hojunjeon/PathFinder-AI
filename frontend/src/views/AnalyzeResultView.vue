@@ -25,9 +25,16 @@
               <span class="nav-label">{{ section.label }}</span>
             </a>
           </nav>
-          <router-link class="cover-letter-link" to="/analyze/new">
-            자기소개서 입력 화면
-          </router-link>
+          <button
+            v-if="hasSubmittedCoverLetter"
+            ref="coverLetterTrigger"
+            type="button"
+            class="cover-letter-trigger"
+            @click="openCoverLetter"
+          >
+            제출 자기소개서 확인
+          </button>
+          <p v-else class="cover-letter-empty">제출된 자기소개서가 없습니다.</p>
         </section>
 
         <section class="side-block" data-od-id="result-interviews">
@@ -122,6 +129,41 @@
           </section>
         </div>
       </main>
+
+      <dialog
+        ref="coverLetterDialog"
+        class="cover-letter-dialog"
+        aria-labelledby="cover-letter-dialog-title"
+        @click="closeOnBackdrop"
+      >
+        <div class="cover-letter-dialog-panel">
+          <header class="cover-letter-dialog-head">
+            <h2 id="cover-letter-dialog-title">제출 자기소개서</h2>
+            <button
+              type="button"
+              class="dialog-close-icon"
+              aria-label="자기소개서 닫기"
+              @click="closeCoverLetter"
+            >
+              ×
+            </button>
+          </header>
+
+          <div class="cover-letter-content" tabindex="0">
+            <template v-if="submittedCoverLetterItems.length">
+              <article
+                v-for="(item, index) in submittedCoverLetterItems"
+                :key="`${index}-${item.question}`"
+                class="cover-letter-item"
+              >
+                <h3>{{ item.question }}</h3>
+                <p>{{ item.answer }}</p>
+              </article>
+            </template>
+            <pre v-else class="cover-letter-raw">{{ analysis.submitted_cover_letter }}</pre>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
 </template>
@@ -138,6 +180,8 @@ const route = useRoute()
 const analysis = ref(null)
 const loading = ref(true)
 const activeSection = ref('summary')
+const coverLetterDialog = ref(null)
+const coverLetterTrigger = ref(null)
 const pageSections = [
   { id: 'summary', label: '분석 요약' },
   { id: 'gap', label: '역량 분석' },
@@ -182,12 +226,34 @@ const evidenceCoverageRows = computed(() => {
   return rows.length ? rows : [{ name: '준비 항목', value: 0, colorClass: 'low' }]
 })
 
+const hasSubmittedCoverLetter = computed(() => Boolean(analysis.value?.submitted_cover_letter?.trim()))
+const submittedCoverLetterItems = computed(() => (
+  Array.isArray(analysis.value?.submitted_cover_letter_items)
+    ? analysis.value.submitted_cover_letter_items.filter(item => item?.question || item?.answer)
+    : []
+))
+
 function hasEvidenceTrace(subtopic) {
   return Boolean(
     subtopic.evidence?.trim()
     || subtopic.source_ids?.length
     || subtopic.experience_connection?.evidence?.trim()
   )
+}
+
+function openCoverLetter() {
+  coverLetterDialog.value?.showModal()
+}
+
+function closeCoverLetter() {
+  coverLetterDialog.value?.close()
+  coverLetterTrigger.value?.focus()
+}
+
+function closeOnBackdrop(event) {
+  if (event.target === coverLetterDialog.value) {
+    closeCoverLetter()
+  }
 }
 
 // Sidebar Active Navigation on Scroll
@@ -337,7 +403,8 @@ onBeforeUnmount(() => {
 .nav-label {
   min-width: 0;
 }
-.cover-letter-link {
+.cover-letter-trigger {
+  width: 100%;
   min-height: 44px;
   margin-top: var(--space-3);
   padding: 10px 12px;
@@ -349,15 +416,21 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   text-align: center;
-  text-decoration: none;
   font-size: var(--text-sm);
   font-weight: 600;
   transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
 }
-.cover-letter-link:hover {
+.cover-letter-trigger:hover {
   background: var(--bg);
   border-color: var(--accent);
   color: var(--accent);
+}
+.cover-letter-empty {
+  margin-top: var(--space-3);
+  padding-inline: 12px;
+  color: var(--meta);
+  font-size: var(--text-xs);
+  line-height: 1.45;
 }
 .chip-list {
   display: flex;
@@ -611,6 +684,128 @@ h2 {
   color: var(--fg-2);
 }
 
+.cover-letter-dialog {
+  width: min(760px, calc(100vw - 32px));
+  height: min(82vh, 840px);
+  max-height: min(82vh, 840px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 24px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: var(--elev-raised);
+}
+.cover-letter-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(4px);
+}
+.cover-letter-dialog-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  max-height: min(82vh, 840px);
+  overflow: hidden;
+}
+.cover-letter-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+.cover-letter-dialog-head {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-soft);
+}
+.cover-letter-dialog-head h2 {
+  font-size: var(--text-xl);
+}
+.dialog-close-icon {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface-warm);
+  color: var(--fg-2);
+  font-size: 24px;
+  line-height: 1;
+}
+.dialog-close-icon:hover {
+  background: var(--surface);
+}
+.cover-letter-content {
+  display: block;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  margin: var(--space-6);
+  padding: var(--space-1);
+}
+.cover-letter-content::-webkit-scrollbar {
+  width: 10px;
+}
+.cover-letter-content::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+}
+.cover-letter-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+}
+.cover-letter-content::-webkit-scrollbar-thumb:hover {
+  background: var(--meta);
+}
+.cover-letter-content:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.cover-letter-raw {
+  margin: 0;
+  padding: var(--space-6);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-warm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--fg-2);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  line-height: 1.75;
+}
+.cover-letter-item {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-warm);
+}
+.cover-letter-item + .cover-letter-item {
+  margin-top: var(--space-4);
+}
+.cover-letter-item h3 {
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+.cover-letter-item p {
+  padding: var(--space-5);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: 1.75;
+}
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: 1fr;
@@ -656,5 +851,27 @@ h2 {
     text-align: left;
   }
 
+  .cover-letter-dialog {
+    width: calc(100vw - 24px);
+    height: calc(100dvh - 32px);
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    border-radius: 24px;
+  }
+  .cover-letter-dialog-panel {
+    max-height: calc(100dvh - 32px);
+  }
+  .cover-letter-dialog-head {
+    padding: var(--space-5);
+  }
+  .cover-letter-content {
+    margin: var(--space-4);
+    padding: var(--space-1);
+  }
+  .cover-letter-item h3,
+  .cover-letter-item p,
+  .cover-letter-raw {
+    padding: var(--space-4);
+  }
 }
 </style>

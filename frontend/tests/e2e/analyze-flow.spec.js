@@ -23,6 +23,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
+      expect(body.submitted_cover_letter_items).toEqual([{
+        question: '지원동기',
+        answer: '제출했던 자기소개서 답변',
+      }])
       expect(body.selected_interview_types).toEqual(['technical', 'personality', 'etc'])
       expect(body.interview_type_etc_text).toBe('임원 과제 리뷰')
       await route.fulfill({ status: 201, json: { id: 99 } })
@@ -62,45 +66,45 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
-  await page.getByRole('link', { name: '자기소개서 입력 화면' }).click()
-  await expect(page).toHaveURL(/\/analyze\/new$/)
-  await expect(page.getByRole('heading', { name: '어떤 회사에 지원했나요?' })).toBeVisible()
-  await page.goto('/analyze/99')
+  await page.getByRole('button', { name: '제출 자기소개서 확인' }).click()
+  const coverLetterDialog = page.getByRole('dialog', { name: '제출 자기소개서' })
+  await expect(coverLetterDialog).toBeVisible()
+  await expect(coverLetterDialog.getByRole('heading', { name: '지원동기' })).toBeVisible()
+  await expect(coverLetterDialog.locator('.cover-letter-item').first()).toContainText('제출했던 자기소개서 답변')
+  await expect(coverLetterDialog.locator('.cover-letter-item').first()).toContainText('답변의 두 번째 문단입니다.')
+  await expect(coverLetterDialog.getByRole('heading', { name: '직무 역량' })).toBeVisible()
+  await expect(coverLetterDialog.locator('.cover-letter-item').nth(1)).toContainText('API와 DB 최적화 경험이 있습니다.')
+  const coverLetterContent = coverLetterDialog.locator('.cover-letter-content')
+  const scrollState = await coverLetterContent.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }))
+  expect(scrollState.scrollHeight).toBeGreaterThan(scrollState.clientHeight)
+  await coverLetterContent.evaluate((element) => element.scrollTo(0, element.scrollHeight))
+  await expect.poll(() => coverLetterContent.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+  const lastCoverLetterItem = coverLetterDialog.locator('.cover-letter-item').last()
+  await expect(lastCoverLetterItem).toContainText('자기소개서 마지막 답변입니다.')
+  const bottomVisibility = await coverLetterContent.evaluate((container) => {
+    const lastItem = container.querySelector('.cover-letter-item:last-child')
+    const containerRect = container.getBoundingClientRect()
+    const itemRect = lastItem.getBoundingClientRect()
+    return itemRect.bottom <= containerRect.bottom + 1
+  })
+  expect(bottomVisibility).toBe(true)
+  await expect(coverLetterDialog.getByText('분석 입력 자료')).toHaveCount(0)
+  await expect(coverLetterDialog.getByText('분석 당시 제출본')).toHaveCount(0)
+  const dialogBox = await coverLetterDialog.boundingBox()
+  const viewport = page.viewportSize()
+  expect(Math.abs((dialogBox.x + dialogBox.width / 2) - viewport.width / 2)).toBeLessThan(3)
+  expect(Math.abs((dialogBox.y + dialogBox.height / 2) - viewport.height / 2)).toBeLessThan(3)
+  await expect(page).toHaveURL(/\/analyze\/99$/)
+  await coverLetterDialog.getByRole('button', { name: '자기소개서 닫기' }).click()
+  await expect(coverLetterDialog).toBeHidden()
   await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
   await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
   await page.getByLabel('EtherCAT').check()
   await page.reload()
   await expect(page.getByLabel('EtherCAT')).toBeChecked()
-})
-
-test('cover letter profile save request contains question and answer', async ({ page }) => {
-  await mockCompanySearch(page)
-  await mockManualPosting(page)
-  await page.route('**/api/analyze/', async route => {
-    await route.fulfill({ status: 201, json: { id: 99 } })
-  })
-  let savedCoverLetters = null
-  await page.route('**/api/profile/', async route => {
-    if (route.request().method() === 'PUT') {
-      savedCoverLetters = route.request().postDataJSON().cover_letters
-      await route.fulfill({ status: 200, json: { cover_letters: savedCoverLetters } })
-    } else {
-      await route.fulfill({ json: { cover_letters: [] } })
-    }
-  })
-
-  await fillManualPosting(page)
-  await page.locator('#next-step-btn').click()
-  await page.locator('.cover-question-input').fill('직무 역량을 설명해 주세요')
-  await page.locator('.cover-answer-input').fill('백엔드 API와 DB 최적화 경험이 있습니다.')
-  await page.locator('#next-cover-letter-btn').click()
-
-  expect(savedCoverLetters).toEqual([
-    {
-      question: '직무 역량을 설명해 주세요',
-      answer: '백엔드 API와 DB 최적화 경험이 있습니다.',
-    },
-  ])
 })
 
 test('analyze flow accepts company-only fallback job without criterion warning', async ({ page }) => {
@@ -225,6 +229,12 @@ async function mockProfileSave(page) {
 
 async function mockAnalysisResult(page) {
   await page.route('**/api/analyze/99/', async route => {
+    const longAnswer = [
+      '제출했던 자기소개서 답변',
+      '답변의 두 번째 문단입니다.',
+      ...Array.from({ length: 28 }, (_, index) => `긴 답변 내용 ${index + 1}번째 줄입니다.`),
+    ].join('\n')
+
     await route.fulfill({
       json: {
         id: 99,
@@ -232,6 +242,22 @@ async function mockAnalysisResult(page) {
         job_title: '백엔드 개발자',
         selected_interview_types: ['technical'],
         interview_type_etc_text: '임원 과제 리뷰',
+        submitted_cover_letter: [
+          'Q. 지원동기',
+          'A. 제출했던 자기소개서 답변',
+          '',
+          '답변의 두 번째 문단입니다.',
+          '',
+          'Q. 직무 역량',
+          'A. API와 DB 최적화 경험이 있습니다.',
+        ].join('\n'),
+        submitted_cover_letter_items: [{
+          question: '지원동기',
+          answer: longAnswer,
+        }, {
+          question: '직무 역량',
+          answer: 'API와 DB 최적화 경험이 있습니다.\n\n자기소개서 마지막 답변입니다.',
+        }],
         competency_gap: {
           summary: 'API 개선 경험은 강점이고 시스템 설계 지식은 우선 보완이 필요합니다.',
           competency_map: [{

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-24T02:32:38.382Z",
+  "updatedAt": "2026-06-24T02:57:17.542Z",
+  "briefPath": ".omo/ulw-loop/graphrag-company-kg-wave1/brief.md",
+  "goalsPath": ".omo/ulw-loop/graphrag-company-kg-wave1/goals.json",
+  "ledgerPath": ".omo/ulw-loop/graphrag-company-kg-wave1/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-implement-wave-1-of-omo-plans-graphr",
+      "title": "Implement Wave 1 of .omo/plans/graphrag-company-kg.md only, preservin...",
+      "objective": "Implement Wave 1 of .omo/plans/graphrag-company-kg.md only, preserving user changes and following plan order.",
+      "status": "in_progress",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "Wave 1 happy path: T1-T4 targeted backend pytest passes after RED tests are made green; artifacts include task-1.md through task-4.md with command outputs and DB/model assertions.",
+          "userModel": "happy",
+          "expectedEvidence": ".omo/evidence/graphrag-company-kg/task-1.md; .omo/evidence/graphrag-company-kg/task-2.md; .omo/evidence/graphrag-company-kg/task-3.md; .omo/evidence/graphrag-company-kg/task-4.md",
+          "essential": true,
+          "capturedEvidence": "T1-T4 evidence docs exist: task-1.md task-2.md task-3.md task-4.md; targeted pytest 24 passed; full backend pytest 59 passed; makemigrations check no changes detected | cleanup: closed workers 019ef77a-e1b2-7052-a0d1-3b4a2e5eb6b0 and 019ef781-8044-76a1-9cd6-6fe6ddddc23f; stopped curl QA django/mock LLM processes per wave1-api-curl-qa.txt",
+          "status": "pass",
+          "capturedAt": "2026-06-24T02:57:17.411Z"
+        },
+        {
+          "id": "C002",
+          "scenario": "Wave 1 edge/adversarial path: analysis request missing company/posting returns 400; private profile/cover-letter data is not promoted to public company knowledge facts/chunks; user_private_candidate facts are rejected.",
+          "userModel": "edge",
+          "expectedEvidence": ".omo/evidence/graphrag-company-kg/wave1-edge-qa.txt plus per-task evidence references",
+          "essential": true,
+          "capturedEvidence": "curl missing company/posting returned HTTP/1.1 400 with company_id and job_posting keys; DB no-leak QA returned chunk_leak=False fact_leak=False; private candidate fact validation covered by companies/tests/test_company_knowledge.py | cleanup: no persistent DB QA runtime; curl QA django/mock LLM processes stopped per wave1-api-curl-qa.txt",
+          "status": "pass",
+          "capturedAt": "2026-06-24T02:57:17.542Z"
+        },
+        {
+          "id": "C003",
+          "scenario": "Wave 1 regression path: existing legacy job_id analysis tests and company/job-posting tests still pass while new no-job contract is added compatibly.",
+          "userModel": "regression",
+          "expectedEvidence": ".omo/evidence/graphrag-company-kg/wave1-regression-pytest.txt",
+          "essential": false,
+          "capturedEvidence": "Regression backend pytest passed: 59 passed in wave1-regression-pytest.txt; legacy job_id tests remained green while new no-Job contract was added compatibly | cleanup: no test server remained; netstat showed only TIME_WAIT for 18080/18081",
+          "status": "pass",
+          "capturedAt": "2026-06-24T02:57:17.485Z"
+        }
+      ],
+      "attempt": 1,
+      "createdAt": "2026-06-24T02:32:38.382Z",
+      "updatedAt": "2026-06-24T02:57:17.542Z",
+      "startedAt": "2026-06-24T02:32:52.921Z"
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/graphrag-company-kg-wave1/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/graphrag-company-kg-wave1/ledger.jsonl as the audit trail.",
+  "activeGoalId": "G001-implement-wave-1-of-omo-plans-graphr"
+}

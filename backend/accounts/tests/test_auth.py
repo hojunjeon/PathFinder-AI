@@ -61,6 +61,22 @@ def test_profile_put(client, user):
 
 
 @pytest.mark.django_db
+def test_profile_api_ignores_cover_letters_as_profile_data(client, user):
+    client.force_authenticate(user=user)
+
+    get_resp = client.get('/api/profile/')
+    put_resp = client.put('/api/profile/', {
+        'cover_letters': [{'question': '직무별 문항', 'answer': '분석 단계 전용'}],
+    }, format='json')
+
+    user.profile.refresh_from_db()
+    assert get_resp.status_code == 200
+    assert put_resp.status_code == 200
+    assert 'cover_letters' not in get_resp.data
+    assert 'cover_letters' not in put_resp.data
+
+
+@pytest.mark.django_db
 def test_profile_auth_path_still_supported(client, user):
     client.force_authenticate(user=user)
     resp = client.get('/api/auth/profile/')

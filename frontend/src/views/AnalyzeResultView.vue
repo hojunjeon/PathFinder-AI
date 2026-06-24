@@ -78,6 +78,26 @@
           <!-- Competency Gap List -->
           <CompetencyGap :gap="analysis.competency_gap || {}" />
 
+          <!-- Evidence Coverage Section -->
+          <section class="section-card" id="scores" data-od-id="result-scores">
+            <div class="section-head">
+              <div>
+                <h2>근거 커버리지</h2>
+                <p class="section-description">준비 항목이 공고, 프로필, 자소서, 기업 fact 중 어떤 근거를 추적하는지 확인합니다.</p>
+              </div>
+              <span class="section-note">source/fact 추적</span>
+            </div>
+            <div class="scores">
+              <div class="score-row" v-for="score in evidenceCoverageRows" :key="score.name">
+                <span class="score-name">{{ score.name }}</span>
+                <div class="bar">
+                  <div :class="['bar-fill', score.colorClass]" :style="{ width: score.value + '%' }"></div>
+                </div>
+                <span class="score-val">{{ score.value }}%</span>
+              </div>
+            </div>
+          </section>
+
           <!-- Roadmap Checklist Timeline -->
           <section class="section-card" id="roadmap" data-od-id="result-roadmap">
             <div class="section-head">
@@ -104,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api'
 import CompetencyGap from '../components/result/CompetencyGap.vue'
@@ -118,6 +138,7 @@ const activeSection = ref('summary')
 const pageSections = [
   { id: 'summary', label: '분석 요약' },
   { id: 'gap', label: '역량 분석' },
+  { id: 'scores', label: '근거 커버리지' },
   { id: 'roadmap', label: '준비 항목' },
 ]
 const {
@@ -142,6 +163,28 @@ function formatDate(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr)
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
+}
+
+const evidenceCoverageRows = computed(() => {
+  const rows = roadmapItems.value.map((category) => {
+    const total = category.subtopics.length
+    const covered = category.subtopics.filter(hasEvidenceTrace).length
+    const value = total ? Math.round((covered / total) * 100) : 0
+    return {
+      name: category.category,
+      value,
+      colorClass: value >= 70 ? '' : value >= 40 ? 'mid' : 'low',
+    }
+  })
+  return rows.length ? rows : [{ name: '준비 항목', value: 0, colorClass: 'low' }]
+})
+
+function hasEvidenceTrace(subtopic) {
+  return Boolean(
+    subtopic.evidence?.trim()
+    || subtopic.source_ids?.length
+    || subtopic.experience_connection?.evidence?.trim()
+  )
 }
 
 // Sidebar Active Navigation on Scroll
@@ -494,6 +537,47 @@ h2 {
   font-size: var(--text-sm);
 }
 
+.scores {
+  display: grid;
+  gap: var(--space-4);
+}
+.score-row {
+  display: grid;
+  grid-template-columns: 240px 1fr 44px;
+  gap: var(--space-4);
+  align-items: center;
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+}
+.score-name {
+  font-weight: 500;
+  word-break: keep-all;
+}
+.bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--border-soft);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.5s ease-out;
+}
+.bar-fill.mid {
+  background: var(--warn);
+}
+.bar-fill.low {
+  background: var(--danger);
+}
+.score-val {
+  text-align: right;
+  font-family: var(--font-mono);
+  color: var(--fg);
+  font-weight: 600;
+}
+
 .roadmap-text {
   white-space: pre-wrap;
   font-family: inherit;
@@ -537,6 +621,14 @@ h2 {
   h2 {
     font-size: var(--text-lg);
     line-height: 1.25;
+  }
+
+  .score-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  .score-val {
+    text-align: left;
   }
 
 }

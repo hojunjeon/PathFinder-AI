@@ -1,0 +1,13 @@
+﻿HTTP/1.1 400 Bad Request
+Date: Wed, 24 Jun 2026 03:38:57 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 84
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"company_id":["This field is required."],"job_posting":["This field is required."]}

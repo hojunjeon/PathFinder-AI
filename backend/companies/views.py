@@ -178,10 +178,6 @@ class ManualJobPostingView(APIView):
 
         raw_text = build_manual_job_posting_text(data)
         jobs = match_jobs_for_manual_posting(company, data['job_title'])
-        if not jobs.exists():
-            fallback_job = create_manual_fallback_job(company, data, raw_text)
-            jobs = company.jobs.filter(pk=fallback_job.pk)
-
         posting = JobPosting.objects.create(
             user=request.user,
             company=company,
@@ -341,19 +337,6 @@ def match_jobs_for_manual_posting(company: Company, job_title: str):
         query |= Q(job_title__icontains=keyword)
     matched = jobs.filter(query)
     return matched if matched.exists() else jobs
-
-
-def create_manual_fallback_job(company: Company, data, raw_text: str):
-    job_title = data['job_title'].strip() or f'{company.company_name} 직무'
-    return Job.objects.create(
-        company=company,
-        job_title=job_title,
-        job_description=raw_text,
-        required_skills=[],
-        preferred_qualifications=[],
-        recommended_study_areas=[],
-        interview_stages=[],
-    )
 
 
 def infer_job_keywords(job_title: str):

@@ -1,0 +1,13 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0
+django: version: 5.2.15, settings: config.settings (from ini)
+rootdir: C:\Users\SSAFY\Desktop\t08_project\backend
+configfile: pytest.ini
+plugins: anyio-4.13.0, django-4.12.0
+collected 4 items
+
+accounts\tests\test_auth.py .                                            [ 25%]
+analysis\tests\test_analysis.py ..                                       [ 75%]
+companies\tests\test_companies.py .                                      [100%]
+
+============================= 4 passed in 10.93s ==============================

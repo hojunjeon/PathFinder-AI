@@ -22,6 +22,23 @@
       </section>
     </div>
 
+    <section v-if="hasTraceDetail" class="trace-section">
+      <div v-if="subtopic.evidence" class="trace-block">
+        <span class="block-label">근거</span>
+        <p>{{ subtopic.evidence }}</p>
+      </div>
+      <div v-if="subtopic.study_goal" class="trace-block">
+        <span class="block-label">학습 기준</span>
+        <p>{{ subtopic.study_goal }}</p>
+      </div>
+      <div v-if="subtopic.source_ids?.length" class="trace-block">
+        <span class="block-label">출처 ID</span>
+        <div class="source-list">
+          <span v-for="sourceId in subtopic.source_ids" :key="sourceId">{{ sourceId }}</span>
+        </div>
+      </div>
+    </section>
+
     <section v-if="subtopic.study_focus.length" class="focus-section">
       <span class="block-label">핵심 개념</span>
       <div class="focus-list">
@@ -104,6 +121,9 @@ const preparationLabel = computed(() => ({
 const connection = computed(() => props.subtopic.experience_connection || {})
 const hasExperienceConnection = computed(() =>
   Boolean(connection.value.evidence || connection.value.transferable_point || connection.value.gap)
+)
+const hasTraceDetail = computed(() =>
+  Boolean(props.subtopic.evidence || props.subtopic.study_goal || props.subtopic.source_ids?.length)
 )
 
 function questionTypeLabel(type) {
@@ -190,10 +210,37 @@ h4 {
   font-size: var(--text-xs);
 }
 .gap-text { color: var(--danger) !important; }
-.focus-section, .steps-section, .question-section {
+.trace-section, .focus-section, .steps-section, .question-section {
   margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-soft);
+}
+.trace-section {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.trace-block {
+  min-width: 0;
+}
+.trace-block p {
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.source-list span {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.3;
 }
 .focus-list {
   display: grid;
@@ -334,7 +381,7 @@ details p { margin-top: var(--space-2); }
 details ul { margin: var(--space-2) 0 0; padding-left: var(--space-5); }
 
 @media (max-width: 720px) {
-  .analysis-grid, .focus-list { grid-template-columns: 1fr; }
+  .analysis-grid, .trace-section, .focus-list { grid-template-columns: 1fr; }
   .question-check { grid-template-columns: 20px 1fr; }
   .question-type { grid-column: 2; width: fit-content; }
   .question-text { grid-column: 2; }

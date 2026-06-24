@@ -1,0 +1,17 @@
+﻿Migrations for 'companies':
+  companies\migrations\0007_interviewtype_rolefamily_skill_studyarea_and_more.py
+    + Create model InterviewType
+    + Create model RoleFamily
+    + Create model Skill
+    + Create model StudyArea
+    + Create model CompanySourceDocument
+    + Create model CompanyKnowledgeClaim
+    + Create model CompanySourceChunk
+    + Create model CompanyKnowledgeFact
+    + Create model RoleFamilySkill
+Migrations for 'analysis':
+  analysis\migrations\0006_analysis_company_analysis_job_posting_coverletter_and_more.py
+    + Add field company to analysis
+    + Add field job_posting to analysis
+    + Create model CoverLetter
+    + Add field cover_letter to analysis

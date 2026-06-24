@@ -1,0 +1,25 @@
+﻿curl.exe :   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+At line:16 char:1
++ curl.exe -i http://127.0.0.1:28080/api/health/ 2>&1 | Tee-Object -Fil ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (  % Total    % ... Time   Current:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+                                 Dload  Upload  Total   Spent   Left   Speed
+
+  0      0   0      0   0      0      0      0                              0
+100     16 100     16   0      0   2643      0                              0
+100     16 100     16   0      0   2606      0                              0
+100     16 100     16   0      0   2567      0                              0
+HTTP/1.1 200 OK
+Date: Wed, 24 Jun 2026 03:36:54 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+X-Frame-Options: DENY
+Content-Length: 16
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+Vary: origin
+
+{"status": "ok"}

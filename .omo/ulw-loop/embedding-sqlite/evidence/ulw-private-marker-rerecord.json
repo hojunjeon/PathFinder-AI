@@ -1,0 +1,245 @@
+﻿{
+  "ok": true,
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-24T06:21:56.794Z",
+    "updatedAt": "2026-06-24T06:49:32.151Z",
+    "briefPath": ".omo/ulw-loop/embedding-sqlite/brief.md",
+    "goalsPath": ".omo/ulw-loop/embedding-sqlite/goals.json",
+    "ledgerPath": ".omo/ulw-loop/embedding-sqlite/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-c001-red-green-prove-current-sqlite",
+        "title": "C001 RED/GREEN: prove current SQLite chunk embedding path is missing,...",
+        "objective": "C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then store GMS text-embedding-3-small vectors on CompanySourceChunk with embedding_status transitions and no private data embedded.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/embedding-red-llm.txt + embedding-red-backend.txt captured missing /llm/embeddings and missing companies.embeddings before implementation; embedding-green-llm.txt and embedding-green-backend.txt passed after adding text-embedding-3-small SQLite storage.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:19.269Z",
+            "notes": "RED/GREEN proof for embedding setup"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st....",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/embedding-green-llm.txt includes missing GMS_KEY returns 503 instead of mock/polluting vectors.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:19.353Z",
+            "notes": "GMS unavailable boundary"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st....",
+            "essential": false,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/backend-full-pytest-final.txt shows 81 passed; llm-server-full-pytest.txt shows 19 passed.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:19.431Z",
+            "notes": "Regression suite"
+          }
+        ],
+        "attempt": 1,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:49:13.8676239Z",
+        "startedAt": "2026-06-24T06:39:57.734Z",
+        "completedAt": "2026-06-24T06:49:13.8676239Z"
+      },
+      {
+        "id": "G002-c002-retrieval-prove-sqlite-vector-s",
+        "title": "C002 Retrieval: prove SQLite vector search/ranking works locally with...",
+        "objective": "C002 Retrieval: prove SQLite vector search/ranking works locally without pgvector, falling back safely when embeddings are missing or GMS is unavailable.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 2.",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/embedding-query-text-green-backend.txt shows search_company_source_chunks_by_text embeds query through /llm/embeddings and ranks SQLite JSONField vectors.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:57.255Z",
+            "notes": "GMS query embedding plus SQLite ranking"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve....",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/embedding-green-llm.txt covers missing GMS_KEY 503; embedding-green-backend.txt covers stored vector parsing and SQLite search behavior.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:57.340Z",
+            "notes": "Boundary behavior"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve....",
+            "essential": false,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/django-check.txt and backend-full-pytest-final.txt passed after retrieval change.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:57.414Z",
+            "notes": "Adjacent regression"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:49:13.8676239Z",
+        "completedAt": "2026-06-24T06:49:13.8676239Z"
+      },
+      {
+        "id": "G003-c003-surface-qa-drive-a-real-cli-dja",
+        "title": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenari...",
+        "objective": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that creates a public source chunk, embeds it via a mocked GMS embeddings response, queries it, and captures DB state/output plus cleanup receipt.",
+        "status": "complete",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 3.",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt shows real Django shell created public source chunk, called /llm/embeddings for chunk and query, stored vector, searched top hit score 1.0.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:57.483Z",
+            "notes": "Surface QA"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+            "essential": true,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:49:32.151Z",
+            "notes": "Private marker leakage and cleanup reverified"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+            "essential": false,
+            "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/git-diff-check.txt exit 0; changed-file-loc.txt records changed file pure LOC.",
+            "status": "pass",
+            "capturedAt": "2026-06-24T06:39:57.618Z",
+            "notes": "Hygiene regression"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:49:32.151Z",
+        "completedAt": "2026-06-24T06:49:13.8676239Z"
+      }
+    ],
+    "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/embedding-sqlite/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/embedding-sqlite/ledger.jsonl as the audit trail."
+  },
+  "goal": {
+    "id": "G003-c003-surface-qa-drive-a-real-cli-dja",
+    "title": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenari...",
+    "objective": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that creates a public source chunk, embeds it via a mocked GMS embeddings response, queries it, and captures DB state/output plus cleanup receipt.",
+    "status": "complete",
+    "successCriteria": [
+      {
+        "id": "C001",
+        "scenario": "happy path for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c...",
+        "userModel": "happy",
+        "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 3.",
+        "essential": true,
+        "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt shows real Django shell created public source chunk, called /llm/embeddings for chunk and query, stored vector, searched top hit score 1.0.",
+        "status": "pass",
+        "capturedAt": "2026-06-24T06:39:57.483Z",
+        "notes": "Surface QA"
+      },
+      {
+        "id": "C002",
+        "scenario": "edge case (boundary/empty/malformed)",
+        "userModel": "edge",
+        "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+        "essential": true,
+        "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+        "status": "pass",
+        "capturedAt": "2026-06-24T06:49:32.151Z",
+        "notes": "Private marker leakage and cleanup reverified"
+      },
+      {
+        "id": "C003",
+        "scenario": "regression: adjacent surface still works",
+        "userModel": "regression",
+        "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+        "essential": false,
+        "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/git-diff-check.txt exit 0; changed-file-loc.txt records changed file pure LOC.",
+        "status": "pass",
+        "capturedAt": "2026-06-24T06:39:57.618Z",
+        "notes": "Hygiene regression"
+      }
+    ],
+    "attempt": 0,
+    "createdAt": "2026-06-24T06:21:56.794Z",
+    "updatedAt": "2026-06-24T06:49:32.151Z",
+    "completedAt": "2026-06-24T06:49:13.8676239Z"
+  },
+  "criterion": {
+    "id": "C002",
+    "scenario": "edge case (boundary/empty/malformed)",
+    "userModel": "edge",
+    "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+    "essential": true,
+    "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+    "status": "pass",
+    "capturedAt": "2026-06-24T06:49:32.151Z",
+    "notes": "Private marker leakage and cleanup reverified"
+  },
+  "ledgerEntry": {
+    "at": "2026-06-24T06:49:32.151Z",
+    "kind": "evidence_captured",
+    "goalId": "G003-c003-surface-qa-drive-a-real-cli-dja",
+    "criterionId": "C002",
+    "criterionStatus": "pass",
+    "evidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+    "capturedEvidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+    "before": {
+      "status": "pass"
+    },
+    "after": {
+      "goalId": "G003-c003-surface-qa-drive-a-real-cli-dja",
+      "criterionId": "C002",
+      "status": "pass",
+      "evidence": ".omo/ulw-loop/embedding-sqlite/evidence/sqlite-embedding-surface-qa.txt creates a private JobPosting marker and shows private_marker_in_public_source=false, private_marker_in_source_chunk=false, embedded_private_chunk_candidates=false; cleanup-receipt.txt shows no QA rows/processes remain.",
+      "capturedAt": "2026-06-24T06:49:32.151Z",
+      "prevStatus": "pass"
+    }
+  },
+  "summary": {
+    "total": 3,
+    "pending": 0,
+    "in_progress": 0,
+    "complete": 3,
+    "failed": 0,
+    "blocked": 0,
+    "review_blocked": 0,
+    "needs_user_decision": 0,
+    "superseded": 0,
+    "criteria": {
+      "total": 9,
+      "pass": 9,
+      "pending": 0,
+      "fail": 0,
+      "blocked": 0
+    }
+  }
+}

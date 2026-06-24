@@ -135,11 +135,7 @@ async function matchPosting() {
     }
     company.value = data.company
     const selectedJob = resolveSelectedJob(data)
-    if (!selectedJob) {
-      errorMsg.value = '입력한 직무와 연결할 수 있는 기준 직무가 없습니다. 직무명을 더 일반적인 표현으로 입력해 주세요.'
-      return
-    }
-    emitNext(String(selectedJob.id), selectedJob)
+    emitNext(selectedJob, data.job_posting)
   } catch (e) {
     errorMsg.value = e.response?.data?.message || '입력한 회사명을 지원 기업 DB에서 찾지 못했습니다.'
   } finally {
@@ -157,16 +153,32 @@ function resolveSelectedJob(data) {
   return jobs.find(job => String(job.id) === String(matchedId)) || data.matched_job || jobs[0] || null
 }
 
-function emitNext(jobId, job) {
+function emitNext(matchedJob, savedPosting) {
   emit('next', {
     url: '',
     company: company.value,
-    jobId,
-    job,
+    job: matchedJob || buildEnteredJobSummary(),
+    job_posting_id: savedPosting?.id || null,
+    job_posting: buildJobPostingPayload(),
     job_posting_text: buildPostingText(),
     selected_interview_types: [...selectedInterviewTypes.value],
     interview_type_etc_text: selectedInterviewTypes.value.includes('etc') ? interviewTypeEtcText.value.trim() : '',
   })
+}
+
+function buildEnteredJobSummary() {
+  return {
+    job_title: form.job_title.trim(),
+  }
+}
+
+function buildJobPostingPayload() {
+  return {
+    job_title: form.job_title.trim(),
+    responsibilities: form.responsibilities.trim(),
+    requirements: form.requirements.trim(),
+    preferred_qualifications: form.preferred_qualifications.trim(),
+  }
 }
 
 function buildPostingText() {

@@ -1,0 +1,28 @@
+﻿  56: def test_profile_put(client, user):
+  57:     client.force_authenticate(user=user)
+  58:     resp = client.put('/api/profile/', {'name': '홍길동', 'major': '컴퓨터공학'})
+  59:     assert resp.status_code == 200
+  60:     assert resp.data['name'] == '홍길동'
+  61: 
+  62: 
+  63: @pytest.mark.django_db
+  64: def test_profile_api_ignores_cover_letters_as_profile_data(client, user):
+  65:     client.force_authenticate(user=user)
+  66: 
+  67:     get_resp = client.get('/api/profile/')
+  68:     put_resp = client.put('/api/profile/', {
+  69:         'cover_letters': [{'question': '직무별 문항', 'answer': '분석 단계 전용'}],
+  70:     }, format='json')
+  71: 
+  72:     user.profile.refresh_from_db()
+  73:     assert get_resp.status_code == 200
+  74:     assert put_resp.status_code == 200
+  75:     assert 'cover_letters' not in get_resp.data
+  76:     assert 'cover_letters' not in put_resp.data
+  77: 
+  78: 
+  79: @pytest.mark.django_db
+  80: def test_profile_auth_path_still_supported(client, user):
+  81:     client.force_authenticate(user=user)
+  82:     resp = client.get('/api/auth/profile/')
+  83:     assert resp.status_code == 200

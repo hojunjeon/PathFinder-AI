@@ -12,7 +12,6 @@ const requiredFiles = [
   'src/views/DashboardView.vue',
   'src/components/profile/CareerForm.vue',
   'src/components/profile/ProjectForm.vue',
-  'src/components/profile/CoverLetterForm.vue',
   'src/components/analyze/StepJobUrl.vue',
   'src/components/analyze/StepCoverLetter.vue',
   'src/components/analyze/StepInterviewType.vue',
@@ -34,14 +33,18 @@ for (const route of ['/login', '/profile', '/analyze/new', '/analyze/:id', '/his
 const profile = read('src/views/ProfileView.vue')
 assert(profile.includes("api.get('/api/profile/')"), 'ProfileView must use /api/profile/ GET')
 assert(profile.includes("api.put('/api/profile/'"), 'ProfileView must use /api/profile/ PUT')
+assert(!profile.includes('CoverLetterForm'), 'ProfileView must not edit cover letters')
+assert(!profile.includes('cover_letters'), 'ProfileView must not persist cover letters')
 
 const stepJobUrl = read('src/components/analyze/StepJobUrl.vue')
 assert(stepJobUrl.includes('/api/job-postings/manual/'), 'StepJobUrl must save manual postings through backend')
 assert(!stepJobUrl.includes("'kakao':"), 'StepJobUrl must not hard-code company URL aliases')
 
 const analyzeCreate = read('src/views/AnalyzeCreateView.vue')
-assert(analyzeCreate.includes("api.put('/api/profile/'"), 'AnalyzeCreateView must save cover letters through profile API')
-assert(analyzeCreate.includes('cover_letters'), 'AnalyzeCreateView must pass structured cover letters')
+assert(!analyzeCreate.includes("api.put('/api/profile/'"), 'AnalyzeCreateView must not save cover letters through profile API')
+assert(!analyzeCreate.includes('job_id:'), 'AnalyzeCreateView must use company_id plus job_posting, not legacy job_id')
+assert(analyzeCreate.includes('company_id:'), 'AnalyzeCreateView must submit selected company_id')
+assert(analyzeCreate.includes('job_posting:'), 'AnalyzeCreateView must submit structured job_posting')
 
 const result = read('src/views/AnalyzeResultView.vue')
 assert(result.includes('CompetencyGap'), 'AnalyzeResultView must render CompetencyGap')

@@ -1,0 +1,5 @@
+﻿8b97faa chore: cleanup temporary omx files
+fa806e2 fix(analyze): allow company-only roadmap posting
+31606e4 refactor(analyze): split roadmap posting form controls
+f2d1329 fix(analyze): remove separate roadmap match button
+1e4edb0 feat(roadmap): 지원 기업 기반 생성 흐름 개선

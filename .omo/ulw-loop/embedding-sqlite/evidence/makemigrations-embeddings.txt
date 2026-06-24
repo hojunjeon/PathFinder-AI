@@ -1,0 +1,6 @@
+﻿Migrations for 'companies':
+  companies\migrations\0009_source_chunk_embeddings.py
+    + Add field embedded_at to companysourcechunk
+    + Add field embedding_error to companysourcechunk
+    + Add field embedding_model to companysourcechunk
+    + Add field embedding_vector to companysourcechunk

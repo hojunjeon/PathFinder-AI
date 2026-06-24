@@ -1,0 +1,69 @@
+﻿Wave 1 curl API QA
+
+Operations to perform:
+  Apply all migrations: accounts, admin, analysis, auth, community, companies, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+company_id=508 company_name=Wave1QA기업1782269701662 email=wave1qa1782269701662@test.com
+
+# health
+HTTP/1.1 200 OK
+Date: Wed, 24 Jun 2026 02:55:06 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+X-Frame-Options: DENY
+Content-Length: 16
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+Vary: origin
+
+{"status": "ok"}
+
+# signup
+HTTP/1.1 201 Created
+Date: Wed, 24 Jun 2026 02:55:06 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 489
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"access":"[redacted]","refresh":"[redacted]"}
+
+# analyze happy path
+HTTP/1.1 201 Created
+Date: Wed, 24 Jun 2026 02:55:07 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 489
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"id":6,"company_name":"Wave1QA기업1782269701662","job_title":"AI 서비스 백엔드 엔지니어","job_posting_url":"","selected_interview_types":["technical"],"interview_type_etc_text":"","competency_gap":{"strengths":["curl API QA"],"gaps":["GraphRAG 운영"]},"text_roadmap":"curl 기반 Wave 1 QA 로드맵","timeline_data":[{"week":1,"title":"GraphRAG API 계약 검증","tasks":["회사+공고+자소서 분석"]}],"status":"done","created_at":"2026-06-24T11:55:06.961212+09:00"}
+
+# analyze missing company/posting failure path
+HTTP/1.1 400 Bad Request
+Date: Wed, 24 Jun 2026 02:55:07 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 84
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"company_id":["This field is required."],"job_posting":["This field is required."]}
+
+cleanup: stopping django pid=3648; stopping mock_llm pid=16588; temp request JSON kept as evidence
+

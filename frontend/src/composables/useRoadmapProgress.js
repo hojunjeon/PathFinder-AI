@@ -148,6 +148,7 @@ function normalizeSubtopic(subtopic, subtopicIdx) {
     job_reason: subtopic.job_reason || subtopic.jobReason || subtopic.why || '',
     matched_experience: matchedExperience || '',
     experience_source: subtopic.experience_source || subtopic.experienceSource || '',
+    source_ids: normalizeStringList(subtopic.source_ids || subtopic.sourceIds),
     experience_connection: normalizeExperienceConnection(
       subtopic.experience_connection || subtopic.experienceConnection,
       matchedExperience,
@@ -243,6 +244,7 @@ function normalizeLegacyItem(item, itemIdx) {
       why: '',
       evidence: '',
       study_goal: '',
+      source_ids: [],
       preparation_type: 'study',
       job_reason: '',
       matched_experience: '',

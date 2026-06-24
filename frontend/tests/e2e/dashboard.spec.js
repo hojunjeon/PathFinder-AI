@@ -23,6 +23,6 @@ test('dashboard loads data, renders charts, filters, toggles dark mode, and expo
   const download = await downloadPromise
   expect(download.suggestedFilename()).toBe('industry-salary-chart.png')
 
-  await page.getByRole('button', { name: '🌙' }).click()
+  await page.getByRole('button', { name: 'Dark' }).click()
   await expect(page.locator('.app-shell')).toHaveClass(/dark/)
 })

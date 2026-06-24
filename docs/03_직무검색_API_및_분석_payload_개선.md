@@ -1,5 +1,7 @@
 # 직무 검색 API 및 분석 Payload 개선 계획
 
+> 현재 GraphRAG 기업 KG 전환 후 로드맵 분석의 기준 계약은 `docs/10_GraphRAG_기업_KG_구현.md`를 따른다. 이 문서의 `Job.required_experience_years`, `annual_salary_krw`, `applicant_count` 기반 prompt 예시는 과거 구현 기록이며, 현재 LLM prompt에는 포함하지 않는다.
+
 ## 목적
 
 사전 구축한 대기업 이공계 엔지니어링 직무 데이터 10,000건을 실제 분석 기능에 연결하기 위한 백엔드 개선 계획이다.

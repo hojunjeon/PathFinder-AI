@@ -1,0 +1,18 @@
+﻿accounts
+ [X] 0001_initial
+ [ ] 0002_remove_profile_cover_letters
+companies
+ [X] 0001_initial
+ [X] 0002_jobposting
+ [X] 0003_jobposting_manual_fields
+ [X] 0004_seed_large_company_data
+ [X] 0005_seed_jobs_careers_if_empty
+ [X] 0006_company_roadmap_supported
+ [X] 0007_interviewtype_rolefamily_skill_studyarea_and_more
+analysis
+ [X] 0001_initial
+ [X] 0002_analysis_competency_gap
+ [X] 0003_analysis_job_posting_text
+ [X] 0004_analysis_job_posting_url_blank
+ [X] 0005_analysis_interview_type_etc_text
+ [X] 0006_analysis_company_analysis_job_posting_coverletter_and_more

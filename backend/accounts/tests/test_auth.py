@@ -19,16 +19,53 @@ def user(db):
 
 @pytest.mark.django_db
 def test_signup(client):
-    resp = client.post('/api/auth/signup/', {'email': 'new@test.com', 'password': 'pass1234!'})
+    resp = client.post('/api/auth/signup/', {
+        'name': '홍길동',
+        'email': 'new@test.com',
+        'password': 'pass1234!',
+        'password_confirm': 'pass1234!',
+    })
     assert resp.status_code == 201
     assert 'access' in resp.data
-    assert User.objects.filter(email='new@test.com').exists()
+    user = User.objects.get(email='new@test.com')
+    assert user.profile.name == '홍길동'
 
 
 @pytest.mark.django_db
 def test_signup_duplicate_email(client, user):
-    resp = client.post('/api/auth/signup/', {'email': 'user@test.com', 'password': 'pass1234!'})
+    resp = client.post('/api/auth/signup/', {
+        'name': '홍길동',
+        'email': 'user@test.com',
+        'password': 'pass1234!',
+        'password_confirm': 'pass1234!',
+    })
     assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_signup_rejects_password_mismatch(client):
+    resp = client.post('/api/auth/signup/', {
+        'name': '홍길동',
+        'email': 'new@test.com',
+        'password': 'pass1234!',
+        'password_confirm': 'different123!',
+    })
+
+    assert resp.status_code == 400
+    assert 'password_confirm' in resp.data
+    assert not User.objects.filter(email='new@test.com').exists()
+
+
+@pytest.mark.django_db
+def test_signup_requires_account_fields(client):
+    resp = client.post('/api/auth/signup/', {
+        'email': 'new@test.com',
+        'password': 'pass1234!',
+    })
+
+    assert resp.status_code == 400
+    assert 'name' in resp.data
+    assert 'password_confirm' in resp.data
 
 
 @pytest.mark.django_db

@@ -52,13 +52,37 @@
         </div>
 
         <form @submit.prevent="submit">
+          <div v-if="mode === 'signup'" class="field">
+            <label for="name">이름</label>
+            <input id="name" v-model.trim="name" type="text" autocomplete="name" maxlength="50" placeholder="이름 입력" required />
+          </div>
           <div class="field">
             <label for="email">이메일</label>
             <input id="email" v-model="email" type="email" autocomplete="email" placeholder="name@example.com" required />
           </div>
           <div class="field">
             <label for="password">비밀번호</label>
-            <input id="password" v-model="password" type="password" autocomplete="current-password" placeholder="8자 이상 입력" required />
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              :autocomplete="mode === 'login' ? 'current-password' : 'new-password'"
+              minlength="8"
+              placeholder="8자 이상 입력"
+              required
+            />
+          </div>
+          <div v-if="mode === 'signup'" class="field">
+            <label for="password-confirm">비밀번호 확인</label>
+            <input
+              id="password-confirm"
+              v-model="passwordConfirm"
+              type="password"
+              autocomplete="new-password"
+              minlength="8"
+              placeholder="비밀번호 다시 입력"
+              required
+            />
           </div>
           <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
           <button class="btn-primary" id="submit-btn" type="submit" :disabled="loading">
@@ -89,19 +113,32 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const mode = ref('login')
+const name = ref('')
 const email = ref('')
 const password = ref('')
+const passwordConfirm = ref('')
 const errorMsg = ref('')
 const loading = ref(false)
 
 async function submit() {
   errorMsg.value = ''
+
+  if (mode.value === 'signup' && password.value !== passwordConfirm.value) {
+    errorMsg.value = '비밀번호가 일치하지 않습니다.'
+    return
+  }
+
   loading.value = true
   try {
     if (mode.value === 'login') {
       await authStore.login(email.value, password.value)
     } else {
-      await authStore.signup(email.value, password.value)
+      await authStore.signup({
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        passwordConfirm: passwordConfirm.value,
+      })
     }
     router.push('/')
   } catch (e) {

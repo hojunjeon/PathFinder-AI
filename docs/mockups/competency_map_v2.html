@@ -264,18 +264,19 @@
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="분석 결과 설명서">
   <div class="drawer-header">
     <div>
-      <div class="drawer-title">이 분석 결과 읽는 법</div>
+      <div class="drawer-title">분석 결과 페이지 안내</div>
     </div>
     <button class="drawer-close" id="drawerClose" aria-label="닫기">✕</button>
   </div>
-  <p class="drawer-subtitle">PathFinder AI · 역량 분석 #2 가이드</p>
+  <p class="drawer-subtitle">PathFinder AI · 역량 지도 &amp; 액션 플래너 사용 가이드</p>
 
   <div class="guide-section">
     <div class="guide-icon-title">
       <div class="guide-icon indigo">🕸</div>
       <div class="guide-title">역량 레이더 차트</div>
     </div>
-    <p class="guide-desc">파란 채움 영역이 현재 역량, 빨간 점선이 직무 요구 수준입니다. 두 영역의 차이가 클수록 준비가 더 필요한 영역입니다. 축 레이블이나 점을 클릭하면 해당 역량 카드가 강조됩니다.</p>
+    <p class="guide-desc">파란 채움 영역이 <strong>현재 나의 역량</strong>, 빨간 점선이 <strong>직무 요구 수준</strong>입니다. 두 영역의 차이가 클수록 우선 준비가 필요한 영역입니다. 축 레이블이나 점을 클릭하면 해당 역량 카드가 자동으로 강조됩니다.</p>
+    <span class="guide-tip">💡 점선과 채움의 차이가 큰 축에 집중하세요</span>
   </div>
 
   <div class="guide-section">
@@ -283,55 +284,66 @@
       <div class="guide-icon green">📊</div>
       <div class="guide-title">역량 상세 카드</div>
     </div>
-    <p class="guide-desc">각 카드를 클릭하면 수치 근거와 면접 액션이 펼쳐집니다. 왼쪽 색 테두리가 역량 상태를 나타냅니다.</p>
+    <p class="guide-desc">각 카드를 클릭하면 <strong>수치 근거 문장</strong>과 <strong>면접 액션</strong>이 펼쳐집니다. 왼쪽 색 테두리로 역량 상태를 한눈에 파악할 수 있습니다.</p>
     <ul style="padding-left:42px;margin-top:6px;font-size:11.5px;color:var(--text-muted)">
-      <li style="margin-bottom:3px">🟢 <strong>초록</strong> — 어필 가능: 경험이 있고 면접에서 강조할 수 있는 역량</li>
-      <li style="margin-bottom:3px">🟡 <strong>주황</strong> — 답변 정리: 경험은 있으나 설명 보완이 필요한 역량</li>
-      <li>🔴 <strong>빨강</strong> — 학습 필요: 현재 경험 근거가 부족한 역량</li>
+      <li style="margin-bottom:3px">🟢 <strong>초록 (어필 가능)</strong> — 경험 있음, 면접에서 자신 있게 강조 가능</li>
+      <li style="margin-bottom:3px">🟡 <strong>주황 (답변 정리)</strong> — 경험은 있으나 설명 구조 보완 필요</li>
+      <li>🔴 <strong>빨강 (학습 필요)</strong> — 현재 경험 근거 부족, 개념 학습 우선</li>
     </ul>
   </div>
 
   <div class="guide-section">
     <div class="guide-icon-title">
-      <div class="guide-icon gray">⭐</div>
-      <div class="guide-title">수치 점수 안내</div>
+      <div class="guide-icon gray">🔢</div>
+      <div class="guide-title">점수 수치의 의미</div>
     </div>
-    <p class="guide-desc"><strong>내 역량 점수</strong>는 자소서·이력서 경험 근거를 기반으로 AI가 추정한 값이며, <strong>직무 요구 점수</strong>는 채용공고 분석 결과입니다. 정밀 수치가 아닌 상대적 참고 지표입니다.</p>
+    <p class="guide-desc"><strong>내 역량 점수 (파란색)</strong>는 제출한 자소서·이력서의 경험 내용을 AI가 분석해 추정한 상대값입니다. <strong>직무 요구 점수 (빨간색)</strong>는 채용공고의 필수·우대 항목 분석 결과입니다. 두 수치 모두 절대적인 평가가 아닌 <em>상대적 준비 우선순위</em>를 나타냅니다.</p>
+    <span class="guide-tip">💡 수치보다 두 점수의 차이(갭)를 중심으로 읽으세요</span>
   </div>
 
   <div class="guide-section">
     <div class="guide-icon-title">
       <div class="guide-icon green">💪</div>
-      <div class="guide-title">어필 가능 (Strength)</div>
+      <div class="guide-title">어필 가능 역량 활용법</div>
     </div>
-    <p class="guide-desc">이미 경험이 있고 면접에서 강조할 수 있는 역량입니다. 구체적인 수치, 프로젝트 이름, 결과를 함께 말하면 효과적입니다.</p>
-    <span class="guide-tip">💡 STAR 구조로 2분 내 답변 연습 권장</span>
+    <p class="guide-desc">이미 경험이 있고 면접에서 강조할 수 있는 역량입니다. 면접관이 납득할 수 있도록 <strong>구체적인 수치, 프로젝트명, 결과</strong>를 함께 이야기하세요. 추상적 설명보다 사례 중심 답변이 효과적입니다.</p>
+    <span class="guide-tip">💡 Situation → Task → Action → Result (STAR) 구조로 2분 안에 말하는 연습을 권장합니다</span>
   </div>
 
   <div class="guide-section">
     <div class="guide-icon-title">
       <div class="guide-icon amber">📝</div>
-      <div class="guide-title">답변 정리 (Articulate)</div>
+      <div class="guide-title">답변 정리 역량 활용법</div>
     </div>
-    <p class="guide-desc">경험은 있지만 설명이 부족할 수 있는 역량입니다. 개념 정리 → 내 경험 연결 → 구체적 사례 순서로 답변 구조를 미리 잡아두세요.</p>
-    <span class="guide-tip">💡 면접 전날 개념 요약 노트 작성 권장</span>
+    <p class="guide-desc">경험은 있지만 설명이 명확하지 않을 수 있는 역량입니다. <strong>개념 정리 → 내 경험 연결 → 구체적 사례</strong> 순서로 답변 구조를 미리 설계해 두세요. 면접 전날 간단한 요약 노트를 작성하는 것이 도움이 됩니다.</p>
+    <span class="guide-tip">💡 「이 기술이 무엇인지」보다 「내가 어떻게 썼는지」를 중심으로 설명하세요</span>
   </div>
 
   <div class="guide-section">
     <div class="guide-icon-title">
       <div class="guide-icon rose">📚</div>
-      <div class="guide-title">학습 필요 (Study)</div>
+      <div class="guide-title">학습 필요 역량 활용법</div>
     </div>
-    <p class="guide-desc">현재 경험 근거가 부족한 영역입니다. 솔직하게 인정하되, 학습 계획과 관련 개념 이해를 보여주는 것이 좋습니다.</p>
-    <span class="guide-tip">💡 Python 경험과의 유사 개념으로 연결해 설명</span>
+    <p class="guide-desc">현재 경험 근거가 부족한 영역입니다. 면접에서 모르는 것을 무리하게 아는 척하기보다, <strong>솔직하게 인정하고 학습 계획과 관련 개념 이해</strong>를 함께 보여주는 것이 좋은 인상을 줍니다. 이미 알고 있는 유사 기술과 연결 지어 설명하는 것도 효과적입니다.</p>
+    <span class="guide-tip">💡 「아직 경험은 없지만, 개념은 이해하고 있습니다」 + 학습 의지 표현이 유리합니다</span>
   </div>
 
   <div class="guide-section">
     <div class="guide-icon-title">
       <div class="guide-icon indigo">❓</div>
-      <div class="guide-title">질문 &amp; 답변 전략 토글</div>
+      <div class="guide-title">질문 &amp; 답변 전략 패널</div>
     </div>
-    <p class="guide-desc">각 역량 항목 아래 <strong>「질문 &amp; 답변 전략 보기」</strong> 버튼을 클릭하면, 일산로보틱스 기술면접에서 나올 수 있는 예상 질문과 답변 전략, 꼬리질문을 확인할 수 있습니다.</p>
+    <p class="guide-desc">각 역량 항목 아래 <strong>「질문 &amp; 답변 전략 보기」</strong> 버튼을 클릭하면, 해당 직무·기업 면접에서 나올 수 있는 <strong>예상 질문 / 답변 전략 / 꼬리질문</strong>을 확인할 수 있습니다. 내 자소서·이력서를 기반으로 생성된 맞춤형 가이드입니다.</p>
+    <span class="guide-tip">💡 먼저 스스로 답변을 말해보고, 전략 패널과 비교하는 방식으로 연습하세요</span>
+  </div>
+
+  <div class="guide-section">
+    <div class="guide-icon-title">
+      <div class="guide-icon gray">✅</div>
+      <div class="guide-title">체크박스 &amp; 진행률</div>
+    </div>
+    <p class="guide-desc">각 역량 항목의 체크박스를 클릭하면 <strong>준비 완료</strong>로 표시됩니다. 상태는 브라우저에 자동 저장되어 페이지를 닫았다가 다시 열어도 유지됩니다. 열 하단의 진행률 바로 전체 준비 상황을 한눈에 확인할 수 있습니다.</p>
+    <span class="guide-tip">💡 면접 당일 아침, 체크된 항목을 훑어보며 자신감을 높이세요</span>
   </div>
 </aside>
 

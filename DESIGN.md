@@ -2,7 +2,7 @@
 
 ## Source of truth
 - Status: Active
-- Last refreshed: 2026-06-24
+- Last refreshed: 2026-06-25
 - Primary product surfaces: 분석 생성, 역량 분석 결과, 면접 준비 항목
 - Evidence reviewed: `frontend/src/views/AnalyzeResultView.vue`, `frontend/src/components/result/*`, `frontend/src/composables/useRoadmapProgress.js`, `llm_server/roadmap_prompt.py`, `docs/09_분석결과_페이지_가독성_개선.md`, `docs/13_면접_예상질문_AI_결과_설계.md`
 
@@ -141,3 +141,14 @@
   - 새 분석은 `submitted_cover_letter_items`에 입력 당시의 항목과 답변 구조를 함께 보존한다.
   - 기존 분석에 구조화 데이터가 없을 때만 `submitted_cover_letter` 원문을 그대로 표시한다.
   - 분석 히스토리 목록에는 원문을 포함하지 않아 개인정보 노출 범위와 응답 크기를 제한한다.
+## Global navigation account identity contract
+- Goal: 인증된 사용자가 모든 주요 화면에서 현재 로그인 중인 계정을 즉시 확인할 수 있어야 한다.
+- Evidence reviewed: `frontend/src/App.vue`, `frontend/src/style.css`, `frontend/src/stores/auth.js`, `frontend/src/views/ProfileView.vue`, `backend/accounts/serializers.py`.
+- Placement: 주요 메뉴와 테마·로그아웃 제어 사이에 아바타, 이름, 이메일을 묶은 계정 표시를 둔다.
+- Information priority:
+  - 프로필 이름이 있으면 이름을 주 식별자로 표시한다.
+  - 이메일은 보조 식별자로 표시한다.
+  - 이름이 비어 있으면 이메일을 주 식별자로 사용한다.
+- Interaction: 계정 표시는 프로필 화면으로 이동하는 링크이며 접근 가능한 이름은 `현재 로그인 계정 프로필`이다.
+- Responsive behavior: 모바일에서는 계정 표시를 메뉴의 독립된 한 줄로 배치하고 긴 이름과 이메일은 말줄임 처리한다.
+- Data contract: `/api/profile/`은 수정 불가능한 `email`과 수정 가능한 `name`을 함께 제공한다.

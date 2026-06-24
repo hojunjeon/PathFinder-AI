@@ -87,14 +87,22 @@ def test_profile_get(client, user):
     resp = client.get('/api/profile/')
     assert resp.status_code == 200
     assert 'name' in resp.data
+    assert resp.data['email'] == 'user@test.com'
 
 
 @pytest.mark.django_db
 def test_profile_put(client, user):
     client.force_authenticate(user=user)
-    resp = client.put('/api/profile/', {'name': '홍길동', 'major': '컴퓨터공학'})
+    resp = client.put('/api/profile/', {
+        'name': '홍길동',
+        'email': 'changed@test.com',
+        'major': '컴퓨터공학',
+    })
     assert resp.status_code == 200
     assert resp.data['name'] == '홍길동'
+    assert resp.data['email'] == 'user@test.com'
+    user.refresh_from_db()
+    assert user.email == 'user@test.com'
 
 
 @pytest.mark.django_db

@@ -34,18 +34,33 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('#next-cover-letter-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
-  await expect(page.getByText('역량 분석')).toBeVisible()
+  await expect(page.getByRole('heading', { name: '역량 분석' })).toBeVisible()
+  const competencySection = page.locator('#gap')
+  await expect(competencySection.getByText('어필 가능', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('답변 정리', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('학습 필요', { exact: true })).toBeVisible()
+  await expect(page.getByText('API 성능 개선').first()).toBeVisible()
   await expect(page.getByText('시스템 설계').first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: '직무 역량 매칭도' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()
-  await expect(page.getByLabel('역기구학')).toBeChecked()
-  await expect(page.getByLabel('모션 플래닝')).toBeChecked()
-  await expect(page.getByText('40%').first()).toBeVisible()
+  await expect(page.getByText('우선순위 1 · 담당업무')).toBeVisible()
+  await expect(page.getByText('직접 경험', { exact: true })).toBeVisible()
+  await expect(page.getByText('업무 연결').first()).toBeVisible()
+  await expect(page.getByText('내 연결점').first()).toBeVisible()
+  await expect(page.getByText('핵심 개념').first()).toBeVisible()
+  await expect(page.getByText('준비 순서').first()).toBeVisible()
+  await expect(page.getByText('로봇 팔 제어 정확도 개선 경험', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('FK와 IK 차이')).toBeVisible()
+  await expect(page.getByText(/직접 연결 경험 없음/).first()).toBeVisible()
+  await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
+  await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
+  await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
   await page.getByLabel('EtherCAT').check()
-  await expect(page.getByText('60%').first()).toBeVisible()
   await page.reload()
   await expect(page.getByLabel('EtherCAT')).toBeChecked()
-  await expect(page.getByText('60%').first()).toBeVisible()
 })
 
 test('cover letter profile save request contains question and answer', async ({ page }) => {
@@ -208,31 +223,107 @@ async function mockAnalysisResult(page) {
         selected_interview_types: ['technical'],
         interview_type_etc_text: '임원 과제 리뷰',
         competency_gap: {
-          strengths: ['프로젝트 경험'],
-          gaps: ['시스템 설계'],
-          required_competencies: ['Python'],
+          summary: 'API 개선 경험은 강점이고 시스템 설계 지식은 우선 보완이 필요합니다.',
+          competency_map: [{
+            keyword: 'API 성능 개선',
+            status: 'strength',
+            importance: 'required',
+            signal: '성능 개선 프로젝트 경험 있음',
+            action: '병목 분석 과정을 어필',
+          }, {
+            keyword: '기술 선택 근거',
+            status: 'articulate',
+            importance: 'required',
+            signal: '구현 경험은 있으나 선택 이유 부족',
+            action: '트레이드오프 답변 정리',
+          }, {
+            keyword: '시스템 설계',
+            status: 'study',
+            importance: 'preferred',
+            signal: '대규모 설계 경험 근거 없음',
+            action: '분산 구조 우선 학습',
+          }],
+          strengths: [{
+            keyword: '주문 API 성능 개선',
+            experience: '주문 조회 API 개선 프로젝트',
+            evidence: '응답 시간을 비교한 기록이 있습니다.',
+            job_relevance: '대규모 트래픽 처리 업무와 직접 연결됩니다.',
+            interview_focus: '병목 분석 과정과 본인 역할을 강조합니다.',
+          }],
+          gaps: [{
+            keyword: '시스템 설계',
+            gap_type: 'knowledge',
+            reason: '대규모 시스템 설계 경험 근거가 부족합니다.',
+            evidence: '채용공고는 분산 시스템 경험을 우대합니다.',
+            action: '트레이드오프를 포함한 설계 답변을 준비합니다.',
+            priority: 'high',
+          }],
+          required_competencies: [{
+            keyword: 'Python',
+            importance: 'required',
+            evidence: '채용공고 필수 요건입니다.',
+          }],
         },
         text_roadmap: '로보틱스 > 역기구학',
         timeline_data: [
           {
             category: '로보틱스',
-            summary: '프로젝트와 채용공고의 제어 요구가 겹치는 영역입니다.',
+            responsibility: '산업용 로봇 제어 알고리즘 개발',
+            priority: 1,
+            priority_reason: '핵심 업무이며 로봇 팔 제어 경험을 직접 어필할 수 있습니다.',
+            experience_match: 'direct',
+            experience_keywords: ['로봇 팔 제어 정확도 개선 경험'],
+            competency_keywords: ['역기구학', '제어 검증'],
             sources: ['채용공고', '프로젝트 1', '프로젝트 2'],
             subtopics: [
               {
                 title: '역기구학',
                 done: true,
-                why: '로봇 팔 제어 경험을 좌표계, 관절 제한, 특이점 대응까지 연결합니다.',
-                question: '1번 프로젝트에서 역기구학을 어떻게 사용했나요?',
-                answer_guide: '목표 위치 계산과 관절각 산출 흐름을 설명하세요.',
-                evidence: '자기소개서의 로봇 팔 제어 정확도 개선 경험',
-                study_goal: 'FK/IK 차이와 특이점 대응을 설명할 수 있어야 합니다.',
-                follow_up_questions: ['관절 제한은 어느 단계에서 반영했나요?'],
+                preparation_type: 'appeal',
+                job_reason: '로봇 제어 업무의 핵심 지식입니다.',
+                matched_experience: '로봇 팔 제어 정확도 개선 경험',
+                experience_source: '프로필·자기소개서',
+                experience_connection: {
+                  evidence: '로봇 팔 제어 정확도 개선 경험',
+                  transferable_point: '산업용 로봇의 목표 자세 계산과 검증으로 연결할 수 있습니다.',
+                  gap: '특이점 처리 기준을 보완해야 합니다.',
+                },
+                study_focus: [
+                  { keyword: 'FK와 IK 차이', checkpoint: '입력과 출력 비교' },
+                  { keyword: '특이점', checkpoint: '탐지와 회피 방식' },
+                  { keyword: '관절 제한', checkpoint: '해 선택 기준' },
+                  { keyword: 'Jacobian', checkpoint: '수치해석에서의 역할' },
+                ],
+                preparation_steps: ['프로젝트 흐름 정리', '해법 선택 이유 정리', '오차 검증 수치 연결'],
+                questions: [{
+                  type: 'concept',
+                  question: '순기구학과 역기구학의 차이는 무엇인가요?',
+                  done: true,
+                  answer_guide: '입력과 출력, 사용 목적을 비교하세요.',
+                  follow_up_questions: [],
+                }, {
+                  type: 'experience',
+                  question: '프로젝트에서 역기구학을 어떻게 사용했나요?',
+                  done: false,
+                  answer_guide: '문제, 구현, 검증 순서로 설명하세요.',
+                  follow_up_questions: [],
+                }, {
+                  type: 'application',
+                  question: '산업용 로봇에서 특이점을 어떻게 처리하겠습니까?',
+                  done: false,
+                  answer_guide: '탐지, 회피, 안전 제한 순서로 설명하세요.',
+                  follow_up_questions: [],
+                }],
               },
               {
                 title: '모션 플래닝',
                 done: true,
-                why: '물류 로봇 경로 최적화 요구와 프로젝트 경험을 연결합니다.',
+                preparation_type: 'organize',
+                job_reason: '경로 생성과 실시간 재계획 능력을 확인하는 개념입니다.',
+                matched_experience: '경로 탐색 방식의 성능 비교 경험',
+                experience_source: '자기소개서',
+                study_focus: ['A*와 RRT 차이', '비용 함수', '재계획'],
+                approach: '검토한 대안, 선택 기준, 결과를 직무 요구와 연결하세요.',
                 question: 'A가 아니라 B 방식을 채택한 이유는 무엇인가요?',
                 answer_guide: '계산 비용과 장애물 재탐색 빈도를 기준으로 답변하세요.',
                 evidence: '성능 비교 기록',
@@ -249,7 +340,12 @@ async function mockAnalysisResult(page) {
               {
                 title: 'EtherCAT',
                 done: false,
-                why: '고속 제어와 다축 동기화가 필요한 장비에서 역할을 정리합니다.',
+                preparation_type: 'study',
+                job_reason: '다축 장비의 실시간 동기화와 제어 주기 설명에 필요합니다.',
+                matched_experience: '',
+                experience_source: '없음',
+                study_focus: ['실시간 Ethernet', '분산 클럭', '다축 동기화'],
+                approach: '일반 Ethernet 차이부터 장비 제어 적용 순서로 학습하세요.',
                 question: 'EtherCAT을 사용하는 이유를 설명할 수 있나요?',
                 answer_guide: '실시간성과 분산 클럭을 중심으로 답변하세요.',
                 evidence: '산업용 자동화 키워드',
@@ -259,7 +355,12 @@ async function mockAnalysisResult(page) {
               {
                 title: 'CAN',
                 done: false,
-                why: '센서/액추에이터 통신에서 장점과 병목을 구분합니다.',
+                preparation_type: 'organize',
+                job_reason: '센서와 액추에이터 통신의 안정성과 병목 판단에 필요합니다.',
+                matched_experience: '센서 데이터 수집 경험',
+                experience_source: '프로필',
+                study_focus: ['CAN frame', 'arbitration', 'bus load'],
+                approach: '센서 연동 경험을 CAN 통신 특성과 연결해 정리하세요.',
                 question: 'CAN 통신의 장점과 병목은 무엇인가요?',
                 answer_guide: 'arbitration과 bus load를 구분해 설명하세요.',
                 evidence: '센서 데이터 수집 경험',
@@ -276,7 +377,12 @@ async function mockAnalysisResult(page) {
               {
                 title: '메모리 안전성과 실시간 제약',
                 done: false,
-                why: '시스템 언어 경험을 제어 소프트웨어 관점으로 확장합니다.',
+                preparation_type: 'organize',
+                job_reason: '제어 모듈의 안정성과 기존 시스템 연동 비용을 판단하기 위해 필요합니다.',
+                matched_experience: 'Rust 학습 경험',
+                experience_source: '프로필',
+                study_focus: ['ownership', 'unsafe 경계', 'FFI'],
+                approach: '안정성 이득과 연동 비용을 균형 있게 정리하세요.',
                 question: '로봇 제어 모듈에 Rust를 적용한다면 장점과 비용은 무엇인가요?',
                 answer_guide: 'ownership, FFI, 팀 러닝커브를 균형 있게 설명하세요.',
                 evidence: 'Rust 학습 경험',

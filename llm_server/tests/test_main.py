@@ -52,7 +52,10 @@ def test_roadmap_returns_mock_without_gms_key(monkeypatch):
     resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
     assert resp.status_code == 200
     data = resp.json()
-    assert "(Mock)" in data["competency_gap"]["strengths"][0]
+    assert "(Mock)" in data["competency_gap"]["strengths"][0]["keyword"]
+    assert data["competency_gap"]["gaps"][0]["gap_type"] == "knowledge"
+    assert data["competency_gap"]["competency_map"][0]["status"] == "strength"
+    assert data["timeline_data"][0]["subtopics"][0]["preparation_type"] == "appeal"
     assert len(data["timeline_data"]) == 3
 
 
@@ -76,9 +79,95 @@ def test_roadmap_parses_competency_gap(monkeypatch):
     resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
     assert resp.status_code == 200
     data = resp.json()
-    assert data["competency_gap"]["gaps"] == ["시스템 설계"]
+    assert data["competency_gap"]["strengths"][0]["keyword"] == "프로젝트 경험"
+    assert data["competency_gap"]["gaps"][0] == {
+        "keyword": "시스템 설계",
+        "gap_type": "knowledge",
+        "reason": "",
+        "evidence": "",
+        "action": "",
+        "priority": "medium",
+    }
+    assert data["competency_gap"]["required_competencies"][0]["keyword"] == "Python"
+    assert data["competency_gap"]["competency_map"][0]["status"] == "strength"
+    assert data["competency_gap"]["competency_map"][1]["status"] == "study"
     assert data["text_roadmap"] == "1주차 준비"
     assert data["timeline_data"][0]["week"] == 1
+
+
+def test_roadmap_preserves_structured_competency_analysis(monkeypatch):
+    async def fake_call_gpt(prompt):
+        return """
+        {
+          "competency_gap": {
+            "summary": "API 개선 경험은 강점이고 시스템 설계 설명을 보완해야 합니다.",
+            "competency_map": [{
+              "keyword": "API 성능 개선",
+              "status": "strength",
+              "importance": "required",
+              "signal": "성능 개선 경험 있음",
+              "action": "병목 분석 과정을 어필합니다."
+            }, {
+              "keyword": "분산 시스템 설계",
+              "status": "articulate",
+              "importance": "preferred",
+              "signal": "구현 경험은 있으나 설계 근거 부족",
+              "action": "트레이드오프 답변을 정리합니다."
+            }],
+            "strengths": [{
+              "keyword": "주문 API 성능 개선",
+              "experience": "주문 조회 API 개선 프로젝트",
+              "evidence": "응답 시간을 비교한 기록이 있습니다.",
+              "job_relevance": "대규모 트래픽 처리 업무와 연결됩니다.",
+              "interview_focus": "병목을 찾은 과정과 본인 역할을 강조합니다."
+            }],
+            "gaps": [{
+              "keyword": "분산 시스템 설계",
+              "gap_type": "articulation",
+              "reason": "기술 선택 이유가 작성되지 않았습니다.",
+              "evidence": "자기소개서에는 구현 결과만 있습니다.",
+              "action": "대안과 선택 기준을 STAR 구조로 정리합니다.",
+              "priority": "high"
+            }],
+            "required_competencies": [{
+              "keyword": "Python",
+              "importance": "required",
+              "evidence": "채용공고 필수 요건입니다."
+            }]
+          },
+          "text_roadmap": "면접 준비",
+          "timeline_data": []
+        }
+        """
+
+    client = TestClient(main.app)
+    monkeypatch.setattr(main, "INTERNAL_TOKEN", TEST_TOKEN)
+    monkeypatch.setattr(main, "_call_gpt", fake_call_gpt)
+
+    resp = client.post("/llm/roadmap", headers=TOKEN_HEADER, json=_payload())
+
+    assert resp.status_code == 200
+    gap = resp.json()["competency_gap"]
+    assert gap["summary"].startswith("API 개선 경험")
+    assert gap["competency_map"][0]["status"] == "strength"
+    assert gap["competency_map"][1]["importance"] == "preferred"
+    assert gap["strengths"][0]["job_relevance"].startswith("대규모 트래픽")
+    assert gap["gaps"][0]["gap_type"] == "articulation"
+    assert gap["gaps"][0]["priority"] == "high"
+    assert gap["required_competencies"][0]["importance"] == "required"
+
+
+def test_normalize_competency_gap_rejects_invalid_collection_types():
+    normalized = main._normalize_competency_gap({
+        "strengths": None,
+        "gaps": "시스템 설계",
+        "required_competencies": {"keyword": "Python"},
+    })
+
+    assert normalized["strengths"] == []
+    assert normalized["gaps"] == []
+    assert normalized["required_competencies"] == []
+    assert normalized["competency_map"] == []
 
 
 def test_roadmap_parses_category_subtopic_roadmap(monkeypatch):
@@ -99,7 +188,12 @@ def test_roadmap_parses_category_subtopic_roadmap(monkeypatch):
               "subtopics": [
                 {
                   "title": "역기구학",
-                  "why": "로봇 팔 제어 경험을 좌표계와 관절 제한까지 연결합니다.",
+                  "preparation_type": "appeal",
+                  "job_reason": "로봇 제어 업무의 핵심 지식입니다.",
+                  "matched_experience": "로봇 팔 제어 정확도 개선 경험",
+                  "experience_source": "자기소개서",
+                  "study_focus": ["FK/IK 차이", "특이점", "관절 제한"],
+                  "approach": "프로젝트 적용 과정과 정확도 검증 순서로 어필합니다.",
                   "question": "1번 프로젝트에서 역기구학을 어떻게 사용했나요?",
                   "answer_guide": "목표 위치 계산과 관절각 산출 흐름을 설명하세요.",
                   "evidence": "자기소개서의 로봇 팔 제어 정확도 개선 경험",
@@ -161,11 +255,25 @@ def test_build_prompt_includes_company_and_job_context():
     assert "직무명: 백엔드 엔지니어" in prompt
     assert "직무설명: 대규모 트래픽을 처리하는 플랫폼 서버 개발" in prompt
     assert "우대사항: ['분산 시스템 경험']" in prompt
-    assert "선택한 면접 유형: technical, etc" in prompt
-    assert "기타 면접 유형 상세: 임원 과제 리뷰" in prompt
-    assert "큰 카테고리" in prompt
-    assert "작은 카테고리" in prompt
-    assert "출제 예측이 아니라" in prompt
+    assert "개인화된 면접 준비 항목" in prompt
+    assert "개인 맞춤 예상 면접 질문" in prompt
+    assert "역량 분석 목적" in prompt
+    assert "어떤 실제 경험을 강점으로 활용" in prompt
+    assert "점수, 적합도 퍼센트, 합격 가능성을 생성하지 마세요" in prompt
+    assert "어필해야 함" in prompt
+    assert "담당업무 → 직무 지식 → 준비 방법 → 질문" in prompt
+    assert '"competency_map"' in prompt
+    assert '"preparation_type"' in prompt
+    assert '"matched_experience"' in prompt
+    assert "competency_map을 4~8개" in prompt
+    assert "담당업무 개수에는 상한을 두지 않습니다" in prompt
+    assert "각 subtopic마다 최소 3개" in prompt
+    assert '"responsibility"' in prompt
+    assert '"responsibility_index"' in prompt
+    assert '"priority_reason"' in prompt
+    assert '"experience_connection"' in prompt
+    assert '"preparation_steps"' in prompt
+    assert '"gap_type"' in prompt
     assert '"category"' in prompt
     assert '"subtopics"' in prompt
 
@@ -215,6 +323,129 @@ def test_call_gpt_sends_gms_bearer_token(monkeypatch):
     assert captured["timeout"] == 120
     assert captured["json"]["model"] == "gpt-5-nano"
     assert captured["json"]["response_format"] == {"type": "json_object"}
+    assert captured["json"]["max_completion_tokens"] == main.GMS_MAX_COMPLETION_TOKENS
+    assert captured["json"]["reasoning_effort"] == "minimal"
+
+
+def test_extract_responsibilities_preserves_every_duty():
+    duties = main.extract_responsibilities(
+        """
+        담당업무:
+        - 산업용 로봇 제어 알고리즘 개발
+        - 로봇 매니퓰레이터의 역기구학 및 궤적 생성
+        - 충돌 회피를 포함한 모션 플래닝
+        - EtherCAT 기반 서보 모터 실시간 제어
+        필수역량:
+        - Python 또는 C++
+        """
+    )
+
+    assert duties == [
+        "산업용 로봇 제어 알고리즘 개발",
+        "로봇 매니퓰레이터의 역기구학 및 궤적 생성",
+        "충돌 회피를 포함한 모션 플래닝",
+        "EtherCAT 기반 서보 모터 실시간 제어",
+    ]
+
+
+def test_normalize_timeline_sorts_priority_and_structures_preparation():
+    normalized = main._normalize_timeline_data([
+        {
+            "category": "통신",
+            "responsibility": "EtherCAT 기반 서보 제어",
+            "priority": 2,
+            "experience_match": "none",
+            "subtopics": [{
+                "title": "분산 클럭",
+                "preparation_type": "study",
+                "study_focus": [
+                    {"keyword": "Distributed Clocks", "checkpoint": "동기화 원리 설명"},
+                    "PDO/SDO",
+                ],
+                "preparation_steps": ["기초 원리", "업무 적용", "답변 연습"],
+                "questions": [
+                    {"type": "concept", "question": "개념 질문"},
+                    {"type": "experience", "question": "경험 질문"},
+                    {"type": "application", "question": "적용 질문"},
+                ],
+            }],
+        },
+        {
+            "category": "제어",
+            "responsibility": "로봇 제어 알고리즘 개발",
+            "priority": 1,
+            "experience_match": "direct",
+            "subtopics": [],
+        },
+    ])
+
+    assert normalized[0]["category"] == "제어"
+    subtopic = normalized[1]["subtopics"][0]
+    assert subtopic["study_focus"][0]["checkpoint"] == "동기화 원리 설명"
+    assert subtopic["study_focus"][1] == {"keyword": "PDO/SDO", "checkpoint": ""}
+    assert subtopic["preparation_steps"] == ["기초 원리", "업무 적용", "답변 연습"]
+    assert [item["type"] for item in subtopic["questions"]] == [
+        "concept", "experience", "application"
+    ]
+
+
+def test_merge_timeline_adds_only_missing_responsibility():
+    original = [{
+        "category": "역기구학",
+        "responsibility": "역기구학 및 궤적 생성",
+        "priority": 1,
+        "subtopics": [{"questions": [{}, {}, {}]}],
+    }]
+    repaired = [{
+        "category": "로봇 제어",
+        "responsibility": "산업용 로봇 제어 알고리즘 개발",
+        "priority": 2,
+        "subtopics": [{"questions": [{}, {}, {}]}],
+    }]
+
+    merged = main._merge_timeline_categories(
+        original,
+        repaired,
+        ["산업용 로봇 제어 알고리즘 개발"],
+    )
+
+    assert [item["responsibility"] for item in merged] == [
+        "역기구학 및 궤적 생성",
+        "산업용 로봇 제어 알고리즘 개발",
+    ]
+
+
+def test_canonicalize_timeline_maps_category_to_original_duty():
+    responsibilities = [
+        "산업용 로봇 제어 알고리즘 개발",
+        "로봇 매니퓰레이터의 역기구학 및 궤적 생성",
+    ]
+    canonical = main._canonicalize_timeline_responsibilities([
+        {
+            "category": "역기구학",
+            "responsibility": "DH 파라미터 기반 역기구학 구현 경험",
+            "priority": 1,
+            "subtopics": [{"title": "역기구학", "questions": []}],
+        }
+    ], responsibilities)
+
+    assert canonical[0]["responsibility_index"] == 2
+    assert canonical[0]["responsibility"] == responsibilities[1]
+
+
+def test_sanitize_timeline_removes_unverified_experience_keywords():
+    sanitized = main._sanitize_timeline_experience([
+        {
+            "experience_match": "related",
+            "experience_keywords": ["EtherCAT", "ROS2"],
+            "subtopics": [],
+        }
+    ], {
+        "프로젝트": [{"title": "ROS2 모바일 로봇"}],
+    })
+
+    assert sanitized[0]["experience_keywords"] == ["ROS2"]
+    assert sanitized[0]["experience_match"] == "related"
 
 
 def _payload():

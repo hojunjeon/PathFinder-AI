@@ -8,7 +8,9 @@ export function useRoadmapProgress(analysis) {
     return id ? `roadmap-progress:${id}` : ''
   })
   const totalTaskCount = computed(() => {
-    return roadmapItems.value.reduce((count, category) => count + category.subtopics.length, 0)
+    return roadmapItems.value.reduce((count, category) => {
+      return count + category.subtopics.reduce((subCount, subtopic) => subCount + subtopic.questions.length, 0)
+    }, 0)
   })
   const completedTaskCount = computed(() => Object.values(completedTasks.value).filter(Boolean).length)
   const progressPercent = computed(() => {
@@ -28,7 +30,7 @@ export function useRoadmapProgress(analysis) {
   const activeItemDesc = computed(() => {
     const nextItem = nextIncompleteSubtopic.value
     if (!nextItem) return '면접 전 최종 점검만 남았습니다.'
-    return nextItem.study_goal || nextItem.question || '답변 기준을 정리하세요.'
+    return nextItem.approach || nextItem.answer_guide || nextItem.question || '개인 맞춤 질문의 답변 방향을 정리하세요.'
   })
 
   function initializeCompletedTasks(timeline) {
@@ -37,8 +39,8 @@ export function useRoadmapProgress(analysis) {
     completedTasks.value = stored || initialCompletedTasks(items)
   }
 
-  function toggleTask({ categoryIdx, subtopicIdx }) {
-    const key = `${categoryIdx}-${subtopicIdx}`
+  function toggleTask({ categoryIdx, subtopicIdx, questionIdx = 0 }) {
+    const key = `${categoryIdx}-${subtopicIdx}-${questionIdx}`
     completedTasks.value[key] = !completedTasks.value[key]
   }
 
@@ -87,8 +89,10 @@ function saveCompletedTasks(key, tasks, items) {
 function filterCompletedTasks(tasks, items) {
   const validKeys = new Set()
   items.forEach((category, categoryIdx) => {
-    category.subtopics.forEach((_, subtopicIdx) => {
-      validKeys.add(`${categoryIdx}-${subtopicIdx}`)
+    category.subtopics.forEach((subtopic, subtopicIdx) => {
+      subtopic.questions.forEach((_, questionIdx) => {
+        validKeys.add(`${categoryIdx}-${subtopicIdx}-${questionIdx}`)
+      })
     })
   })
   return Object.fromEntries(
@@ -100,43 +104,161 @@ function normalizeRoadmap(timeline = []) {
   return timeline.map((item, itemIdx) => {
     if (Array.isArray(item.subtopics)) return normalizeCategoryItem(item, itemIdx)
     return normalizeLegacyItem(item, itemIdx)
-  })
+  }).sort((a, b) => a.priority - b.priority)
 }
 
 function normalizeCategoryItem(item, itemIdx) {
   return {
     category: item.category || item.title || `${itemIdx + 1}번째 영역`,
-    summary: item.summary || '',
-    sources: Array.isArray(item.sources) ? item.sources : [],
-    subtopics: item.subtopics.map((subtopic, subtopicIdx) => ({
-      title: subtopic.title || subtopic.concept || `항목 ${subtopicIdx + 1}`,
-      done: Boolean(subtopic.done),
-      hasDone: Object.prototype.hasOwnProperty.call(subtopic, 'done'),
-      why: subtopic.why || '',
-      question: subtopic.question || '',
-      answer_guide: subtopic.answer_guide || subtopic.answerGuide || '',
-      evidence: subtopic.evidence || '',
-      study_goal: subtopic.study_goal || subtopic.studyGoal || '',
-      follow_up_questions: Array.isArray(subtopic.follow_up_questions) ? subtopic.follow_up_questions : [],
-    })),
+    responsibility: item.responsibility || item.summary || '',
+    priority: Number.isInteger(Number(item.priority)) ? Number(item.priority) : itemIdx + 1,
+    priority_reason: item.priority_reason || item.priorityReason || item.summary || '',
+    experience_match: normalizeExperienceMatch(item.experience_match || item.experienceMatch),
+    experience_keywords: normalizeStringList(item.experience_keywords || item.experienceKeywords),
+    competency_keywords: normalizeStringList(item.competency_keywords || item.competencyKeywords),
+    sources: normalizeStringList(item.sources),
+    subtopics: item.subtopics.map((subtopic, subtopicIdx) => normalizeSubtopic(subtopic, subtopicIdx)),
   }
+}
+
+function normalizeSubtopic(subtopic, subtopicIdx) {
+  const title = subtopic.title || subtopic.concept || `항목 ${subtopicIdx + 1}`
+  const matchedExperience = Object.prototype.hasOwnProperty.call(subtopic, 'matched_experience')
+    ? subtopic.matched_experience
+    : subtopic.matchedExperience || subtopic.evidence || ''
+  const fallbackQuestion = {
+    type: normalizeQuestionType(subtopic.type),
+    question: subtopic.question || title,
+    answer_guide: subtopic.answer_guide || subtopic.answerGuide || '',
+    follow_up_questions: normalizeStringList(subtopic.follow_up_questions),
+    done: Boolean(subtopic.done),
+    hasDone: Object.prototype.hasOwnProperty.call(subtopic, 'done'),
+  }
+
+  const questions = Array.isArray(subtopic.questions) && subtopic.questions.length
+    ? subtopic.questions.map((questionItem) => normalizeQuestionItem(questionItem, fallbackQuestion))
+    : [fallbackQuestion]
+
+  return {
+    title,
+    why: subtopic.why || '',
+    evidence: subtopic.evidence || '',
+    study_goal: subtopic.study_goal || subtopic.studyGoal || '',
+    preparation_type: normalizePreparationType(subtopic.preparation_type || subtopic.preparationType),
+    job_reason: subtopic.job_reason || subtopic.jobReason || subtopic.why || '',
+    matched_experience: matchedExperience || '',
+    experience_source: subtopic.experience_source || subtopic.experienceSource || '',
+    experience_connection: normalizeExperienceConnection(
+      subtopic.experience_connection || subtopic.experienceConnection,
+      matchedExperience,
+    ),
+    study_focus: normalizeStudyFocus(subtopic.study_focus || subtopic.studyFocus),
+    preparation_steps: normalizeStringList(
+      subtopic.preparation_steps || subtopic.preparationSteps || subtopic.approach
+    ),
+    approach: subtopic.approach || subtopic.study_goal || subtopic.studyGoal || '',
+    questions: questions.filter(item => item.question),
+  }
+}
+
+function normalizeExperienceMatch(value) {
+  return ['direct', 'related', 'none'].includes(value) ? value : 'none'
+}
+
+function normalizeExperienceConnection(value, matchedExperience) {
+  const connection = value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+  return {
+    evidence: connection.evidence || matchedExperience || '',
+    transferable_point: connection.transferable_point || connection.transferablePoint || '',
+    gap: connection.gap || '',
+  }
+}
+
+function normalizeStudyFocus(value) {
+  if (!Array.isArray(value)) return []
+  return value.map((item) => {
+    if (typeof item === 'string') return { keyword: item.trim(), checkpoint: '' }
+    return {
+      keyword: String(item?.keyword || item?.title || item?.concept || '').trim(),
+      checkpoint: String(item?.checkpoint || item?.goal || item?.description || '').trim(),
+    }
+  }).filter(item => item.keyword)
+}
+
+function normalizePreparationType(value) {
+  return ['appeal', 'organize', 'study'].includes(value) ? value : inferPreparationType(value)
+}
+
+function inferPreparationType(value) {
+  const normalized = String(value || '').toLowerCase()
+  if (normalized.includes('강점') || normalized.includes('어필')) return 'appeal'
+  if (normalized.includes('보완') || normalized.includes('정리')) return 'organize'
+  return 'study'
+}
+
+function normalizeQuestionItem(questionItem, fallbackQuestion) {
+  if (typeof questionItem === 'string') {
+    return {
+      type: fallbackQuestion.type,
+      question: questionItem,
+      answer_guide: fallbackQuestion.answer_guide,
+      follow_up_questions: fallbackQuestion.follow_up_questions,
+      done: false,
+      hasDone: false,
+    }
+  }
+
+  return {
+    type: normalizeQuestionType(questionItem?.type),
+    question: questionItem?.question || fallbackQuestion.question,
+    answer_guide: questionItem?.answer_guide || questionItem?.answerGuide || fallbackQuestion.answer_guide,
+    follow_up_questions: normalizeStringList(questionItem?.follow_up_questions || questionItem?.followUps),
+    done: Boolean(questionItem?.done),
+    hasDone: Boolean(questionItem && Object.prototype.hasOwnProperty.call(questionItem, 'done')),
+  }
+}
+
+function normalizeQuestionType(value) {
+  return ['concept', 'experience', 'application'].includes(value) ? value : 'concept'
+}
+
+function normalizeStringList(value) {
+  return Array.isArray(value)
+    ? value.map(item => String(item || '').trim()).filter(Boolean)
+    : []
 }
 
 function normalizeLegacyItem(item, itemIdx) {
   return {
     category: item.title || (item.week ? `${item.week}주차` : `${itemIdx + 1}번째 영역`),
-    summary: item.summary || '',
+    responsibility: item.summary || '',
+    priority: itemIdx + 1,
+    priority_reason: '',
+    experience_match: 'none',
+    experience_keywords: [],
+    competency_keywords: [],
     sources: [],
     subtopics: (item.tasks || []).map((task, taskIdx) => ({
       title: task,
-      done: false,
-      hasDone: false,
       why: '',
-      question: String(task),
-      answer_guide: '',
       evidence: '',
       study_goal: '',
-      follow_up_questions: [],
+      preparation_type: 'study',
+      job_reason: '',
+      matched_experience: '',
+      experience_source: '',
+      experience_connection: { evidence: '', transferable_point: '', gap: '' },
+      study_focus: [],
+      preparation_steps: [],
+      approach: '',
+      questions: [{
+        type: 'concept',
+        question: String(task),
+        answer_guide: '',
+        follow_up_questions: [],
+        done: false,
+        hasDone: false,
+      }],
       legacy: true,
       taskIdx,
     })),
@@ -150,16 +272,18 @@ function initialCompletedTasks(items) {
 
   items.forEach((category, categoryIdx) => {
     category.subtopics.forEach((subtopic, subtopicIdx) => {
-      taskList.push({ categoryIdx, subtopicIdx, legacy: subtopic.legacy })
-      hasExplicitDone ||= subtopic.hasDone
-      if (subtopic.done) completed[`${categoryIdx}-${subtopicIdx}`] = true
+      subtopic.questions.forEach((question, questionIdx) => {
+        taskList.push({ categoryIdx, subtopicIdx, questionIdx, legacy: subtopic.legacy })
+        hasExplicitDone ||= question.hasDone
+        if (question.done) completed[`${categoryIdx}-${subtopicIdx}-${questionIdx}`] = true
+      })
     })
   })
 
   if (!hasExplicitDone && taskList.some(task => task.legacy)) {
     const completeCount = Math.round(taskList.length * 0.4)
     taskList.slice(0, completeCount).forEach(task => {
-      completed[`${task.categoryIdx}-${task.subtopicIdx}`] = true
+      completed[`${task.categoryIdx}-${task.subtopicIdx}-${task.questionIdx}`] = true
     })
   }
 
@@ -170,8 +294,16 @@ function findNextIncomplete(roadmapItems, completedTasks) {
   for (let categoryIdx = 0; categoryIdx < roadmapItems.length; categoryIdx++) {
     const category = roadmapItems[categoryIdx]
     for (let subtopicIdx = 0; subtopicIdx < category.subtopics.length; subtopicIdx++) {
-      if (!completedTasks[`${categoryIdx}-${subtopicIdx}`]) {
-        return { category: category.category, ...category.subtopics[subtopicIdx] }
+      const subtopic = category.subtopics[subtopicIdx]
+      for (let questionIdx = 0; questionIdx < subtopic.questions.length; questionIdx++) {
+        if (!completedTasks[`${categoryIdx}-${subtopicIdx}-${questionIdx}`]) {
+          return {
+            category: category.category,
+            title: subtopic.title,
+            approach: subtopic.approach,
+            ...subtopic.questions[questionIdx],
+          }
+        }
       }
     }
   }

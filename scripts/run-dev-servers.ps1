@@ -246,6 +246,22 @@ function Ensure-CompanyFixtureLoaded($BackendPython, $ProjectDir, $LoadOnFirstRu
 }
 
 
+function Resolve-AvailablePort($Name, $StartPort, $ExcludePorts = @()) {
+    $port = $StartPort
+    while ($true) {
+        if ($port -in $ExcludePorts) {
+            $port++
+            continue
+        }
+        $listener = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
+        if ($listener) {
+            $port++
+            continue
+        }
+        return $port
+    }
+}
+
 function Assert-PortFree($Port) {
     $listener = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
     if ($listener) {

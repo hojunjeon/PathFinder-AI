@@ -7,7 +7,7 @@
       :category-idx="categoryIdx"
       :completed-tasks="completedTasks"
       :current="categoryIdx === currentCategoryIdx"
-      @toggle-subtopic="subtopicIdx => $emit('toggle-task', { categoryIdx, subtopicIdx })"
+      @toggle-question="payload => $emit('toggle-task', { categoryIdx, ...payload })"
     />
   </div>
 </template>
@@ -26,8 +26,10 @@ defineEmits(['toggle-task'])
 const currentCategoryIdx = computed(() => {
   for (let categoryIdx = 0; categoryIdx < props.timelineData.length; categoryIdx++) {
     const category = props.timelineData[categoryIdx]
-    const hasIncomplete = category.subtopics.some((_, subtopicIdx) => {
-      return !props.completedTasks[`${categoryIdx}-${subtopicIdx}`]
+    const hasIncomplete = category.subtopics.some((subtopic, subtopicIdx) => {
+      return subtopic.questions.some((_, questionIdx) => {
+        return !props.completedTasks[`${categoryIdx}-${subtopicIdx}-${questionIdx}`]
+      })
     })
     if (hasIncomplete) return categoryIdx
   }

@@ -1,49 +1,37 @@
 <template>
   <div class="entry-list">
-    <p v-if="!modelValue.length" class="empty-state">아직 등록된 프로젝트가 없습니다.</p>
+    <p v-if="!modelValue.length" class="empty-state">아직 등록된 자격증이 없습니다.</p>
 
     <div v-for="(item, i) in modelValue" :key="i" class="entry-card">
       <div class="item-header">
         <div>
-          <strong>프로젝트 {{ i + 1 }}</strong>
-          <span>{{ item.name || '프로젝트명 미입력' }}</span>
+          <strong>자격증 {{ i + 1 }}</strong>
+          <span>{{ item.name || '자격증명 미입력' }}</span>
         </div>
-        <button type="button" class="btn-remove" aria-label="프로젝트 삭제" @click="remove(i)">✕</button>
+        <button type="button" class="btn-remove" aria-label="자격증 삭제" @click="remove(i)">✕</button>
       </div>
 
       <div class="entry-grid">
         <label class="field">
-          <span class="label">프로젝트명</span>
-          <input class="input" v-model="item.name" placeholder="예: AI 면접 로드맵 서비스" />
+          <span class="label">자격증명</span>
+          <input class="input" v-model="item.name" placeholder="예: 정보처리기사" />
         </label>
         <label class="field">
-          <span class="label">역할</span>
-          <input class="input" v-model="item.role" placeholder="예: 백엔드/API 설계" />
+          <span class="label">주관기관</span>
+          <input class="input" v-model="item.issuer" placeholder="예: 한국산업인력공단" />
         </label>
         <label class="field">
-          <span class="label">시작일</span>
-          <input class="input" type="date" v-model="item.start_date" />
+          <span class="label">취득일</span>
+          <input class="input" type="date" v-model="item.acquired_date" />
         </label>
         <label class="field">
-          <span class="label">종료일</span>
-          <input class="input" type="date" v-model="item.end_date" />
-        </label>
-        <label class="field field-wide">
-          <span class="label">기술 스택</span>
-          <input class="input" v-model="item.stack" placeholder="예: Vue, Django, PostgreSQL" />
-        </label>
-        <label class="field field-wide">
-          <span class="label">프로젝트 설명</span>
-          <textarea class="input" v-model="item.description" rows="3" placeholder="문제 상황, 구현 내용, 협업 방식을 적어 주세요." />
-        </label>
-        <label class="field field-wide">
-          <span class="label">결과/성과</span>
-          <textarea class="input" v-model="item.result" rows="2" placeholder="정량 지표, 수상, 사용자 피드백 등 결과를 적어 주세요." />
+          <span class="label">등록번호</span>
+          <input class="input" v-model="item.credential_id" placeholder="선택 입력" />
         </label>
       </div>
     </div>
 
-    <button type="button" class="btn-outline add-button" @click="add">+ 프로젝트 추가</button>
+    <button type="button" class="btn-outline add-button" @click="add">+ 자격증 추가</button>
   </div>
 </template>
 
@@ -54,7 +42,7 @@ const emit = defineEmits(['update:modelValue'])
 function add() {
   emit('update:modelValue', [
     ...props.modelValue,
-    { name: '', role: '', start_date: '', end_date: '', stack: '', description: '', result: '' },
+    { name: '', issuer: '', acquired_date: '', credential_id: '' },
   ])
 }
 
@@ -112,10 +100,6 @@ function remove(i) {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-}
-
-.field-wide {
-  grid-column: 1 / -1;
 }
 
 .btn-remove {

@@ -30,7 +30,7 @@ export function useRoadmapProgress(analysis) {
   const activeItemDesc = computed(() => {
     const nextItem = nextIncompleteSubtopic.value
     if (!nextItem) return '면접 전 최종 점검만 남았습니다.'
-    return nextItem.answer_guide || nextItem.question || '개인 맞춤 질문의 답변 방향을 정리하세요.'
+    return nextItem.approach || nextItem.answer_guide || nextItem.question || '개인 맞춤 질문의 답변 방향을 정리하세요.'
   })
 
   function initializeCompletedTasks(timeline) {
@@ -111,13 +111,16 @@ function normalizeCategoryItem(item, itemIdx) {
   return {
     category: item.category || item.title || `${itemIdx + 1}번째 영역`,
     summary: item.summary || '',
-    sources: Array.isArray(item.sources) ? item.sources : [],
+    sources: normalizeStringList(item.sources),
     subtopics: item.subtopics.map((subtopic, subtopicIdx) => normalizeSubtopic(subtopic, subtopicIdx)),
   }
 }
 
 function normalizeSubtopic(subtopic, subtopicIdx) {
   const title = subtopic.title || subtopic.concept || `항목 ${subtopicIdx + 1}`
+  const matchedExperience = Object.prototype.hasOwnProperty.call(subtopic, 'matched_experience')
+    ? subtopic.matched_experience
+    : subtopic.matchedExperience || subtopic.evidence || ''
   const fallbackQuestion = {
     question: subtopic.question || title,
     answer_guide: subtopic.answer_guide || subtopic.answerGuide || '',
@@ -135,8 +138,25 @@ function normalizeSubtopic(subtopic, subtopicIdx) {
     why: subtopic.why || '',
     evidence: subtopic.evidence || '',
     study_goal: subtopic.study_goal || subtopic.studyGoal || '',
+    preparation_type: normalizePreparationType(subtopic.preparation_type || subtopic.preparationType),
+    job_reason: subtopic.job_reason || subtopic.jobReason || subtopic.why || '',
+    matched_experience: matchedExperience || '',
+    experience_source: subtopic.experience_source || subtopic.experienceSource || '',
+    study_focus: normalizeStringList(subtopic.study_focus || subtopic.studyFocus),
+    approach: subtopic.approach || subtopic.study_goal || subtopic.studyGoal || '',
     questions: questions.filter(item => item.question),
   }
+}
+
+function normalizePreparationType(value) {
+  return ['appeal', 'organize', 'study'].includes(value) ? value : inferPreparationType(value)
+}
+
+function inferPreparationType(value) {
+  const normalized = String(value || '').toLowerCase()
+  if (normalized.includes('강점') || normalized.includes('어필')) return 'appeal'
+  if (normalized.includes('보완') || normalized.includes('정리')) return 'organize'
+  return 'study'
 }
 
 function normalizeQuestionItem(questionItem, fallbackQuestion) {
@@ -175,6 +195,12 @@ function normalizeLegacyItem(item, itemIdx) {
       why: '',
       evidence: '',
       study_goal: '',
+      preparation_type: 'study',
+      job_reason: '',
+      matched_experience: '',
+      experience_source: '',
+      study_focus: [],
+      approach: '',
       questions: [{
         question: String(task),
         answer_guide: '',
@@ -223,6 +249,7 @@ function findNextIncomplete(roadmapItems, completedTasks) {
           return {
             category: category.category,
             title: subtopic.title,
+            approach: subtopic.approach,
             ...subtopic.questions[questionIdx],
           }
         }

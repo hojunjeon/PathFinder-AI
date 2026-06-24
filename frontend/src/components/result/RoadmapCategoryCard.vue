@@ -2,9 +2,16 @@
   <article :class="['category-card', { current }]">
     <div class="category-head">
       <div>
+        <p class="category-eyebrow">직무 지식 분야</p>
         <h3>{{ category.category }}</h3>
+        <p v-if="category.summary" class="category-summary">{{ category.summary }}</p>
       </div>
       <span :class="['status', statusClass]">{{ statusText }}</span>
+    </div>
+
+    <div v-if="category.sources.length" class="source-list" aria-label="분석 기준">
+      <span class="source-label">분석 기준</span>
+      <span v-for="source in category.sources" :key="source" class="source-chip">{{ source }}</span>
     </div>
 
     <div class="subtopics">
@@ -94,6 +101,21 @@ h3 {
   font-weight: 600;
   color: var(--fg);
 }
+.category-eyebrow {
+  margin-bottom: var(--space-1);
+  color: var(--meta);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.category-summary {
+  max-width: 720px;
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
 
 .status {
   border: 1px solid var(--border);
@@ -113,6 +135,27 @@ h3 {
 .status.done {
   color: var(--success);
   border-color: color-mix(in oklab, var(--success), transparent 55%);
+}
+.source-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.source-label {
+  color: var(--meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+.source-chip {
+  padding: 4px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--fg-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
 }
 
 .subtopics {

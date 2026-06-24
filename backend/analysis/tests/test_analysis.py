@@ -35,9 +35,40 @@ def test_analysis_create_success(auth_client, job):
     client, _ = auth_client
     mock_result = {
         'competency_gap': {
-            'strengths': ['프로젝트 경험'],
-            'gaps': ['시스템 설계'],
-            'required_competencies': ['Python'],
+            'summary': 'API 개선 경험은 강점이고 시스템 설계 지식은 보완이 필요합니다.',
+            'competency_map': [{
+                'keyword': 'API 성능 개선',
+                'status': 'strength',
+                'importance': 'required',
+                'signal': '성능 개선 경험 있음',
+                'action': '병목 분석 과정을 어필',
+            }, {
+                'keyword': '시스템 설계',
+                'status': 'study',
+                'importance': 'preferred',
+                'signal': '대규모 설계 경험 근거 없음',
+                'action': '분산 구조 우선 학습',
+            }],
+            'strengths': [{
+                'keyword': '주문 API 성능 개선',
+                'experience': '주문 조회 API 개선 프로젝트',
+                'evidence': '응답 시간을 비교한 기록이 있습니다.',
+                'job_relevance': '대규모 트래픽 처리 업무와 연결됩니다.',
+                'interview_focus': '병목 분석 과정과 본인 역할을 강조합니다.',
+            }],
+            'gaps': [{
+                'keyword': '시스템 설계',
+                'gap_type': 'knowledge',
+                'reason': '대규모 시스템 설계 근거가 부족합니다.',
+                'evidence': '채용공고는 분산 시스템 경험을 우대합니다.',
+                'action': '트레이드오프를 포함한 설계 답변을 준비합니다.',
+                'priority': 'high',
+            }],
+            'required_competencies': [{
+                'keyword': 'Python',
+                'importance': 'required',
+                'evidence': '채용공고 필수 요건입니다.',
+            }],
         },
         'text_roadmap': '1주차: 자료구조 복습\n2주차: 알고리즘 연습',
         'timeline_data': [{'week': 1, 'title': '1주차', 'tasks': ['자료구조 복습']}],
@@ -50,7 +81,11 @@ def test_analysis_create_success(auth_client, job):
         }, format='json')
     assert resp.status_code == 201
     assert resp.data['status'] == 'done'
-    assert resp.data['competency_gap']['gaps'] == ['시스템 설계']
+    assert resp.data['competency_gap']['competency_map'][0]['status'] == 'strength'
+    assert resp.data['competency_gap']['competency_map'][1]['status'] == 'study'
+    assert resp.data['competency_gap']['strengths'][0]['keyword'] == '주문 API 성능 개선'
+    assert resp.data['competency_gap']['gaps'][0]['keyword'] == '시스템 설계'
+    assert resp.data['competency_gap']['gaps'][0]['priority'] == 'high'
     assert '1주차' in resp.data['text_roadmap']
 
 

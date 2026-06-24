@@ -78,30 +78,13 @@
           <!-- Competency Gap List -->
           <CompetencyGap :gap="analysis.competency_gap || {}" />
 
-          <!-- Scores Section -->
-          <section class="section-card" id="scores" data-od-id="result-scores">
-            <div class="section-head">
-              <h2>직무 역량 매칭도</h2>
-              <span class="section-note">면접 대비 우선순위</span>
-            </div>
-            <div class="scores">
-              <div class="score-row" v-for="score in computedScores" :key="score.source">
-                <span class="score-name">
-                  <span class="score-keyword">{{ score.name }}</span>
-                  <span class="score-kind">{{ score.kind }}</span>
-                </span>
-                <div class="bar">
-                  <div :class="['bar-fill', score.colorClass]" :style="{ width: score.value + '%' }"></div>
-                </div>
-                <span class="score-val">{{ score.value }}%</span>
-              </div>
-            </div>
-          </section>
-
           <!-- Roadmap Checklist Timeline -->
           <section class="section-card" id="roadmap" data-od-id="result-roadmap">
             <div class="section-head">
-              <h2>준비 항목</h2>
+              <div>
+                <h2>준비 항목</h2>
+                <p class="section-description">직무 지식별로 내 경험을 연결하고, 어필·답변 정리·학습 순서로 준비하세요.</p>
+              </div>
             </div>
             <div v-if="roadmapItems.length">
               <RoadmapTimeline 
@@ -121,7 +104,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api'
 import CompetencyGap from '../components/result/CompetencyGap.vue'
@@ -135,7 +118,6 @@ const activeSection = ref('summary')
 const pageSections = [
   { id: 'summary', label: '분석 요약' },
   { id: 'gap', label: '역량 분석' },
-  { id: 'scores', label: '직무 매칭도' },
   { id: 'roadmap', label: '준비 항목' },
 ]
 const {
@@ -161,94 +143,6 @@ function formatDate(dateStr) {
   const d = new Date(dateStr)
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
 }
-
-function getDeterministicScore(name, minVal, maxVal) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  const range = maxVal - minVal
-  return minVal + Math.abs(hash % range)
-}
-
-function toKeywordLabel(value) {
-  const text = String(value || '')
-    .replace(/^\(Mock\)\s*/, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-  if (!text) return ''
-
-  const parenMatch = text.match(/^(.+?)\s*\(.+\)$/)
-  if (parenMatch) return compactKeyword(parenMatch[1])
-
-  const separatorMatch = text.match(/^(.{2,32}?)(?:\s*[:：]\s+|\s+-\s+|\s+대비\s+|\s+보완\s+)(.+)$/)
-  if (separatorMatch) return compactKeyword(separatorMatch[1])
-
-  return compactKeyword(text)
-}
-
-function compactKeyword(text) {
-  const cleaned = String(text || '')
-    .replace(/[.,;!?]$/g, '')
-    .trim()
-  if (cleaned.length <= 18) return cleaned
-
-  const tokens = cleaned
-    .split(/[\s/·,]+/)
-    .map(token => token.trim())
-    .filter(Boolean)
-
-  if (tokens.length <= 2) return cleaned.slice(0, 18)
-  return tokens.slice(0, 3).join(' ')
-}
-
-const computedScores = computed(() => {
-  const gap = analysis.value?.competency_gap || {}
-  const strengths = gap.strengths || []
-  const gaps = gap.gaps || []
-  const reqs = gap.required_competencies || []
-
-  const scores = []
-  
-  strengths.slice(0, 2).forEach(s => {
-    scores.push({
-      source: `strength-${s}`,
-      name: toKeywordLabel(s),
-      kind: '강점',
-      value: getDeterministicScore(s, 75, 95),
-      colorClass: '',
-    })
-  })
-  
-  reqs.slice(0, 2).forEach(r => {
-    scores.push({
-      source: `required-${r}`,
-      name: toKeywordLabel(r),
-      kind: '요구',
-      value: getDeterministicScore(r, 45, 70),
-      colorClass: 'mid',
-    })
-  })
-
-  gaps.slice(0, 2).forEach(g => {
-    scores.push({
-      source: `gap-${g}`,
-      name: toKeywordLabel(g),
-      kind: '보완',
-      value: getDeterministicScore(g, 15, 40),
-      colorClass: 'low',
-    })
-  })
-
-  if (scores.length === 0) {
-    scores.push({ source: 'fallback-java', name: 'Java / Spring', kind: '강점', value: 78, colorClass: '' })
-    scores.push({ source: 'fallback-algorithm', name: '알고리즘', kind: '요구', value: 65, colorClass: '' })
-    scores.push({ source: 'fallback-system-design', name: '시스템 설계', kind: '보완', value: 42, colorClass: 'mid' })
-    scores.push({ source: 'fallback-kotlin', name: 'Kotlin', kind: '보완', value: 24, colorClass: 'low' })
-  }
-
-  return scores.filter(score => score.name)
-})
 
 // Sidebar Active Navigation on Scroll
 function handleScroll() {
@@ -585,6 +479,12 @@ h2 {
   color: var(--muted);
   font-size: var(--text-sm);
 }
+.section-description {
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
 .roadmap-summary {
   margin-bottom: var(--space-5);
 }
@@ -592,66 +492,6 @@ h2 {
 .roadmap-empty {
   color: var(--muted);
   font-size: var(--text-sm);
-}
-
-/* Scores grid */
-.scores {
-  display: grid;
-  gap: var(--space-4);
-}
-.score-row {
-  display: grid;
-  grid-template-columns: 220px 1fr 44px;
-  gap: var(--space-4);
-  align-items: center;
-  color: var(--fg-2);
-  font-size: var(--text-sm);
-}
-.score-name {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  font-weight: 600;
-  word-break: keep-all;
-}
-.score-keyword {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.score-kind {
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  padding: 2px 7px;
-  color: var(--meta);
-  background: var(--surface-warm);
-  font-size: var(--text-xs);
-  font-weight: 600;
-}
-.bar {
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--border-soft);
-  overflow: hidden;
-}
-.bar-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: var(--accent);
-  transition: width 0.5s ease-out;
-}
-.bar-fill.mid {
-  background: var(--warn);
-}
-.bar-fill.low {
-  background: var(--danger);
-}
-.score-val {
-  text-align: right;
-  font-family: var(--font-mono);
-  color: var(--fg);
-  font-weight: 600;
 }
 
 .roadmap-text {
@@ -699,12 +539,5 @@ h2 {
     line-height: 1.25;
   }
 
-  .score-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
-  .score-val {
-    text-align: left;
-  }
 }
 </style>

@@ -1,52 +1,55 @@
 <template>
   <section :class="['subtopic', `type-${preparationType}`]">
     <header class="subtopic-head">
-      <div class="title-row">
-        <span :class="['type-badge', `badge-${preparationType}`]">{{ preparationLabel }}</span>
-        <h4>{{ subtopic.title }}</h4>
-      </div>
-      <p class="type-guide">{{ preparationGuide }}</p>
+      <span :class="['type-badge', `badge-${preparationType}`]">{{ preparationLabel }}</span>
+      <h4>{{ subtopic.title }}</h4>
     </header>
 
-    <div class="prep-grid">
-      <section v-if="subtopic.job_reason" class="prep-block">
-        <span class="prep-label">왜 준비하나요?</span>
+    <div class="analysis-grid">
+      <section v-if="subtopic.job_reason" class="analysis-block">
+        <span class="block-label">업무 연결</span>
         <p>{{ subtopic.job_reason }}</p>
       </section>
 
-      <section class="prep-block">
-        <span class="prep-label">내 연결점</span>
-        <p v-if="subtopic.matched_experience">{{ subtopic.matched_experience }}</p>
-        <p v-else class="missing-experience">직접 연결되는 경험이 확인되지 않았습니다.</p>
-        <span v-if="subtopic.experience_source && subtopic.experience_source !== '없음'" class="source-note">
-          {{ subtopic.experience_source }} 기반
-        </span>
-      </section>
-
-      <section v-if="subtopic.approach" class="prep-block approach-block">
-        <span class="prep-label">이렇게 준비하세요</span>
-        <p>{{ subtopic.approach }}</p>
+      <section class="analysis-block">
+        <span class="block-label">내 연결점</span>
+        <template v-if="hasExperienceConnection">
+          <p v-if="connection.evidence"><strong>근거</strong>{{ connection.evidence }}</p>
+          <p v-if="connection.transferable_point"><strong>전환</strong>{{ connection.transferable_point }}</p>
+          <p v-if="connection.gap" class="gap-text"><strong>보완</strong>{{ connection.gap }}</p>
+        </template>
+        <p v-else class="gap-text">직접 연결 경험 없음 · 지식 학습과 유사 경험 연결이 필요합니다.</p>
       </section>
     </div>
 
-    <div v-if="subtopic.study_focus.length" class="focus-row">
-      <span class="prep-label">먼저 볼 개념</span>
+    <section v-if="subtopic.study_focus.length" class="focus-section">
+      <span class="block-label">핵심 개념</span>
       <div class="focus-list">
-        <span v-for="focus in subtopic.study_focus" :key="focus">{{ focus }}</span>
+        <article v-for="focus in subtopic.study_focus" :key="focus.keyword" class="focus-item">
+          <strong>{{ focus.keyword }}</strong>
+          <p v-if="focus.checkpoint">{{ focus.checkpoint }}</p>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <div class="question-section">
+    <section v-if="subtopic.preparation_steps.length" class="steps-section">
+      <span class="block-label">준비 순서</span>
+      <ol>
+        <li v-for="step in subtopic.preparation_steps" :key="step">{{ step }}</li>
+      </ol>
+    </section>
+
+    <section class="question-section">
       <div class="question-section-head">
         <strong>예상 질문</strong>
         <span>{{ questionItems.length }}개</span>
       </div>
 
-      <div class="question-cards">
+      <div class="question-list">
         <article
           v-for="(questionItem, questionIdx) in questionItems"
           :key="`${subtopic.title}-${questionIdx}-${questionItem.question}`"
-          :class="['question-card', { done: isCompleted(questionIdx) }]"
+          :class="['question-item', { done: isCompleted(questionIdx) }]"
         >
           <label class="question-check">
             <span class="checkbox-control">
@@ -58,27 +61,20 @@
               >
               <span class="checkmark" aria-hidden="true"></span>
             </span>
-            <span>질문 {{ questionIdx + 1 }}</span>
+            <span :class="['question-type', `question-${questionItem.type}`]">{{ questionTypeLabel(questionItem.type) }}</span>
+            <span class="question-text">{{ questionItem.question }}</span>
           </label>
 
-          <div class="question-body">
-            <p class="question-text">{{ questionItem.question }}</p>
-
-            <div v-if="questionItem.answer_guide" class="answer-tip">
-              <span>답변 전략</span>
-              <p>{{ questionItem.answer_guide }}</p>
-            </div>
-
-            <div v-if="questionItem.follow_up_questions.length" class="follow-up">
-              <span>꼬리질문</span>
-              <ul>
-                <li v-for="followUp in questionItem.follow_up_questions" :key="followUp">{{ followUp }}</li>
-              </ul>
-            </div>
-          </div>
+          <details v-if="questionItem.answer_guide || questionItem.follow_up_questions.length">
+            <summary>답변 방향</summary>
+            <p v-if="questionItem.answer_guide">{{ questionItem.answer_guide }}</p>
+            <ul v-if="questionItem.follow_up_questions.length">
+              <li v-for="followUp in questionItem.follow_up_questions" :key="followUp">{{ followUp }}</li>
+            </ul>
+          </details>
         </article>
       </div>
-    </div>
+    </section>
   </section>
 </template>
 
@@ -105,11 +101,18 @@ const preparationLabel = computed(() => ({
   organize: '답변 정리',
   study: '학습',
 }[preparationType.value]))
-const preparationGuide = computed(() => ({
-  appeal: '내 경험을 직무 지식과 연결해 강조할 항목',
-  organize: '유사 경험을 직무 언어로 바꿔 설명할 항목',
-  study: '기초 개념부터 학습해 답변을 만들어야 할 항목',
-}[preparationType.value]))
+const connection = computed(() => props.subtopic.experience_connection || {})
+const hasExperienceConnection = computed(() =>
+  Boolean(connection.value.evidence || connection.value.transferable_point || connection.value.gap)
+)
+
+function questionTypeLabel(type) {
+  return {
+    concept: '개념',
+    experience: '경험',
+    application: '적용',
+  }[type] || '개념'
+}
 
 function isCompleted(questionIdx) {
   return !!props.completedTasks[`${props.categoryIdx}-${props.subtopicIdx}-${questionIdx}`]
@@ -128,10 +131,6 @@ function isCompleted(questionIdx) {
 .type-organize { border-left-color: var(--warn); }
 .type-study { border-left-color: var(--danger); }
 .subtopic-head {
-  display: grid;
-  gap: var(--space-2);
-}
-.title-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -141,14 +140,13 @@ h4 {
   color: var(--fg);
   font-size: var(--text-lg);
   font-weight: 700;
-  line-height: 1.3;
 }
-.type-badge {
-  padding: 4px 9px;
+.type-badge, .question-type {
   border-radius: var(--radius-pill);
   font-size: var(--text-xs);
   font-weight: 700;
 }
+.type-badge { padding: 4px 9px; }
 .badge-appeal {
   color: var(--success);
   background: color-mix(in oklab, var(--success), transparent 90%);
@@ -161,70 +159,73 @@ h4 {
   color: var(--danger);
   background: color-mix(in oklab, var(--danger), transparent 90%);
 }
-.type-guide {
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-.prep-grid {
+.analysis-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
   margin-top: var(--space-4);
 }
-.prep-block {
+.analysis-block {
   min-width: 0;
   padding: var(--space-3);
   border-radius: var(--radius-md);
   background: var(--surface-warm);
 }
-.approach-block {
-  grid-column: 1 / -1;
-  background: color-mix(in oklab, var(--accent), transparent 95%);
-}
-.prep-label {
+.block-label {
+  display: block;
+  margin-bottom: var(--space-2);
   color: var(--meta);
   font-size: var(--text-xs);
   font-weight: 700;
 }
-.prep-block p {
-  margin-top: var(--space-1);
+.analysis-block p {
   color: var(--fg-2);
   font-size: var(--text-sm);
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.prep-block .missing-experience { color: var(--danger); }
-.source-note {
-  display: inline-block;
-  margin-top: var(--space-2);
-  color: var(--accent);
+.analysis-block p + p { margin-top: var(--space-2); }
+.analysis-block strong {
+  margin-right: var(--space-2);
+  color: var(--fg);
   font-size: var(--text-xs);
-  font-weight: 600;
 }
-.focus-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
-}
-.focus-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.focus-list span {
-  padding: 5px 9px;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--fg-2);
-  font-size: var(--text-xs);
-  font-weight: 600;
-}
-.question-section {
+.gap-text { color: var(--danger) !important; }
+.focus-section, .steps-section, .question-section {
   margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-soft);
+}
+.focus-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.focus-item {
+  padding: var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.focus-item strong {
+  color: var(--fg);
+  font-size: var(--text-sm);
+}
+.focus-item p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+.steps-section ol {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 22px;
+}
+.steps-section li {
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  line-height: 1.5;
 }
 .question-section-head {
   display: flex;
@@ -232,35 +233,27 @@ h4 {
   gap: var(--space-3);
   margin-bottom: var(--space-3);
 }
-.question-section-head strong {
-  color: var(--fg);
-  font-size: var(--text-sm);
-}
-.question-section-head span {
-  color: var(--meta);
-  font-size: var(--text-xs);
-}
-.question-cards {
+.question-section-head strong { color: var(--fg); font-size: var(--text-sm); }
+.question-section-head span { color: var(--meta); font-size: var(--text-xs); }
+.question-list {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
-.question-card {
-  padding: var(--space-4);
+.question-item {
+  padding: var(--space-3);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   background: var(--surface);
 }
-.question-card.done {
+.question-item.done {
   border-color: color-mix(in oklab, var(--success), transparent 65%);
   background: color-mix(in oklab, var(--success), white 96%);
 }
 .question-check {
-  display: inline-flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 20px auto 1fr;
+  align-items: start;
   gap: var(--space-2);
-  color: var(--meta);
-  font-size: var(--text-xs);
-  font-weight: 700;
   cursor: pointer;
 }
 .checkbox-control {
@@ -301,44 +294,50 @@ h4 {
   transform: rotate(-45deg);
 }
 .checkbox-control input:focus-visible + .checkmark { box-shadow: var(--focus-ring); }
-.question-body {
-  display: grid;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-  padding-left: 30px;
+.question-type {
+  padding: 3px 7px;
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent), transparent 92%);
+  white-space: nowrap;
+}
+.question-experience {
+  color: var(--success);
+  background: color-mix(in oklab, var(--success), transparent 92%);
+}
+.question-application {
+  color: color-mix(in oklab, var(--warn), black 22%);
+  background: color-mix(in oklab, var(--warn), transparent 86%);
 }
 .question-text {
   color: var(--fg);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 650;
-  line-height: 1.55;
+  line-height: 1.5;
 }
-.answer-tip, .follow-up {
-  display: grid;
-  gap: var(--space-1);
+details {
+  margin-top: var(--space-3);
+  padding-left: 30px;
 }
-.answer-tip {
-  padding-left: var(--space-3);
-  border-left: 3px solid var(--accent);
-}
-.answer-tip span, .follow-up span {
-  color: var(--meta);
+summary {
+  width: fit-content;
+  color: var(--accent);
   font-size: var(--text-xs);
   font-weight: 700;
+  cursor: pointer;
 }
-.answer-tip p, .follow-up li {
+details p, details li {
   color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.55;
 }
-.follow-up ul {
-  margin: 0;
-  padding-left: var(--space-5);
-}
+details p { margin-top: var(--space-2); }
+details ul { margin: var(--space-2) 0 0; padding-left: var(--space-5); }
 
 @media (max-width: 720px) {
-  .prep-grid { grid-template-columns: 1fr; }
-  .approach-block { grid-column: auto; }
-  .question-body { padding-left: 0; }
+  .analysis-grid, .focus-list { grid-template-columns: 1fr; }
+  .question-check { grid-template-columns: 20px 1fr; }
+  .question-type { grid-column: 2; width: fit-content; }
+  .question-text { grid-column: 2; }
+  details { padding-left: 28px; }
 }
 </style>

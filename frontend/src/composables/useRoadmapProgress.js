@@ -104,13 +104,18 @@ function normalizeRoadmap(timeline = []) {
   return timeline.map((item, itemIdx) => {
     if (Array.isArray(item.subtopics)) return normalizeCategoryItem(item, itemIdx)
     return normalizeLegacyItem(item, itemIdx)
-  })
+  }).sort((a, b) => a.priority - b.priority)
 }
 
 function normalizeCategoryItem(item, itemIdx) {
   return {
     category: item.category || item.title || `${itemIdx + 1}번째 영역`,
-    summary: item.summary || '',
+    responsibility: item.responsibility || item.summary || '',
+    priority: Number.isInteger(Number(item.priority)) ? Number(item.priority) : itemIdx + 1,
+    priority_reason: item.priority_reason || item.priorityReason || item.summary || '',
+    experience_match: normalizeExperienceMatch(item.experience_match || item.experienceMatch),
+    experience_keywords: normalizeStringList(item.experience_keywords || item.experienceKeywords),
+    competency_keywords: normalizeStringList(item.competency_keywords || item.competencyKeywords),
     sources: normalizeStringList(item.sources),
     subtopics: item.subtopics.map((subtopic, subtopicIdx) => normalizeSubtopic(subtopic, subtopicIdx)),
   }
@@ -122,6 +127,7 @@ function normalizeSubtopic(subtopic, subtopicIdx) {
     ? subtopic.matched_experience
     : subtopic.matchedExperience || subtopic.evidence || ''
   const fallbackQuestion = {
+    type: normalizeQuestionType(subtopic.type),
     question: subtopic.question || title,
     answer_guide: subtopic.answer_guide || subtopic.answerGuide || '',
     follow_up_questions: normalizeStringList(subtopic.follow_up_questions),
@@ -142,10 +148,41 @@ function normalizeSubtopic(subtopic, subtopicIdx) {
     job_reason: subtopic.job_reason || subtopic.jobReason || subtopic.why || '',
     matched_experience: matchedExperience || '',
     experience_source: subtopic.experience_source || subtopic.experienceSource || '',
-    study_focus: normalizeStringList(subtopic.study_focus || subtopic.studyFocus),
+    experience_connection: normalizeExperienceConnection(
+      subtopic.experience_connection || subtopic.experienceConnection,
+      matchedExperience,
+    ),
+    study_focus: normalizeStudyFocus(subtopic.study_focus || subtopic.studyFocus),
+    preparation_steps: normalizeStringList(
+      subtopic.preparation_steps || subtopic.preparationSteps || subtopic.approach
+    ),
     approach: subtopic.approach || subtopic.study_goal || subtopic.studyGoal || '',
     questions: questions.filter(item => item.question),
   }
+}
+
+function normalizeExperienceMatch(value) {
+  return ['direct', 'related', 'none'].includes(value) ? value : 'none'
+}
+
+function normalizeExperienceConnection(value, matchedExperience) {
+  const connection = value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+  return {
+    evidence: connection.evidence || matchedExperience || '',
+    transferable_point: connection.transferable_point || connection.transferablePoint || '',
+    gap: connection.gap || '',
+  }
+}
+
+function normalizeStudyFocus(value) {
+  if (!Array.isArray(value)) return []
+  return value.map((item) => {
+    if (typeof item === 'string') return { keyword: item.trim(), checkpoint: '' }
+    return {
+      keyword: String(item?.keyword || item?.title || item?.concept || '').trim(),
+      checkpoint: String(item?.checkpoint || item?.goal || item?.description || '').trim(),
+    }
+  }).filter(item => item.keyword)
 }
 
 function normalizePreparationType(value) {
@@ -162,6 +199,7 @@ function inferPreparationType(value) {
 function normalizeQuestionItem(questionItem, fallbackQuestion) {
   if (typeof questionItem === 'string') {
     return {
+      type: fallbackQuestion.type,
       question: questionItem,
       answer_guide: fallbackQuestion.answer_guide,
       follow_up_questions: fallbackQuestion.follow_up_questions,
@@ -171,12 +209,17 @@ function normalizeQuestionItem(questionItem, fallbackQuestion) {
   }
 
   return {
+    type: normalizeQuestionType(questionItem?.type),
     question: questionItem?.question || fallbackQuestion.question,
     answer_guide: questionItem?.answer_guide || questionItem?.answerGuide || fallbackQuestion.answer_guide,
     follow_up_questions: normalizeStringList(questionItem?.follow_up_questions || questionItem?.followUps),
     done: Boolean(questionItem?.done),
     hasDone: Boolean(questionItem && Object.prototype.hasOwnProperty.call(questionItem, 'done')),
   }
+}
+
+function normalizeQuestionType(value) {
+  return ['concept', 'experience', 'application'].includes(value) ? value : 'concept'
 }
 
 function normalizeStringList(value) {
@@ -188,7 +231,12 @@ function normalizeStringList(value) {
 function normalizeLegacyItem(item, itemIdx) {
   return {
     category: item.title || (item.week ? `${item.week}주차` : `${itemIdx + 1}번째 영역`),
-    summary: item.summary || '',
+    responsibility: item.summary || '',
+    priority: itemIdx + 1,
+    priority_reason: '',
+    experience_match: 'none',
+    experience_keywords: [],
+    competency_keywords: [],
     sources: [],
     subtopics: (item.tasks || []).map((task, taskIdx) => ({
       title: task,
@@ -199,9 +247,12 @@ function normalizeLegacyItem(item, itemIdx) {
       job_reason: '',
       matched_experience: '',
       experience_source: '',
+      experience_connection: { evidence: '', transferable_point: '', gap: '' },
       study_focus: [],
+      preparation_steps: [],
       approach: '',
       questions: [{
+        type: 'concept',
         question: String(task),
         answer_guide: '',
         follow_up_questions: [],

@@ -83,7 +83,7 @@
             <div class="section-head">
               <div>
                 <h2>준비 항목</h2>
-                <p class="section-description">직무 지식별로 내 경험을 연결하고, 어필·답변 정리·학습 순서로 준비하세요.</p>
+                <p class="section-description">담당업무별 우선순위와 필요한 직무 지식, 준비 순서와 예상 질문을 확인하세요.</p>
               </div>
             </div>
             <div v-if="roadmapItems.length">

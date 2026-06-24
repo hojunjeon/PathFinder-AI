@@ -45,18 +45,23 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByRole('heading', { name: '직무 역량 매칭도' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()
-  await expect(page.getByText('왜 준비하나요?').first()).toBeVisible()
-  await expect(page.getByText('로봇 팔 제어 정확도 개선 경험')).toBeVisible()
+  await expect(page.getByText('우선순위 1 · 담당업무')).toBeVisible()
+  await expect(page.getByText('직접 경험', { exact: true })).toBeVisible()
+  await expect(page.getByText('업무 연결').first()).toBeVisible()
+  await expect(page.getByText('내 연결점').first()).toBeVisible()
+  await expect(page.getByText('핵심 개념').first()).toBeVisible()
+  await expect(page.getByText('준비 순서').first()).toBeVisible()
+  await expect(page.getByText('로봇 팔 제어 정확도 개선 경험', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('FK와 IK 차이')).toBeVisible()
-  await expect(page.getByText('직접 연결되는 경험이 확인되지 않았습니다.').first()).toBeVisible()
-  await expect(page.getByLabel('역기구학')).toBeChecked()
+  await expect(page.getByText(/직접 연결 경험 없음/).first()).toBeVisible()
+  await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
+  await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
   await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
-  await expect(page.getByText('40%').first()).toBeVisible()
   await page.getByLabel('EtherCAT').check()
-  await expect(page.getByText('60%').first()).toBeVisible()
   await page.reload()
   await expect(page.getByLabel('EtherCAT')).toBeChecked()
-  await expect(page.getByText('60%').first()).toBeVisible()
 })
 
 test('cover letter profile save request contains question and answer', async ({ page }) => {
@@ -190,7 +195,12 @@ async function mockAnalysisResult(page) {
         timeline_data: [
           {
             category: '로보틱스',
-            summary: '프로젝트와 채용공고의 제어 요구가 겹치는 영역입니다.',
+            responsibility: '산업용 로봇 제어 알고리즘 개발',
+            priority: 1,
+            priority_reason: '핵심 업무이며 로봇 팔 제어 경험을 직접 어필할 수 있습니다.',
+            experience_match: 'direct',
+            experience_keywords: ['로봇 팔 제어 정확도 개선 경험'],
+            competency_keywords: ['역기구학', '제어 검증'],
             sources: ['채용공고', '프로젝트 1', '프로젝트 2'],
             subtopics: [
               {
@@ -200,13 +210,37 @@ async function mockAnalysisResult(page) {
                 job_reason: '로봇 제어 업무의 핵심 지식입니다.',
                 matched_experience: '로봇 팔 제어 정확도 개선 경험',
                 experience_source: '프로필·자기소개서',
-                study_focus: ['FK와 IK 차이', '특이점', '관절 제한'],
-                approach: '프로젝트 문제, 적용 방식, 제약 처리, 검증 결과 순서로 어필하세요.',
-                question: '1번 프로젝트에서 역기구학을 어떻게 사용했나요?',
-                answer_guide: '목표 위치 계산과 관절각 산출 흐름을 설명하세요.',
-                evidence: '자기소개서의 로봇 팔 제어 정확도 개선 경험',
-                study_goal: 'FK/IK 차이와 특이점 대응을 설명할 수 있어야 합니다.',
-                follow_up_questions: ['관절 제한은 어느 단계에서 반영했나요?'],
+                experience_connection: {
+                  evidence: '로봇 팔 제어 정확도 개선 경험',
+                  transferable_point: '산업용 로봇의 목표 자세 계산과 검증으로 연결할 수 있습니다.',
+                  gap: '특이점 처리 기준을 보완해야 합니다.',
+                },
+                study_focus: [
+                  { keyword: 'FK와 IK 차이', checkpoint: '입력과 출력 비교' },
+                  { keyword: '특이점', checkpoint: '탐지와 회피 방식' },
+                  { keyword: '관절 제한', checkpoint: '해 선택 기준' },
+                  { keyword: 'Jacobian', checkpoint: '수치해석에서의 역할' },
+                ],
+                preparation_steps: ['프로젝트 흐름 정리', '해법 선택 이유 정리', '오차 검증 수치 연결'],
+                questions: [{
+                  type: 'concept',
+                  question: '순기구학과 역기구학의 차이는 무엇인가요?',
+                  done: true,
+                  answer_guide: '입력과 출력, 사용 목적을 비교하세요.',
+                  follow_up_questions: [],
+                }, {
+                  type: 'experience',
+                  question: '프로젝트에서 역기구학을 어떻게 사용했나요?',
+                  done: false,
+                  answer_guide: '문제, 구현, 검증 순서로 설명하세요.',
+                  follow_up_questions: [],
+                }, {
+                  type: 'application',
+                  question: '산업용 로봇에서 특이점을 어떻게 처리하겠습니까?',
+                  done: false,
+                  answer_guide: '탐지, 회피, 안전 제한 순서로 설명하세요.',
+                  follow_up_questions: [],
+                }],
               },
               {
                 title: '모션 플래닝',

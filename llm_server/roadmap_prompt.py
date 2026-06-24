@@ -1,3 +1,6 @@
+import re
+
+
 def build_prompt(req) -> str:
     interview_stages = req.job_info.get("interview_stages", [])
     stages_text = "\n".join(
@@ -6,6 +9,11 @@ def build_prompt(req) -> str:
     selected = ", ".join(req.selected_interview_types)
     cv_text = _cover_letter_text(req.user_profile.get("자소서", []))
     awards_text = _awards_text(req.user_profile.get("수상내역", []))
+    responsibilities = extract_responsibilities(req.job_posting_text)
+    responsibilities_text = "\n".join(
+        f"{index}. {responsibility}"
+        for index, responsibility in enumerate(responsibilities, start=1)
+    )
 
     return f"""당신은 취업 준비 전문 코치입니다. 아래 정보를 바탕으로 개인화된 면접 준비 항목을 작성해주세요.
 
@@ -23,6 +31,9 @@ def build_prompt(req) -> str:
 
 ## 채용공고 내용 (최우선 참고)
 {req.job_posting_text}
+
+## 사전 추출된 담당업무 목록
+{responsibilities_text or '구조화된 목록 없음. 채용공고 본문에서 담당업무를 빠짐없이 직접 추출하세요.'}
 
 ## 기업 정보 (참고용)
 - 회사명: {req.company_info.get('회사명', '')}
@@ -75,23 +86,44 @@ def build_prompt(req) -> str:
 10-2. 사용자 입력에서 직접 확인되는 프로젝트 기술과 성과는 누락하지 말고 strength 또는 articulate 후보로 반드시 검토하세요.
 11. 모든 keyword는 긴 문장을 자른 값이 아니라 입력을 종합하여 새로 붙인 짧고 구체적인 명사구여야 합니다.
 12. 점수, 적합도 퍼센트, 합격 가능성을 생성하지 마세요.
-13. timeline_data는 주차별 계획이 아니라 직무 지식 학습 구조로 작성하세요.
-14. category는 "로보틱스", "산업용 통신", "제어 소프트웨어"처럼 직무 지식의 큰 분야로 작성하세요.
-14-1. 채용공고에 둘 이상의 지식 분야가 있으면 timeline_data를 2~4개 category로 나누고, 각 category에는 1~4개의 subtopic을 작성하세요.
-15. category의 sources에는 해당 분야를 선택한 기준을 "채용공고", "직무 DB", "프로필", "자기소개서" 중 실제 사용한 값만 넣으세요.
-16. subtopics의 title은 "역기구학", "모션 플래닝", "EtherCAT"처럼 해당 분야의 세부 개념 키워드로 작성하세요.
-17. 각 세부 개념은 다음 preparation_type 중 하나로 분류하세요.
+13. timeline_data는 주차별 계획이 아니라 "담당업무 → 직무 지식 → 준비 방법 → 질문" 구조로 작성하세요.
+14. timeline_data의 최상위 category 하나는 담당업무 하나를 나타냅니다. category는 "산업용 로봇 제어", "모션 플래닝", "실시간 서보 제어"처럼 업무를 대표하는 짧은 핵심 키워드로 작성하세요.
+15. 사전 추출된 담당업무 목록이 있으면 항목 수를 줄이거나 합치지 말고 모든 담당업무를 각각 하나 이상의 category로 만드세요. 담당업무 개수에는 상한을 두지 않습니다.
+16. responsibility_index에는 사전 추출 담당업무 목록의 번호를, responsibility에는 해당 업무 문장을 글자 그대로 작성하세요.
+17. category의 priority는 1부터 시작하는 정수로 작성하고 다음 기준을 종합해 정렬하세요.
+   - 직접 경험이 있어 면접에서 강하게 어필할 수 있는 업무
+   - 유사 경험이 있어 직무 언어로 전환하면 경쟁력이 생기는 업무
+   - 직무 중요도가 높지만 경험·지식이 없어 면접 전 학습이 시급한 업무
+   - 우대사항 또는 보조 업무
+18. priority_reason에는 "직무 중요도 + 내 경험/역량의 상태 + 면접 준비 효과"를 한 문장으로 작성하세요.
+19. experience_match는 다음 중 하나로 분류하세요.
+   - direct: 해당 업무와 직접 연결되는 경험이 있음
+   - related: 유사하거나 전환 가능한 경험·역량이 있음
+   - none: 연결 경험이 확인되지 않음
+20. experience_keywords에는 프로필·자기소개서에서 확인된 경험 이름과 행동 키워드만, competency_keywords에는 해당 업무에 활용 가능한 기술·역량 키워드만 작성하세요.
+21. category의 sources에는 "채용공고", "직무 DB", "프로필", "자기소개서" 중 실제 사용한 값만 넣으세요.
+22. subtopics는 해당 담당업무를 수행하거나 면접에서 설명하기 위해 필요한 직무 지식 키워드입니다. 업무마다 필요한 지식을 충분히 분해하되, 같은 의미의 키워드를 반복하지 마세요.
+23. subtopics의 title은 "역기구학", "충돌 회피", "궤적 보간", "EtherCAT 분산 클럭"처럼 구체적인 직무 지식 키워드로 작성하세요.
+24. 각 세부 지식은 다음 preparation_type 중 하나로 분류하세요.
    - appeal: 직접 관련 경험과 지식이 있어 면접에서 어필해야 함
    - organize: 관련 또는 유사 경험이 있어 직무 개념에 맞게 답변을 정리해야 함
    - study: 직무에 필요하지만 관련 근거가 없어 먼저 공부해야 함
-18. job_reason에는 채용공고나 직무 DB를 기준으로 왜 이 개념을 준비하는지 작성하세요.
-19. matched_experience에는 프로필·자기소개서에서 확인된 연결 경험만 짧게 작성하고, 없으면 빈 문자열로 두세요.
-20. experience_source는 "프로필", "자기소개서", "프로필·자기소개서", "없음" 중 하나로 작성하세요.
-21. study_focus에는 먼저 확인할 핵심 개념을 2~4개 작성하세요.
-22. approach에는 지원자가 취할 준비 전략을 작성하세요. appeal이면 어필 순서, organize이면 경험을 직무에 연결하는 방식, study이면 기초 개념부터 답변까지의 학습 순서를 제시하세요.
-23. 각 소제목마다 questions 배열을 만들고, 질문마다 개인 맞춤 면접 질문과 답변 팁, 체크용 done 값, 꼬리질문을 작성하세요.
-24. 답변 팁은 지원자 프로필·자기소개서 경험·채용공고 요구를 어떤 순서와 관점으로 연결하면 좋은지 제안하세요.
-25. 최종 JSON을 만들기 전에 채용공고의 필수역량·우대사항과 프로필의 프로젝트·자기소개서를 대조하여, 입력에 명시된 핵심 역량이나 경험이 결과에서 빠지지 않았는지 점검하세요.
+25. job_reason에는 "이 지식이 실제 담당업무의 어떤 판단·구현·검증에 쓰이는지"를 구체적으로 작성하세요. 일반적인 중요성 설명은 금지합니다.
+26. matched_experience에는 프로필·자기소개서에서 확인된 연결 경험만 작성하고, experience_connection에는 다음 세 요소를 포함하세요.
+   - evidence: 입력에서 확인한 구체적인 행동·기술·결과
+   - transferable_point: 이 경험을 현재 담당업무에 전환해 설명할 수 있는 이유
+   - gap: 직접 업무와 비교했을 때 추가로 보완할 부분. 없으면 빈 문자열
+27. experience_source는 "프로필", "자기소개서", "프로필·자기소개서", "없음" 중 하나로 작성하세요.
+28. study_focus에는 먼저 볼 개념을 최소 4개 작성하고 각 항목을 keyword와 checkpoint로 구조화하세요. checkpoint는 면접에서 설명하거나 비교할 수 있어야 하는 기준입니다.
+29. preparation_steps에는 실제 준비 순서를 3~5단계로 작성하세요. appeal은 경험 정리→직무 연결→성과 검증, organize는 개념 보완→유사 경험 변환→차이 설명, study는 기초 원리→비교 기준→업무 적용→답변 연습 순서를 따르세요.
+30. questions는 각 subtopic마다 최소 3개 작성하세요. 반드시 다음 유형을 포함하세요.
+   - concept: 개념과 원리 확인
+   - experience: 지원자 경험과의 연결 확인
+   - application: 담당업무 적용, 선택 기준, 트레이드오프 확인
+31. 담당업무의 모든 문장에 대해 최소 하나 이상의 subtopic과 질문 묶음을 생성하세요. 질문 총개수에 임의의 상한을 두지 마세요.
+32. answer_guide에는 모범답안 전문 대신 "답변 순서 + 사용할 경험 근거 + 핵심 기술 판단"을 간결하게 작성하세요.
+33. 최종 JSON을 만들기 전에 사전 추출 담당업무 각각이 timeline_data의 responsibility로 포함되었는지 체크하고 누락되면 반드시 추가하세요.
+34. 불필요한 서론, 반복 설명, 추상적인 격려 문구를 제거하고 각 문자열을 가독성 있게 압축하세요.
 
 ## 출력 형식 (반드시 아래 JSON 형식으로만 답변)
 {{
@@ -153,23 +185,40 @@ def build_prompt(req) -> str:
   "text_roadmap": "개인 맞춤 질문 준비 요약. 주차별 계획처럼 쓰지 말고 짧은 문장으로 작성",
   "timeline_data": [
     {{
-      "category": "직무 지식 대분류",
-      "summary": "이 지식 분야를 준비해야 하는 이유를 한 문장으로 요약",
-      "sources": ["채용공고", "직무 DB"],
+      "category": "담당업무 핵심 키워드",
+      "responsibility_index": 1,
+      "responsibility": "채용공고의 담당업무 문장",
+      "priority": 1,
+      "priority_reason": "직무 중요도와 내 경험·역량을 함께 고려한 우선순위 이유",
+      "experience_match": "direct | related | none",
+      "experience_keywords": ["연결 경험·행동 키워드"],
+      "competency_keywords": ["활용 가능한 역량 키워드"],
+      "sources": ["채용공고", "프로필", "자기소개서"],
       "subtopics": [
         {{
           "title": "세부 지식 키워드",
           "preparation_type": "appeal | organize | study",
-          "job_reason": "채용공고 또는 직무 DB 기준으로 준비해야 하는 이유",
+          "job_reason": "이 지식이 담당업무의 어떤 판단·구현·검증에 사용되는지",
           "matched_experience": "프로필 또는 자기소개서에서 연결되는 경험. 없으면 빈 문자열",
           "experience_source": "프로필 | 자기소개서 | 프로필·자기소개서 | 없음",
-          "study_focus": ["먼저 확인할 핵심 개념"],
-          "approach": "어필, 답변 정리 또는 학습을 위한 구체적인 접근 순서",
+          "experience_connection": {{
+            "evidence": "입력에서 확인한 행동·기술·결과",
+            "transferable_point": "담당업무에 전환해 설명할 수 있는 이유",
+            "gap": "직접 업무와 비교해 보완할 부분. 없으면 빈 문자열"
+          }},
+          "study_focus": [
+            {{
+              "keyword": "먼저 볼 핵심 개념",
+              "checkpoint": "면접에서 설명·비교할 수 있어야 하는 기준"
+            }}
+          ],
+          "preparation_steps": ["1단계 준비 행동", "2단계 준비 행동", "3단계 준비 행동"],
           "questions": [
             {{
+              "type": "concept | experience | application",
               "question": "프로필·자기소개서·기업 정보·채용공고 기반 개인 맞춤 예상 면접 질문",
               "done": false,
-              "answer_guide": "답변 팁. 내 경험과 채용공고 요구를 어떤 순서로 연결할지 포함",
+              "answer_guide": "답변 순서, 사용할 경험 근거, 핵심 기술 판단",
               "follow_up_questions": ["꼬리질문"]
             }}
           ]
@@ -192,3 +241,36 @@ def _awards_text(raw_awards) -> str:
     if not isinstance(raw_awards, list):
         return str(raw_awards)
     return "\n".join([f"- {award.get('title', '')} ({award.get('org', '')})" for award in raw_awards])
+
+
+def extract_responsibilities(job_posting_text: str) -> list[str]:
+    text = str(job_posting_text or "").replace("\r\n", "\n").replace("\r", "\n")
+    if not text.strip():
+        return []
+
+    section_match = re.search(
+        r"(?:담당\s*업무|주요\s*업무|수행\s*업무|업무\s*내용)\s*[:：]?\s*(.+?)(?=\n\s*(?:필수\s*역량|필수\s*요건|자격\s*요건|지원\s*자격|요구\s*역량|우대\s*사항|우대\s*조건)\s*[:：]?|$)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    section = section_match.group(1).strip() if section_match else ""
+    if not section:
+        return []
+
+    raw_items = []
+    for line in section.splitlines():
+        cleaned = re.sub(r"^\s*(?:[-*•·]|\d+[.)])\s*", "", line).strip()
+        if not cleaned:
+            continue
+        raw_items.extend(re.split(r"\s*(?:,|;|ㆍ)\s*", cleaned))
+
+    items = []
+    seen = set()
+    for raw_item in raw_items:
+        item = re.sub(r"\s+", " ", raw_item).strip(" -–—")
+        key = item.casefold()
+        if len(item) < 2 or key in seen:
+            continue
+        seen.add(key)
+        items.append(item)
+    return items

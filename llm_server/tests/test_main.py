@@ -261,12 +261,18 @@ def test_build_prompt_includes_company_and_job_context():
     assert "어떤 실제 경험을 강점으로 활용" in prompt
     assert "점수, 적합도 퍼센트, 합격 가능성을 생성하지 마세요" in prompt
     assert "어필해야 함" in prompt
-    assert "직무 지식 학습 구조" in prompt
+    assert "담당업무 → 직무 지식 → 준비 방법 → 질문" in prompt
     assert '"competency_map"' in prompt
     assert '"preparation_type"' in prompt
     assert '"matched_experience"' in prompt
     assert "competency_map을 4~8개" in prompt
-    assert "timeline_data를 2~4개 category" in prompt
+    assert "담당업무 개수에는 상한을 두지 않습니다" in prompt
+    assert "각 subtopic마다 최소 3개" in prompt
+    assert '"responsibility"' in prompt
+    assert '"responsibility_index"' in prompt
+    assert '"priority_reason"' in prompt
+    assert '"experience_connection"' in prompt
+    assert '"preparation_steps"' in prompt
     assert '"gap_type"' in prompt
     assert '"category"' in prompt
     assert '"subtopics"' in prompt
@@ -319,6 +325,127 @@ def test_call_gpt_sends_gms_bearer_token(monkeypatch):
     assert captured["json"]["response_format"] == {"type": "json_object"}
     assert captured["json"]["max_completion_tokens"] == main.GMS_MAX_COMPLETION_TOKENS
     assert captured["json"]["reasoning_effort"] == "minimal"
+
+
+def test_extract_responsibilities_preserves_every_duty():
+    duties = main.extract_responsibilities(
+        """
+        담당업무:
+        - 산업용 로봇 제어 알고리즘 개발
+        - 로봇 매니퓰레이터의 역기구학 및 궤적 생성
+        - 충돌 회피를 포함한 모션 플래닝
+        - EtherCAT 기반 서보 모터 실시간 제어
+        필수역량:
+        - Python 또는 C++
+        """
+    )
+
+    assert duties == [
+        "산업용 로봇 제어 알고리즘 개발",
+        "로봇 매니퓰레이터의 역기구학 및 궤적 생성",
+        "충돌 회피를 포함한 모션 플래닝",
+        "EtherCAT 기반 서보 모터 실시간 제어",
+    ]
+
+
+def test_normalize_timeline_sorts_priority_and_structures_preparation():
+    normalized = main._normalize_timeline_data([
+        {
+            "category": "통신",
+            "responsibility": "EtherCAT 기반 서보 제어",
+            "priority": 2,
+            "experience_match": "none",
+            "subtopics": [{
+                "title": "분산 클럭",
+                "preparation_type": "study",
+                "study_focus": [
+                    {"keyword": "Distributed Clocks", "checkpoint": "동기화 원리 설명"},
+                    "PDO/SDO",
+                ],
+                "preparation_steps": ["기초 원리", "업무 적용", "답변 연습"],
+                "questions": [
+                    {"type": "concept", "question": "개념 질문"},
+                    {"type": "experience", "question": "경험 질문"},
+                    {"type": "application", "question": "적용 질문"},
+                ],
+            }],
+        },
+        {
+            "category": "제어",
+            "responsibility": "로봇 제어 알고리즘 개발",
+            "priority": 1,
+            "experience_match": "direct",
+            "subtopics": [],
+        },
+    ])
+
+    assert normalized[0]["category"] == "제어"
+    subtopic = normalized[1]["subtopics"][0]
+    assert subtopic["study_focus"][0]["checkpoint"] == "동기화 원리 설명"
+    assert subtopic["study_focus"][1] == {"keyword": "PDO/SDO", "checkpoint": ""}
+    assert subtopic["preparation_steps"] == ["기초 원리", "업무 적용", "답변 연습"]
+    assert [item["type"] for item in subtopic["questions"]] == [
+        "concept", "experience", "application"
+    ]
+
+
+def test_merge_timeline_adds_only_missing_responsibility():
+    original = [{
+        "category": "역기구학",
+        "responsibility": "역기구학 및 궤적 생성",
+        "priority": 1,
+        "subtopics": [{"questions": [{}, {}, {}]}],
+    }]
+    repaired = [{
+        "category": "로봇 제어",
+        "responsibility": "산업용 로봇 제어 알고리즘 개발",
+        "priority": 2,
+        "subtopics": [{"questions": [{}, {}, {}]}],
+    }]
+
+    merged = main._merge_timeline_categories(
+        original,
+        repaired,
+        ["산업용 로봇 제어 알고리즘 개발"],
+    )
+
+    assert [item["responsibility"] for item in merged] == [
+        "역기구학 및 궤적 생성",
+        "산업용 로봇 제어 알고리즘 개발",
+    ]
+
+
+def test_canonicalize_timeline_maps_category_to_original_duty():
+    responsibilities = [
+        "산업용 로봇 제어 알고리즘 개발",
+        "로봇 매니퓰레이터의 역기구학 및 궤적 생성",
+    ]
+    canonical = main._canonicalize_timeline_responsibilities([
+        {
+            "category": "역기구학",
+            "responsibility": "DH 파라미터 기반 역기구학 구현 경험",
+            "priority": 1,
+            "subtopics": [{"title": "역기구학", "questions": []}],
+        }
+    ], responsibilities)
+
+    assert canonical[0]["responsibility_index"] == 2
+    assert canonical[0]["responsibility"] == responsibilities[1]
+
+
+def test_sanitize_timeline_removes_unverified_experience_keywords():
+    sanitized = main._sanitize_timeline_experience([
+        {
+            "experience_match": "related",
+            "experience_keywords": ["EtherCAT", "ROS2"],
+            "subtopics": [],
+        }
+    ], {
+        "프로젝트": [{"title": "ROS2 모바일 로봇"}],
+    })
+
+    assert sanitized[0]["experience_keywords"] == ["ROS2"]
+    assert sanitized[0]["experience_match"] == "related"
 
 
 def _payload():

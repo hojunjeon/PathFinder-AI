@@ -2,16 +2,31 @@
   <article :class="['category-card', { current }]">
     <div class="category-head">
       <div>
-        <p class="category-eyebrow">직무 지식 분야</p>
+        <p class="category-eyebrow">우선순위 {{ category.priority }} · 담당업무</p>
         <h3>{{ category.category }}</h3>
-        <p v-if="category.summary" class="category-summary">{{ category.summary }}</p>
+        <p v-if="category.responsibility" class="responsibility">{{ category.responsibility }}</p>
       </div>
-      <span :class="['status', statusClass]">{{ statusText }}</span>
+      <div class="head-badges">
+        <span :class="['match-badge', `match-${category.experience_match}`]">{{ experienceMatchLabel }}</span>
+        <span :class="['status', statusClass]">{{ statusText }}</span>
+      </div>
     </div>
 
-    <div v-if="category.sources.length" class="source-list" aria-label="분석 기준">
-      <span class="source-label">분석 기준</span>
-      <span v-for="source in category.sources" :key="source" class="source-chip">{{ source }}</span>
+    <p v-if="category.priority_reason" class="priority-reason">{{ category.priority_reason }}</p>
+
+    <div v-if="category.experience_keywords.length || category.competency_keywords.length" class="keyword-groups">
+      <div v-if="category.experience_keywords.length" class="keyword-group">
+        <span>연결 경험</span>
+        <div>
+          <em v-for="keyword in category.experience_keywords" :key="keyword">{{ keyword }}</em>
+        </div>
+      </div>
+      <div v-if="category.competency_keywords.length" class="keyword-group">
+        <span>활용 역량</span>
+        <div>
+          <em v-for="keyword in category.competency_keywords" :key="keyword">{{ keyword }}</em>
+        </div>
+      </div>
     </div>
 
     <div class="subtopics">
@@ -54,6 +69,12 @@ const completedCount = computed(() => {
 const totalQuestionCount = computed(() => {
   return props.category.subtopics.reduce((count, subtopic) => count + subtopic.questions.length, 0)
 })
+
+const experienceMatchLabel = computed(() => ({
+  direct: '직접 경험',
+  related: '유사 경험',
+  none: '경험 부족',
+}[props.category.experience_match] || '경험 부족'))
 
 const statusText = computed(() => {
   const total = totalQuestionCount.value
@@ -101,6 +122,13 @@ h3 {
   font-weight: 600;
   color: var(--fg);
 }
+.head-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
 .category-eyebrow {
   margin-bottom: var(--space-1);
   color: var(--meta);
@@ -109,10 +137,10 @@ h3 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.category-summary {
-  max-width: 720px;
+.responsibility {
+  max-width: 760px;
   margin-top: var(--space-2);
-  color: var(--muted);
+  color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.5;
 }
@@ -136,31 +164,69 @@ h3 {
   color: var(--success);
   border-color: color-mix(in oklab, var(--success), transparent 55%);
 }
-.source-list {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+.match-badge {
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+.match-direct {
+  color: var(--success);
+  background: color-mix(in oklab, var(--success), transparent 90%);
+}
+.match-related {
+  color: color-mix(in oklab, var(--warn), black 20%);
+  background: color-mix(in oklab, var(--warn), transparent 84%);
+}
+.match-none {
+  color: var(--danger);
+  background: color-mix(in oklab, var(--danger), transparent 90%);
+}
+.priority-reason {
+  margin-top: var(--space-4);
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--accent);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+.keyword-groups {
+  display: grid;
   gap: var(--space-2);
   margin-top: var(--space-4);
 }
-.source-label {
+.keyword-group {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: start;
+  gap: var(--space-2);
+}
+.keyword-group > span {
   color: var(--meta);
   font-size: var(--text-xs);
   font-weight: 700;
 }
-.source-chip {
-  padding: 4px 8px;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--bg);
+.keyword-group > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.keyword-group em {
   color: var(--fg-2);
   font-size: var(--text-xs);
   font-weight: 600;
+  font-style: normal;
 }
 
 .subtopics {
   display: grid;
   gap: var(--space-3);
   margin-top: var(--space-5);
+}
+
+@media (max-width: 720px) {
+  .category-head { flex-direction: column; }
+  .head-badges { justify-content: flex-start; }
+  .keyword-group { grid-template-columns: 1fr; }
 }
 </style>

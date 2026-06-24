@@ -36,14 +36,15 @@
 - Core routes/screens: `/analyze/new`, `/analyze/:id`
 - Content hierarchy:
   - 역량 분석: 상태 분포 → 상태별 핵심 역량 키워드
-  - 준비 항목: 지식 분야 → 세부 개념 → 직무 근거 → 경험 연결 → 준비 전략 → 예상 질문
+  - 준비 항목: 담당업무 핵심 키워드 → 경험 기반 우선순위 → 직무 지식 키워드 → 준비 근거 → 핵심 개념·준비 순서 → 예상 질문
 
 ## Design principles
 - 한눈에 상태를 판단하고 필요할 때만 세부 내용을 읽는다.
 - 점수보다 행동 가능한 상태와 근거를 보여준다.
 - 직무 요구를 출발점으로 삼고 사용자 경험을 연결한다.
+- 채용공고의 모든 담당업무를 누락 없이 하나 이상의 준비 항목으로 연결한다.
 - 직접 경험, 유사 경험, 경험 없음의 차이를 명확히 표현한다.
-- Tradeoffs: 상세 근거는 역량 지도에서 줄이고 준비 항목에서 맥락에 맞게 제공한다.
+- Tradeoffs: 질문 수가 많아질 수 있으므로 질문은 목록으로 빠르게 훑고 답변 방향은 펼쳐보는 구조를 사용한다.
 
 ## Visual language
 - Color: 성공색은 어필, 경고색은 답변 정리, 위험색은 학습 필요, 중립색은 판단 보류
@@ -58,7 +59,8 @@
 - New/changed components:
   - `CompetencyGap`: 상세 경험 카드에서 상태 기반 역량 지도로 변경
   - `RoadmapCategoryCard`: 직무 지식 분야와 분석 출처 표시
-  - `RoadmapSubtopicCard`: 경험 연결과 학습 접근 전략 표시
+  - `RoadmapCategoryCard`: 담당업무 핵심 키워드, 원문 업무, 경험·역량 기반 우선순위 표시
+  - `RoadmapSubtopicCard`: 직무 지식별 업무 연결, 경험 판단, 핵심 개념, 준비 순서, 예상 질문 표시
 - Variants and states:
   - 역량: `strength`, `articulate`, `study`, `insufficient_data`
   - 준비 방식: `appeal`, `organize`, `study`
@@ -87,7 +89,7 @@
 ## Content voice
 - Tone: 짧고 단정적이며 행동 지향적
 - Terminology: `어필 가능`, `답변 정리`, `학습 필요`, `판단 보류`
-- Microcopy rules: 사용자를 평가하기보다 다음 행동을 안내한다.
+- Microcopy rules: 중복 설명을 피하고 `업무 연결`, `내 연결점`, `준비 순서`, `핵심 개념`, `예상 질문`처럼 스캔 가능한 제목을 사용한다.
 
 ## Implementation constraints
 - Framework/styling system: Vue 3 SFC, 기존 CSS 변수

@@ -1,0 +1,13 @@
+﻿HTTP/1.1 201 Created
+Date: Wed, 24 Jun 2026 03:38:24 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 491
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzgyMjc5NTA0LCJpYXQiOjE3ODIyNzIzMDQsImp0aSI6IjFjNDMwZDIyOWM4YzRkYWU5MmMwOWQzYjQ1MWJkOTQxIiwidXNlcl9pZCI6IjE0In0.EgCHZq2LKDd30_4_Qtg7WwZNPyqYozd2xf3xNjzSK9k","refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc4Mjg3NzEwNCwiaWF0IjoxNzgyMjcyMzA0LCJqdGkiOiI3MmU4NTMwMDRjYWY0NDJjYTk0Y2M0MGM0OWFkYTA5NSIsInVzZXJfaWQiOiIxNCJ9.qoe34vcug0wXPXwzxKpC8lzAVALd1tONpuoSx8ByLVI"}

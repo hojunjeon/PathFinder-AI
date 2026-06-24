@@ -1,0 +1,13 @@
+﻿HTTP/1.1 201 Created
+Date: Wed, 24 Jun 2026 03:25:01 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 1095
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"supported":true,"company":{"id":514,"company_name":"QA Lane2 Clean GraphRAG 1782271499","industry":"AI QA","size":"startup","talent_description":"","culture_keywords":[],"roadmap_supported":true},"job_posting":{"id":34,"source_url":"","company_name":"QA Lane2 Clean GraphRAG 1782271499","job_title":"GraphRAG Clean Role 1782271499","responsibilities":"Responsibilities PRIVATE_QA_CLEAN_MARKER_1782271499 API","requirements":"Python, Django, GraphRAG","preferred_qualifications":"Search quality evaluation","raw_text":"회사명: QA Lane2 Clean GraphRAG 1782271499\n\n직무명: GraphRAG Clean Role 1782271499\n\n담당업무:\nResponsibilities PRIVATE_QA_CLEAN_MARKER_1782271499 API\n\n자격요건:\nPython, Django, GraphRAG\n\n우대사항:\nSearch quality evaluation","resolved":true,"company":{"id":514,"company_name":"QA Lane2 Clean GraphRAG 1782271499","industry":"AI QA","size":"startup","talent_description":"","culture_keywords":[],"roadmap_supported":true},"created_at":"2026-06-24T12:25:01.817987+09:00"},"matched_job":null,"jobs":[],"jobs_meta":{"count":0,"page":1,"page_size":10}}

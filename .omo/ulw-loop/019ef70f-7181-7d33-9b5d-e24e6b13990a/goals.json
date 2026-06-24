@@ -1,0 +1,3584 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-24T02:32:14.219Z",
+  "updatedAt": "2026-06-24T02:32:14.219Z",
+  "briefPath": ".omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/brief.md",
+  "goalsPath": ".omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/goals.json",
+  "ledgerPath": ".omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-replace-the-old-jobs-concept-with-ro",
+      "title": "Replace the old `jobs` concept with role/skill taxonomy and user `job...",
+      "objective": "Replace the old `jobs` concept with role/skill taxonomy and user `job_postings` snapshots in the plan.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Replace the old `jobs` concept with role/skill taxonomy and user `job_posting...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Replace the old `jobs` concept with role/skill taxonomy and user `job_posting....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Replace the old `jobs` concept with role/skill taxonomy and user `job_posting....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G002-keep-companies-as-sql-source-of-trut",
+      "title": "Keep `companies` as SQL source-of-truth for company CRUD.",
+      "objective": "Keep `companies` as SQL source-of-truth for company CRUD.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Keep `companies` as SQL source-of-truth for company CRUD.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 2.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Keep `companies` as SQL source-of-truth for company CRUD..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Keep `companies` as SQL source-of-truth for company CRUD..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G003-add-a-company-knowledge-layer-source",
+      "title": "Add a company knowledge layer: source documents, extracted claims, ap...",
+      "objective": "Add a company knowledge layer: source documents, extracted claims, approved facts, chunks, and KG projection.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Add a company knowledge layer: source documents, extracted claims, approved f...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 3.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Add a company knowledge layer: source documents, extracted claims, approved f....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Add a company knowledge layer: source documents, extracted claims, approved f....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G004-use-kg-only-as-derived-search-projec",
+      "title": "Use KG only as derived search/projection, not the authoritative CRUD...",
+      "objective": "Use KG only as derived search/projection, not the authoritative CRUD store.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Use KG only as derived search/projection, not the authoritative CRUD store.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 4.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Use KG only as derived search/projection, not the authoritative CRUD store..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Use KG only as derived search/projection, not the authoritative CRUD store..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G005-treat-job-postings-profiles-and-cove",
+      "title": "Treat `job_postings`, `profiles`, and `cover_letters` as private evid...",
+      "objective": "Treat `job_postings`, `profiles`, and `cover_letters` as private evidence at analysis time.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Treat `job_postings`, `profiles`, and `cover_letters` as private evidence at...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 5.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Treat `job_postings`, `profiles`, and `cover_letters` as private evidence at....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Treat `job_postings`, `profiles`, and `cover_letters` as private evidence at....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G006-move-cover-letters-out-of-profiles-i",
+      "title": "Move cover letters out of `profiles` into application-specific records.",
+      "objective": "Move cover letters out of `profiles` into application-specific records.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Move cover letters out of `profiles` into application-specific records.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 6.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Move cover letters out of `profiles` into application-specific records..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Move cover letters out of `profiles` into application-specific records..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G007-ensure-unknown-new-role-names-are-an",
+      "title": "Ensure unknown/new role names are analyzed from the entered posting a...",
+      "objective": "Ensure unknown/new role names are analyzed from the entered posting and stored as pending claims, not authoritative KG facts.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Ensure unknown/new role names are analyzed from the entered posting and store...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 7.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Ensure unknown/new role names are analyzed from the entered posting and store....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Ensure unknown/new role names are analyzed from the entered posting and store....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G008-split-llm-context-into-company-graph",
+      "title": "Split LLM context into `company_graph_context` and `private_evidence_...",
+      "objective": "Split LLM context into `company_graph_context` and `private_evidence_context`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Split LLM context into `company_graph_context` and `private_evidence_context`.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 8.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Split LLM context into `company_graph_context` and `private_evidence_context`..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Split LLM context into `company_graph_context` and `private_evidence_context`..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G009-preserve-frontend-visible-analysis-o",
+      "title": "Preserve frontend-visible analysis output fields unless a later UI ta...",
+      "objective": "Preserve frontend-visible analysis output fields unless a later UI task explicitly changes them.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Preserve frontend-visible analysis output fields unless a later UI task expli...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 9.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Preserve frontend-visible analysis output fields unless a later UI task expli....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Preserve frontend-visible analysis output fields unless a later UI task expli....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G010-define-verification-for-migration-sa",
+      "title": "Define verification for migration safety, no user data leakage into p...",
+      "objective": "Define verification for migration safety, no user data leakage into public KG, prompt contract, and claim approval behavior.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Define verification for migration safety, no user data leakage into public KG...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 10.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Define verification for migration safety, no user data leakage into public KG....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Define verification for migration safety, no user data leakage into public KG....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G011-include-exact-schema-contracts-statu",
+      "title": "Include exact schema contracts, status/trust enums, nullability/casca...",
+      "objective": "Include exact schema contracts, status/trust enums, nullability/cascade rules, and migration sequence before implementation starts.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Include exact schema contracts, status/trust enums, nullability/cascade rules...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 11.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Include exact schema contracts, status/trust enums, nullability/cascade rules....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Include exact schema contracts, status/trust enums, nullability/cascade rules....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G012-make-every-qa-scenario-executable-wi",
+      "title": "Make every QA scenario executable with a command, payload shape, and...",
+      "objective": "Make every QA scenario executable with a command, payload shape, and expected observable.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Make every QA scenario executable with a command, payload shape, and expected...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 12.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Make every QA scenario executable with a command, payload shape, and expected....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Make every QA scenario executable with a command, payload shape, and expected....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G013-must-not-implement-code-during-plann",
+      "title": "Must not implement code during planning.",
+      "objective": "Must not implement code during planning.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not implement code during planning.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 13.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not implement code during planning..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not implement code during planning..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G014-must-not-execute-omo-start-work",
+      "title": "Must not execute `$omo:start-work`.",
+      "objective": "Must not execute `$omo:start-work`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not execute `$omo:start-work`.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 14.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not execute `$omo:start-work`..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not execute `$omo:start-work`..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G015-must-not-preserve-the-old-salary-app",
+      "title": "Must not preserve the old salary/applicant-count `jobs` semantics as...",
+      "objective": "Must not preserve the old salary/applicant-count `jobs` semantics as core roadmap data.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not preserve the old salary/applicant-count `jobs` semantics as core roa...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 15.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not preserve the old salary/applicant-count `jobs` semantics as core roa....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not preserve the old salary/applicant-count `jobs` semantics as core roa....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G016-must-not-make-graphrag-neo4j-the-cru",
+      "title": "Must not make GraphRAG/Neo4j the CRUD source of truth for companies.",
+      "objective": "Must not make GraphRAG/Neo4j the CRUD source of truth for companies.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not make GraphRAG/Neo4j the CRUD source of truth for companies.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 16.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not make GraphRAG/Neo4j the CRUD source of truth for companies..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not make GraphRAG/Neo4j the CRUD source of truth for companies..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G017-must-not-store-profiles-cover-letter",
+      "title": "Must not store profiles, cover letters, or analyses in public KG.",
+      "objective": "Must not store profiles, cover letters, or analyses in public KG.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not store profiles, cover letters, or analyses in public KG.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 17.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not store profiles, cover letters, or analyses in public KG..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not store profiles, cover letters, or analyses in public KG..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G018-must-not-use-previous-analyses-as-fa",
+      "title": "Must not use previous `analyses` as factual evidence for future analy...",
+      "objective": "Must not use previous `analyses` as factual evidence for future analyses.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not use previous `analyses` as factual evidence for future analyses.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 18.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not use previous `analyses` as factual evidence for future analyses..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not use previous `analyses` as factual evidence for future analyses..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G019-must-not-auto-promote-user-submitted",
+      "title": "Must not auto-promote user-submitted job postings into public KG facts.",
+      "objective": "Must not auto-promote user-submitted job postings into public KG facts.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not auto-promote user-submitted job postings into public KG facts.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 19.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not auto-promote user-submitted job postings into public KG facts..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not auto-promote user-submitted job postings into public KG facts..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G020-must-not-create-public-company-facts",
+      "title": "Must not create public company facts from private user postings unles...",
+      "objective": "Must not create public company facts from private user postings unless a human creates a redacted public-source claim or attaches an independent public/curated source.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not create public company facts from private user postings unless a huma...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 20.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not create public company facts from private user postings unless a huma....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not create public company facts from private user postings unless a huma....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G021-must-not-require-embeddings-in-mvp-b",
+      "title": "Must not require embeddings in MVP before measuring need.",
+      "objective": "Must not require embeddings in MVP before measuring need.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not require embeddings in MVP before measuring need.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 21.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not require embeddings in MVP before measuring need..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not require embeddings in MVP before measuring need..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G022-must-not-call-user-entered-private-d",
+      "title": "Must not call user-entered private data a shared GraphRAG corpus in d...",
+      "objective": "Must not call user-entered private data a shared GraphRAG corpus in docs or prompts.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Must not call user-entered private data a shared GraphRAG corpus in docs or p...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 22.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Must not call user-entered private data a shared GraphRAG corpus in docs or p....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Must not call user-entered private data a shared GraphRAG corpus in docs or p....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G023-company-source-documents-id-company",
+      "title": "`company_source_documents`: `id`, `company_id` FK cascade, `source_ty...",
+      "objective": "`company_source_documents`: `id`, `company_id` FK cascade, `source_type` enum (`fixture`, `admin_manual`, `homepage`, `news`, `blog`, `public_report`), `title`, `url` nullable, `raw_text`, `published_at` nullable, `collected_at`, `content_hash`, `status` enum (`active`, `stale`, `deleted`).",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `company_source_documents`: `id`, `company_id` FK cascade, `source_type` enum...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 23.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `company_source_documents`: `id`, `company_id` FK cascade, `source_type` enum....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `company_source_documents`: `id`, `company_id` FK cascade, `source_type` enum....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G024-company-source-chunks-id-source-docu",
+      "title": "`company_source_chunks`: `id`, `source_document_id` FK cascade, `chun...",
+      "objective": "`company_source_chunks`: `id`, `source_document_id` FK cascade, `chunk_index`, `chunk_text`, `content_hash`, `embedding_status` enum (`not_required`, `pending`, `embedded`, `failed`), unique `(source_document_id, chunk_index)`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `company_source_chunks`: `id`, `source_document_id` FK cascade, `chunk_index`...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 24.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `company_source_chunks`: `id`, `source_document_id` FK cascade, `chunk_index`....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `company_source_chunks`: `id`, `source_document_id` FK cascade, `chunk_index`....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G025-company-knowledge-claims-id-company",
+      "title": "`company_knowledge_claims`: `id`, `company_id` FK cascade, `source_do...",
+      "objective": "`company_knowledge_claims`: `id`, `company_id` FK cascade, `source_document_id` FK nullable only for human-authored admin claims, `claim_type` enum (`business_area`, `product`, `recent_issue`, `talent_trait`, `culture_keyword`, `tech_stack`, `role_candidate`, `skill_relation`), `subject`, `predicate`, `object`, `confidence` nullable, `status` enum (`pending`, `approved`, `rejected`), `trust_level` enum (`public_source`, `admin_curated`, `user_private_candidate`), `created_by_user_id` nullable, `created_at`, `reviewed_at` nullable.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `company_knowledge_claims`: `id`, `company_id` FK cascade, `source_document_i...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 25.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `company_knowledge_claims`: `id`, `company_id` FK cascade, `source_document_i....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `company_knowledge_claims`: `id`, `company_id` FK cascade, `source_document_i....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G026-company-knowledge-facts-id-company-i",
+      "title": "`company_knowledge_facts`: `id`, `company_id` FK cascade, `approved_c...",
+      "objective": "`company_knowledge_facts`: `id`, `company_id` FK cascade, `approved_claim_id` FK protect, `fact_type`, `subject`, `predicate`, `object`, `trust_level` enum (`public_source`, `admin_curated` only), `source_document_id` FK nullable, `valid_from` nullable, `valid_until` nullable, unique `(company_id, fact_type, subject, predicate, object)`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `company_knowledge_facts`: `id`, `company_id` FK cascade, `approved_claim_id`...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 26.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `company_knowledge_facts`: `id`, `company_id` FK cascade, `approved_claim_id`....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `company_knowledge_facts`: `id`, `company_id` FK cascade, `approved_claim_id`....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G027-role-families-id-name-description-is",
+      "title": "`role_families`: `id`, `name`, `description`, `is_active`, unique `na...",
+      "objective": "`role_families`: `id`, `name`, `description`, `is_active`, unique `name`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `role_families`: `id`, `name`, `description`, `is_active`, unique `name`.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 27.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `role_families`: `id`, `name`, `description`, `is_active`, unique `name`..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `role_families`: `id`, `name`, `description`, `is_active`, unique `name`..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G028-skills-id-name-category-enum-languag",
+      "title": "`skills`: `id`, `name`, `category` enum (`language`, `framework`, `da...",
+      "objective": "`skills`: `id`, `name`, `category` enum (`language`, `framework`, `database`, `infra`, `cs`, `soft_skill`, `domain`), `aliases` JSON list, unique `name`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `skills`: `id`, `name`, `category` enum (`language`, `framework`, `database`,...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 28.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `skills`: `id`, `name`, `category` enum (`language`, `framework`, `database`,....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `skills`: `id`, `name`, `category` enum (`language`, `framework`, `database`,....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G029-interview-types-id-code-label-descri",
+      "title": "`interview_types`: `id`, `code`, `label`, `description`, unique `code`.",
+      "objective": "`interview_types`: `id`, `code`, `label`, `description`, unique `code`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `interview_types`: `id`, `code`, `label`, `description`, unique `code`.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 29.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `interview_types`: `id`, `code`, `label`, `description`, unique `code`..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `interview_types`: `id`, `code`, `label`, `description`, unique `code`..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G030-study-areas-id-name-description-uniq",
+      "title": "`study_areas`: `id`, `name`, `description`, unique `name`.",
+      "objective": "`study_areas`: `id`, `name`, `description`, unique `name`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `study_areas`: `id`, `name`, `description`, unique `name`.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 30.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `study_areas`: `id`, `name`, `description`, unique `name`..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `study_areas`: `id`, `name`, `description`, unique `name`..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G031-role-family-skills-role-family-id-sk",
+      "title": "`role_family_skills`: `role_family_id`, `skill_id`, `importance` enum...",
+      "objective": "`role_family_skills`: `role_family_id`, `skill_id`, `importance` enum (`required`, `preferred`, `contextual`), unique `(role_family_id, skill_id)`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `role_family_skills`: `role_family_id`, `skill_id`, `importance` enum (`requi...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 31.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `role_family_skills`: `role_family_id`, `skill_id`, `importance` enum (`requi....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `role_family_skills`: `role_family_id`, `skill_id`, `importance` enum (`requi....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G032-job-postings-keep-user-owned-posting",
+      "title": "`job_postings`: keep user-owned posting snapshot fields; add/retain `...",
+      "objective": "`job_postings`: keep user-owned posting snapshot fields; add/retain `user_id`, `company_id`, `job_title`, `responsibilities`, `requirements`, `preferred_qualifications`, `raw_text`, `created_at`; add extracted JSON fields only if needed (`extracted_skills`, `extracted_tasks`, `extraction_version`) and keep them private.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `job_postings`: keep user-owned posting snapshot fields; add/retain `user_id`...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 32.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `job_postings`: keep user-owned posting snapshot fields; add/retain `user_id`....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `job_postings`: keep user-owned posting snapshot fields; add/retain `user_id`....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G033-cover-letters-id-user-id-fk-cascade",
+      "title": "`cover_letters`: `id`, `user_id` FK cascade, `company_id` FK set-null...",
+      "objective": "`cover_letters`: `id`, `user_id` FK cascade, `company_id` FK set-null, `job_posting_id` FK set-null, `analysis_id` FK nullable set-null, `content`, `created_at`, `updated_at`; do not store company-specific cover letters on `Profile`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `cover_letters`: `id`, `user_id` FK cascade, `company_id` FK set-null, `job_p...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 33.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `cover_letters`: `id`, `user_id` FK cascade, `company_id` FK set-null, `job_p....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `cover_letters`: `id`, `user_id` FK cascade, `company_id` FK set-null, `job_p....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G034-analyses-migrate-away-from-mandatory",
+      "title": "`analyses`: migrate away from mandatory `job_id`; link `company_id`,...",
+      "objective": "`analyses`: migrate away from mandatory `job_id`; link `company_id`, `job_posting_id`, `cover_letter_id` where available; keep result fields `competency_gap`, `text_roadmap`, `timeline_data`, `status`, `created_at`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `analyses`: migrate away from mandatory `job_id`; link `company_id`, `job_pos...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 34.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `analyses`: migrate away from mandatory `job_id`; link `company_id`, `job_pos....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `analyses`: migrate away from mandatory `job_id`; link `company_id`, `job_pos....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G035-add-new-tables-with-nullable-links-a",
+      "title": "Add new tables with nullable links and no destructive drops.",
+      "objective": "Add new tables with nullable links and no destructive drops.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Add new tables with nullable links and no destructive drops.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 35.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Add new tables with nullable links and no destructive drops..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Add new tables with nullable links and no destructive drops..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G036-backfill-cover-letters-from-existing",
+      "title": "Backfill `cover_letters` from existing `Analysis.submitted_cover_lett...",
+      "objective": "Backfill `cover_letters` from existing `Analysis.submitted_cover_letter` and, if present, legacy `Profile.cover_letters` only as user-private records.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Backfill `cover_letters` from existing `Analysis.submitted_cover_letter` and,...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 36.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Backfill `cover_letters` from existing `Analysis.submitted_cover_letter` and,....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Backfill `cover_letters` from existing `Analysis.submitted_cover_letter` and,....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G037-add-analysis-company-id-analysis-job",
+      "title": "Add `Analysis.company_id`, `Analysis.job_posting_id`, `Analysis.cover...",
+      "objective": "Add `Analysis.company_id`, `Analysis.job_posting_id`, `Analysis.cover_letter_id` and backfill from existing `Analysis.job.company` and existing posting text.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Add `Analysis.company_id`, `Analysis.job_posting_id`, `Analysis.cover_letter_...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 37.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Add `Analysis.company_id`, `Analysis.job_posting_id`, `Analysis.cover_letter_....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Add `Analysis.company_id`, `Analysis.job_posting_id`, `Analysis.cover_letter_....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G038-update-serializers-services-tests-to",
+      "title": "Update serializers/services/tests to use the new contract.",
+      "objective": "Update serializers/services/tests to use the new contract.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Update serializers/services/tests to use the new contract.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 38.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Update serializers/services/tests to use the new contract..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Update serializers/services/tests to use the new contract..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G039-deprecate-analysis-job-and-job-reads",
+      "title": "Deprecate `Analysis.job` and `Job` reads from prompt generation.",
+      "objective": "Deprecate `Analysis.job` and `Job` reads from prompt generation.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Deprecate `Analysis.job` and `Job` reads from prompt generation.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 39.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Deprecate `Analysis.job` and `Job` reads from prompt generation..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Deprecate `Analysis.job` and `Job` reads from prompt generation..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G040-drop-old-jobs-only-after-tests-and-d",
+      "title": "Drop old `jobs` only after tests and data migration prove no roadmap...",
+      "objective": "Drop old `jobs` only after tests and data migration prove no roadmap path depends on it.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Drop old `jobs` only after tests and data migration prove no roadmap path dep...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 40.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Drop old `jobs` only after tests and data migration prove no roadmap path dep....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Drop old `jobs` only after tests and data migration prove no roadmap path dep....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G041-test-decision-tdd-for-schema-service",
+      "title": "Test decision: TDD for schema/service contract changes; tests-after o...",
+      "objective": "Test decision: TDD for schema/service contract changes; tests-after only for documentation-only plan updates.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Test decision: TDD for schema/service contract changes; tests-after only for...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 41.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Test decision: TDD for schema/service contract changes; tests-after only for....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Test decision: TDD for schema/service contract changes; tests-after only for....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G042-backend-test-command-cd-backend-venv",
+      "title": "Backend test command: `cd backend && .\\\\venv\\\\Scripts\\\\python.exe -m...",
+      "objective": "Backend test command: `cd backend && .\\\\venv\\\\Scripts\\\\python.exe -m pytest`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Backend test command: `cd backend && .\\\\venv\\\\Scripts\\\\python.exe -m pytest`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 42.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Backend test command: `cd backend && .\\\\venv\\\\Scripts\\\\python.exe -m pytest`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Backend test command: `cd backend && .\\\\venv\\\\Scripts\\\\python.exe -m pytest`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G043-llm-server-test-command-cd-llm-serve",
+      "title": "LLM server test command: `cd llm_server && .\\\\venv\\\\Scripts\\\\python.e...",
+      "objective": "LLM server test command: `cd llm_server && .\\\\venv\\\\Scripts\\\\python.exe -m pytest`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: LLM server test command: `cd llm_server && .\\\\venv\\\\Scripts\\\\python.exe -m py...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 43.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: LLM server test command: `cd llm_server && .\\\\venv\\\\Scripts\\\\python.exe -m py....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: LLM server test command: `cd llm_server && .\\\\venv\\\\Scripts\\\\python.exe -m py....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G044-frontend-contract-build-command-cd-f",
+      "title": "Frontend contract/build command: `cd frontend && npm run build`",
+      "objective": "Frontend contract/build command: `cd frontend && npm run build`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Frontend contract/build command: `cd frontend && npm run build`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 44.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Frontend contract/build command: `cd frontend && npm run build`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Frontend contract/build command: `cd frontend && npm run build`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G045-manual-api-qa-scenario-create-compan",
+      "title": "Manual API QA scenario: create company, source document, pending clai...",
+      "objective": "Manual API QA scenario: create company, source document, pending claim, approved fact, job posting, cover letter, analysis request, then verify response keeps `competency_gap`, `text_roadmap`, `timeline_data`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Manual API QA scenario: create company, source document, pending claim, appro...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 45.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Manual API QA scenario: create company, source document, pending claim, appro....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Manual API QA scenario: create company, source document, pending claim, appro....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G046-evidence-omo-evidence-graphrag-compa",
+      "title": "Evidence: `.omo/evidence/graphrag-company-kg/task-<N>.md`",
+      "objective": "Evidence: `.omo/evidence/graphrag-company-kg/task-<N>.md`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Evidence: `.omo/evidence/graphrag-company-kg/task-<N>.md`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 46.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Evidence: `.omo/evidence/graphrag-company-kg/task-<N>.md`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Evidence: `.omo/evidence/graphrag-company-kg/task-<N>.md`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G047-backend-unit-cd-backend-venv-scripts",
+      "title": "Backend unit: `cd backend && .\\venv\\Scripts\\python.exe -m pytest comp...",
+      "objective": "Backend unit: `cd backend && .\\venv\\Scripts\\python.exe -m pytest companies/tests/test_companies.py analysis/tests/test_analysis.py analysis/tests/test_services.py`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Backend unit: `cd backend && .\\venv\\Scripts\\python.exe -m pytest companies/te...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 47.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Backend unit: `cd backend && .\\venv\\Scripts\\python.exe -m pytest companies/te....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Backend unit: `cd backend && .\\venv\\Scripts\\python.exe -m pytest companies/te....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G048-llm-unit-cd-llm-server-venv-scripts",
+      "title": "LLM unit: `cd llm_server && .\\venv\\Scripts\\python.exe -m pytest tests...",
+      "objective": "LLM unit: `cd llm_server && .\\venv\\Scripts\\python.exe -m pytest tests/test_main.py`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: LLM unit: `cd llm_server && .\\venv\\Scripts\\python.exe -m pytest tests/test_ma...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 48.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: LLM unit: `cd llm_server && .\\venv\\Scripts\\python.exe -m pytest tests/test_ma....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: LLM unit: `cd llm_server && .\\venv\\Scripts\\python.exe -m pytest tests/test_ma....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G049-frontend-build-cd-frontend-npm-run-b",
+      "title": "Frontend build: `cd frontend && npm run build`",
+      "objective": "Frontend build: `cd frontend && npm run build`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Frontend build: `cd frontend && npm run build`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 49.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Frontend build: `cd frontend && npm run build`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Frontend build: `cd frontend && npm run build`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G050-api-happy-path-curl-i-x-post-http-lo",
+      "title": "API happy path: `curl -i -X POST http://localhost:8080/api/analyze/ -...",
+      "objective": "API happy path: `curl -i -X POST http://localhost:8080/api/analyze/ -H \"Authorization: Bearer <ACCESS>\" -H \"Content-Type: application/json\" --data \"{\\\"company_id\\\":1,\\\"job_posting\\\":{\\\"job_title\\\":\\\"AI 서비스 백엔드 엔지니어\\\",\\\"responsibilities\\\":\\\"검색 API 개발\\\",\\\"requirements\\\":\\\"Python, FastAPI, LLM API\\\",\\\"preferred_qualifications\\\":\\\"대규모 트래픽 경험\\\"},\\\"cover_letter\\\":\\\"지원 동기와 프로젝트 경험\\\",\\\"selected_interview_types\\\":[\\\"technical\\\"]}\"` must return `201` and JSON containing `competency_gap`, `text_roadmap`, `timeline_data`.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: API happy path: `curl -i -X POST http://localhost:8080/api/analyze/ -H \"Autho...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 50.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: API happy path: `curl -i -X POST http://localhost:8080/api/analyze/ -H \"Autho....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: API happy path: `curl -i -X POST http://localhost:8080/api/analyze/ -H \"Autho....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G051-api-failure-path-same-endpoint-with",
+      "title": "API failure path: same endpoint with missing `requirements` must retu...",
+      "objective": "API failure path: same endpoint with missing `requirements` must return `400` and a field-specific validation message.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: API failure path: same endpoint with missing `requirements` must return `400`...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 51.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: API failure path: same endpoint with missing `requirements` must return `400`....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: API failure path: same endpoint with missing `requirements` must return `400`....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G052-no-leakage-check-run-a-django-shell",
+      "title": "No-leakage check: run a Django shell/assertion that no `company_knowl...",
+      "objective": "No-leakage check: run a Django shell/assertion that no `company_knowledge_facts.object` or `company_source_chunks.chunk_text` contains a unique private marker from a submitted cover letter.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: No-leakage check: run a Django shell/assertion that no `company_knowledge_fac...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 52.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: No-leakage check: run a Django shell/assertion that no `company_knowledge_fac....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: No-leakage check: run a Django shell/assertion that no `company_knowledge_fac....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G053-prompt-injection-check-submit-postin",
+      "title": "Prompt-injection check: submit posting text containing `Ignore previo...",
+      "objective": "Prompt-injection check: submit posting text containing `Ignore previous instructions` and assert the LLM prompt quotes it under private evidence and preserves the developer output schema instruction.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Prompt-injection check: submit posting text containing `Ignore previous instr...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 53.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Prompt-injection check: submit posting text containing `Ignore previous instr....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Prompt-injection check: submit posting text containing `Ignore previous instr....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G054-wave-1-data-model-contracts-and-migr",
+      "title": "Wave 1: data model contracts and migrations. T1-T4 can be planned tog...",
+      "objective": "Wave 1: data model contracts and migrations. T1-T4 can be planned together, but implementation should keep migrations atomic.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Wave 1: data model contracts and migrations. T1-T4 can be planned together, b...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 54.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Wave 1: data model contracts and migrations. T1-T4 can be planned together, b....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Wave 1: data model contracts and migrations. T1-T4 can be planned together, b....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G055-wave-2-ingestion-extraction-claim-ap",
+      "title": "Wave 2: ingestion/extraction/claim approval services. T5-T8 can paral...",
+      "objective": "Wave 2: ingestion/extraction/claim approval services. T5-T8 can parallelize after Wave 1 schema lands.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Wave 2: ingestion/extraction/claim approval services. T5-T8 can parallelize a...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 55.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Wave 2: ingestion/extraction/claim approval services. T5-T8 can parallelize a....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Wave 2: ingestion/extraction/claim approval services. T5-T8 can parallelize a....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G056-wave-3-analysis-payload-and-llm-prom",
+      "title": "Wave 3: analysis payload and LLM prompt contract. T9-T11 depend on Wa...",
+      "objective": "Wave 3: analysis payload and LLM prompt contract. T9-T11 depend on Wave 1 and private evidence models.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Wave 3: analysis payload and LLM prompt contract. T9-T11 depend on Wave 1 and...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 56.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Wave 3: analysis payload and LLM prompt contract. T9-T11 depend on Wave 1 and....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Wave 3: analysis payload and LLM prompt contract. T9-T11 depend on Wave 1 and....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G057-wave-4-verification-docs-and-optiona",
+      "title": "Wave 4: verification, docs, and optional Neo4j/vector readiness hooks...",
+      "objective": "Wave 4: verification, docs, and optional Neo4j/vector readiness hooks. T12-T14 depend on core behavior.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Wave 4: verification, docs, and optional Neo4j/vector readiness hooks. T12-T1...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 57.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Wave 4: verification, docs, and optional Neo4j/vector readiness hooks. T12-T1....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Wave 4: verification, docs, and optional Neo4j/vector readiness hooks. T12-T1....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G058-t1-remove-old-jobs-as-roadmap-source",
+      "title": "[ ] T1. Remove old `jobs` as roadmap source and define replacement co...",
+      "objective": "[ ] T1. Remove old `jobs` as roadmap source and define replacement contracts",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T1. Remove old `jobs` as roadmap source and define replacement contracts",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 58.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T1. Remove old `jobs` as roadmap source and define replacement contracts.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T1. Remove old `jobs` as roadmap source and define replacement contracts.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G059-t2-add-sql-company-knowledge-source",
+      "title": "[ ] T2. Add SQL company knowledge source/claim/fact schema",
+      "objective": "[ ] T2. Add SQL company knowledge source/claim/fact schema",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T2. Add SQL company knowledge source/claim/fact schema",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 59.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T2. Add SQL company knowledge source/claim/fact schema.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T2. Add SQL company knowledge source/claim/fact schema.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G060-t3-add-role-and-skill-taxonomy-repla",
+      "title": "[ ] T3. Add role and skill taxonomy replacing `jobs`",
+      "objective": "[ ] T3. Add role and skill taxonomy replacing `jobs`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T3. Add role and skill taxonomy replacing `jobs`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 60.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T3. Add role and skill taxonomy replacing `jobs`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T3. Add role and skill taxonomy replacing `jobs`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G061-t4-move-cover-letters-out-of-profile",
+      "title": "[ ] T4. Move cover letters out of profiles",
+      "objective": "[ ] T4. Move cover letters out of profiles",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T4. Move cover letters out of profiles",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 61.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T4. Move cover letters out of profiles.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T4. Move cover letters out of profiles.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G062-t5-build-company-knowledge-extractio",
+      "title": "[ ] T5. Build company knowledge extraction and approval workflow",
+      "objective": "[ ] T5. Build company knowledge extraction and approval workflow",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T5. Build company knowledge extraction and approval workflow",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 62.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T5. Build company knowledge extraction and approval workflow.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T5. Build company knowledge extraction and approval workflow.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G063-t6-add-source-chunks-and-optional-em",
+      "title": "[ ] T6. Add source chunks and optional embedding boundary",
+      "objective": "[ ] T6. Add source chunks and optional embedding boundary",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T6. Add source chunks and optional embedding boundary",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 63.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T6. Add source chunks and optional embedding boundary.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T6. Add source chunks and optional embedding boundary.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G064-t7-implement-pending-role-skill-clai",
+      "title": "[ ] T7. Implement pending role/skill claims from user job postings",
+      "objective": "[ ] T7. Implement pending role/skill claims from user job postings",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T7. Implement pending role/skill claims from user job postings",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 64.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T7. Implement pending role/skill claims from user job postings.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T7. Implement pending role/skill claims from user job postings.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G065-t8-build-company-graph-context-retri",
+      "title": "[ ] T8. Build company graph context retriever over SQL facts",
+      "objective": "[ ] T8. Build company graph context retriever over SQL facts",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T8. Build company graph context retriever over SQL facts",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 65.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T8. Build company graph context retriever over SQL facts.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T8. Build company graph context retriever over SQL facts.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G066-t9-redesign-analysis-request-and-per",
+      "title": "[ ] T9. Redesign analysis request and persistence contract",
+      "objective": "[ ] T9. Redesign analysis request and persistence contract",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T9. Redesign analysis request and persistence contract",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 66.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T9. Redesign analysis request and persistence contract.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T9. Redesign analysis request and persistence contract.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G067-t10-split-llm-payload-and-prompt-con",
+      "title": "[ ] T10. Split LLM payload and prompt contexts",
+      "objective": "[ ] T10. Split LLM payload and prompt contexts",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T10. Split LLM payload and prompt contexts",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 67.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T10. Split LLM payload and prompt contexts.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T10. Split LLM payload and prompt contexts.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G068-t11-add-evidence-extraction-and-trus",
+      "title": "[ ] T11. Add evidence extraction and trust rules",
+      "objective": "[ ] T11. Add evidence extraction and trust rules",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T11. Add evidence extraction and trust rules",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 68.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T11. Add evidence extraction and trust rules.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T11. Add evidence extraction and trust rules.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G069-t12-add-privacy-deletion-and-no-leak",
+      "title": "[ ] T12. Add privacy, deletion, and no-leakage guards",
+      "objective": "[ ] T12. Add privacy, deletion, and no-leakage guards",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T12. Add privacy, deletion, and no-leakage guards",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 69.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T12. Add privacy, deletion, and no-leakage guards.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T12. Add privacy, deletion, and no-leakage guards.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G070-t13-update-frontend-flow-and-result",
+      "title": "[ ] T13. Update frontend flow and result compatibility",
+      "objective": "[ ] T13. Update frontend flow and result compatibility",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T13. Update frontend flow and result compatibility",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 70.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T13. Update frontend flow and result compatibility.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T13. Update frontend flow and result compatibility.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G071-t14-document-architecture-and-option",
+      "title": "[ ] T14. Document architecture and optional GraphRAG/Neo4j migration...",
+      "objective": "[ ] T14. Document architecture and optional GraphRAG/Neo4j migration path",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] T14. Document architecture and optional GraphRAG/Neo4j migration path",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 71.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] T14. Document architecture and optional GraphRAG/Neo4j migration path.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] T14. Document architecture and optional GraphRAG/Neo4j migration path.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G072-f1-plan-compliance-audit-verify-ever",
+      "title": "[ ] F1. Plan compliance audit: verify every implemented todo maps to...",
+      "objective": "[ ] F1. Plan compliance audit: verify every implemented todo maps to this plan, no `$omo:start-work` assumptions were skipped, and no old `jobs` dependency remains.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] F1. Plan compliance audit: verify every implemented todo maps to this pla...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 72.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] F1. Plan compliance audit: verify every implemented todo maps to this pla....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] F1. Plan compliance audit: verify every implemented todo maps to this pla....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G073-f2-code-quality-review-review-migrat",
+      "title": "[ ] F2. Code quality review: review migrations, model boundaries, pro...",
+      "objective": "[ ] F2. Code quality review: review migrations, model boundaries, prompt contracts, extraction services, and no direct KG source-of-truth writes.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] F2. Code quality review: review migrations, model boundaries, prompt cont...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 73.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] F2. Code quality review: review migrations, model boundaries, prompt cont....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] F2. Code quality review: review migrations, model boundaries, prompt cont....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G074-f3-real-manual-qa-run-backend-llm-se",
+      "title": "[ ] F3. Real manual QA: run backend, LLM server, frontend, create an...",
+      "objective": "[ ] F3. Real manual QA: run backend, LLM server, frontend, create an analysis with selected company/new role/posting/cover letter, and capture result page plus API evidence.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] F3. Real manual QA: run backend, LLM server, frontend, create an analysis...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 74.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] F3. Real manual QA: run backend, LLM server, frontend, create an analysis....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] F3. Real manual QA: run backend, LLM server, frontend, create an analysis....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G075-f4-scope-fidelity-verify-profiles-co",
+      "title": "[ ] F4. Scope fidelity: verify profiles/cover letters/analyses are no...",
+      "objective": "[ ] F4. Scope fidelity: verify profiles/cover letters/analyses are not public KG facts, embeddings are not required in MVP, and unknown roles create pending claims only.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: [ ] F4. Scope fidelity: verify profiles/cover letters/analyses are not public...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 75.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: [ ] F4. Scope fidelity: verify profiles/cover letters/analyses are not public....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: [ ] F4. Scope fidelity: verify profiles/cover letters/analyses are not public....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G076-one-commit-per-wave-when-feasible-sp",
+      "title": "One commit per wave when feasible; split migration-heavy changes into...",
+      "objective": "One commit per wave when feasible; split migration-heavy changes into reviewable commits.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: One commit per wave when feasible; split migration-heavy changes into reviewa...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 76.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: One commit per wave when feasible; split migration-heavy changes into reviewa....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: One commit per wave when feasible; split migration-heavy changes into reviewa....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G077-use-conventional-commits",
+      "title": "Use Conventional Commits:",
+      "objective": "Use Conventional Commits:",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Use Conventional Commits:",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 77.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Use Conventional Commits:.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Use Conventional Commits:.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G078-refactor-analysis-remove-roadmap-dep",
+      "title": "`refactor(analysis): remove roadmap dependency on legacy jobs`",
+      "objective": "`refactor(analysis): remove roadmap dependency on legacy jobs`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `refactor(analysis): remove roadmap dependency on legacy jobs`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 78.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `refactor(analysis): remove roadmap dependency on legacy jobs`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `refactor(analysis): remove roadmap dependency on legacy jobs`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G079-feat-companies-add-company-knowledge",
+      "title": "`feat(companies): add company knowledge provenance schema`",
+      "objective": "`feat(companies): add company knowledge provenance schema`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `feat(companies): add company knowledge provenance schema`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 79.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `feat(companies): add company knowledge provenance schema`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `feat(companies): add company knowledge provenance schema`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G080-feat-companies-add-role-and-skill-ta",
+      "title": "`feat(companies): add role and skill taxonomy`",
+      "objective": "`feat(companies): add role and skill taxonomy`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `feat(companies): add role and skill taxonomy`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 80.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `feat(companies): add role and skill taxonomy`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `feat(companies): add role and skill taxonomy`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G081-refactor-accounts-separate-cover-let",
+      "title": "`refactor(accounts): separate cover letters from profiles`",
+      "objective": "`refactor(accounts): separate cover letters from profiles`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `refactor(accounts): separate cover letters from profiles`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 81.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `refactor(accounts): separate cover letters from profiles`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `refactor(accounts): separate cover letters from profiles`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G082-feat-analysis-add-company-graph-cont",
+      "title": "`feat(analysis): add company graph context builder`",
+      "objective": "`feat(analysis): add company graph context builder`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `feat(analysis): add company graph context builder`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 82.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `feat(analysis): add company graph context builder`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `feat(analysis): add company graph context builder`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G083-feat-llm-separate-graph-and-private",
+      "title": "`feat(llm): separate graph and private evidence prompts`",
+      "objective": "`feat(llm): separate graph and private evidence prompts`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `feat(llm): separate graph and private evidence prompts`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 83.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `feat(llm): separate graph and private evidence prompts`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `feat(llm): separate graph and private evidence prompts`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G084-docs-graphrag-document-company-knowl",
+      "title": "`docs(graphrag): document company knowledge graph architecture`",
+      "objective": "`docs(graphrag): document company knowledge graph architecture`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: `docs(graphrag): document company knowledge graph architecture`",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 84.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: `docs(graphrag): document company knowledge graph architecture`.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: `docs(graphrag): document company knowledge graph architecture`.",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G085-do-not-commit-until-implementation-i",
+      "title": "Do not commit until implementation is requested.",
+      "objective": "Do not commit until implementation is requested.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Do not commit until implementation is requested.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 85.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Do not commit until implementation is requested..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Do not commit until implementation is requested..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G086-final-implementation-commit-touching",
+      "title": "Final implementation commit touching this plan should include footer:...",
+      "objective": "Final implementation commit touching this plan should include footer: `Plan: .omo/plans/graphrag-company-kg.md`",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Final implementation commit touching this plan should include footer: `Plan:...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 86.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Final implementation commit touching this plan should include footer: `Plan:....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Final implementation commit touching this plan should include footer: `Plan:....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G087-the-old-jobs-table-semantics-are-no",
+      "title": "The old `jobs` table semantics are no longer the roadmap analysis sou...",
+      "objective": "The old `jobs` table semantics are no longer the roadmap analysis source.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: The old `jobs` table semantics are no longer the roadmap analysis source.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 87.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: The old `jobs` table semantics are no longer the roadmap analysis source..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: The old `jobs` table semantics are no longer the roadmap analysis source..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G088-company-crud-remains-sql-backed-and",
+      "title": "Company CRUD remains SQL-backed and authoritative.",
+      "objective": "Company CRUD remains SQL-backed and authoritative.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Company CRUD remains SQL-backed and authoritative.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 88.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Company CRUD remains SQL-backed and authoritative..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Company CRUD remains SQL-backed and authoritative..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G089-company-knowledge-has-source-claim-f",
+      "title": "Company knowledge has source -> claim -> fact provenance before KG pr...",
+      "objective": "Company knowledge has source -> claim -> fact provenance before KG projection.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Company knowledge has source -> claim -> fact provenance before KG projection.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 89.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Company knowledge has source -> claim -> fact provenance before KG projection..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Company knowledge has source -> claim -> fact provenance before KG projection..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G090-user-job-postings-profiles-cover-let",
+      "title": "User job postings, profiles, cover letters, and analyses are private/...",
+      "objective": "User job postings, profiles, cover letters, and analyses are private/user-scoped data and never public KG facts.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: User job postings, profiles, cover letters, and analyses are private/user-sco...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 90.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: User job postings, profiles, cover letters, and analyses are private/user-sco....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: User job postings, profiles, cover letters, and analyses are private/user-sco....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G091-unknown-company-specific-roles-are-a",
+      "title": "Unknown company-specific roles are analyzed from the entered posting...",
+      "objective": "Unknown company-specific roles are analyzed from the entered posting and only create pending claims.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Unknown company-specific roles are analyzed from the entered posting and only...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 91.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Unknown company-specific roles are analyzed from the entered posting and only....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Unknown company-specific roles are analyzed from the entered posting and only....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G092-llm-prompt-separates-company-graph-c",
+      "title": "LLM prompt separates company graph context from private evidence cont...",
+      "objective": "LLM prompt separates company graph context from private evidence context.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: LLM prompt separates company graph context from private evidence context.",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 92.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: LLM prompt separates company graph context from private evidence context..",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: LLM prompt separates company graph context from private evidence context..",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G093-existing-result-rendering-contract-i",
+      "title": "Existing result rendering contract is preserved or explicitly migrate...",
+      "objective": "Existing result rendering contract is preserved or explicitly migrated with tests.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Existing result rendering contract is preserved or explicitly migrated with t...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 93.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Existing result rendering contract is preserved or explicitly migrated with t....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Existing result rendering contract is preserved or explicitly migrated with t....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    },
+    {
+      "id": "G094-backend-llm-server-frontend-build-te",
+      "title": "Backend, LLM server, frontend build/tests, and manual API/browser QA...",
+      "objective": "Backend, LLM server, frontend build/tests, and manual API/browser QA all pass before implementation is considered complete.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Backend, LLM server, frontend build/tests, and manual API/browser QA all pass...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 94.",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Backend, LLM server, frontend build/tests, and manual API/browser QA all pass....",
+          "essential": true,
+          "capturedEvidence": null,
+          "status": "pending"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Backend, LLM server, frontend build/tests, and manual API/browser QA all pass....",
+          "essential": false,
+          "capturedEvidence": null,
+          "status": "pending"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-24T02:32:14.219Z",
+      "updatedAt": "2026-06-24T02:32:14.219Z"
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/ledger.jsonl as the audit trail."
+}

@@ -1,0 +1,13 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0
+django: version: 5.2.15, settings: config.settings (from ini)
+rootdir: C:\Users\SSAFY\Desktop\t08_project\backend
+configfile: pytest.ini
+plugins: anyio-4.13.0, django-4.12.0
+collected 9 items
+
+analysis\tests\test_analysis.py ....                                     [ 44%]
+companies\tests\test_companies.py ..                                     [ 66%]
+companies\tests\test_company_knowledge_services.py ...                   [100%]
+
+============================= 9 passed in 13.12s ==============================

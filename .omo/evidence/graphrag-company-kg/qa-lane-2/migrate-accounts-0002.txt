@@ -1,0 +1,4 @@
+﻿Operations to perform:
+  Target specific migration: 0002_remove_profile_cover_letters, from accounts
+Running migrations:
+  Applying accounts.0002_remove_profile_cover_letters... OK

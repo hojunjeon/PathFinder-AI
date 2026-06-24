@@ -41,7 +41,6 @@ class Profile(models.Model):
     major = models.CharField(max_length=100, blank=True)
     education = models.CharField(max_length=200, blank=True)
     careers = models.JSONField(default=list)        # [{title, company, period, description}]
-    cover_letters = models.JSONField(default=list)  # [{question, answer}]
     projects = models.JSONField(default=list)       # [{name, period, description, stack}]
     awards = models.JSONField(default=list)         # [{title, org, date}]
     certificates = models.JSONField(default=list)   # [{name, date}]

@@ -23,11 +23,6 @@
       </section>
 
       <section class="card">
-        <h2>자기소개서</h2>
-        <CoverLetterForm v-model="form.cover_letters" />
-      </section>
-
-      <section class="card">
         <h2>수상내역 / 자격증</h2>
         <label class="label">수상내역 (줄바꿈으로 구분)</label>
         <textarea class="input" v-model="awardsText" rows="3" placeholder="예) 2024 해커톤 대상 - 주최기관" />
@@ -49,9 +44,8 @@ import { ref, onMounted } from 'vue'
 import api from '../api'
 import CareerForm from '../components/profile/CareerForm.vue'
 import ProjectForm from '../components/profile/ProjectForm.vue'
-import CoverLetterForm from '../components/profile/CoverLetterForm.vue'
 
-const form = ref({ name: '', major: '', education: '', careers: [], cover_letters: [], projects: [], awards: [], certificates: [] })
+const form = ref({ name: '', major: '', education: '', careers: [], projects: [], awards: [], certificates: [] })
 const awardsText = ref('')
 const certsText = ref('')
 const loading = ref(false)

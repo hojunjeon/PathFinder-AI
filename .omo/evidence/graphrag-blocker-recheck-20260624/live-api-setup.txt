@@ -1,0 +1,3 @@
+﻿stamp=20260624123723
+company_name=QA GraphRAG Corp 20260624123723
+company_id=516

@@ -88,42 +88,39 @@ const router = useRouter()
 const currentStep = ref(1)
 const showHelp = ref(false)
 const jobUrl = ref('')
-const selectedJobId = ref(null)
 const selectedJob = ref(null)
 const selectedCompany = ref(null)
 const coverLetter = ref('')
-const coverLetters = ref([])
 const submitting = ref(false)
 const coverLetterPending = ref(false)
 const manualPostingText = ref('')
+const jobPostingId = ref(null)
+const jobPosting = ref(null)
 const selectedInterviewTypes = ref([])
 const interviewTypeEtcText = ref('')
 
-function onJobSelected({ url, company, jobId, job, job_posting_text, selected_interview_types, interview_type_etc_text }) {
+function onJobSelected({ url, company, job, job_posting_id, job_posting, job_posting_text, selected_interview_types, interview_type_etc_text }) {
   jobUrl.value = url
   selectedCompany.value = company
-  selectedJobId.value = jobId
   selectedJob.value = job
+  jobPostingId.value = job_posting_id || null
+  jobPosting.value = job_posting || null
   manualPostingText.value = job_posting_text || ''
   selectedInterviewTypes.value = selected_interview_types || []
   interviewTypeEtcText.value = interview_type_etc_text || ''
   currentStep.value = 2
 }
 
-async function onCoverLetterDone({ cover_letters, text }) {
+async function onCoverLetterDone({ text }) {
   if (coverLetterPending.value || submitting.value) {
     return
   }
   coverLetterPending.value = true
-  coverLetters.value = cover_letters || []
   coverLetter.value = text || ''
   try {
-    if (coverLetters.value.length) {
-      await api.put('/api/profile/', { cover_letters: coverLetters.value })
-    }
     await onSubmit()
   } catch (e) {
-    alert(e.response?.data?.message || '자기소개서 저장에 실패했습니다.')
+    alert(e.response?.data?.message || '로드맵 생성에 실패했습니다.')
   } finally {
     coverLetterPending.value = false
   }
@@ -132,9 +129,10 @@ async function onCoverLetterDone({ cover_letters, text }) {
 async function onSubmit() {
   submitting.value = true
   try {
-    const numericJobId = Number(selectedJobId.value)
     const { data } = await api.post('/api/analyze/', {
-      job_id: Number.isNaN(numericJobId) ? selectedJobId.value : numericJobId,
+      company_id: selectedCompany.value?.id,
+      job_posting_id: jobPostingId.value,
+      job_posting: jobPosting.value,
       job_posting_url: jobUrl.value,
       job_posting_text: manualPostingText.value,
       submitted_cover_letter: coverLetter.value,

@@ -9,11 +9,18 @@ test.beforeEach(async ({ page }) => {
 test('analyze flow saves manual posting, cover letter, submits, and renders result', async ({ page }) => {
   await mockCompanySearch(page)
   await mockManualPosting(page)
-  await mockProfileSave(page)
   await page.route('**/api/analyze/', async route => {
     if (route.request().method() === 'POST') {
       const body = route.request().postDataJSON()
-      expect(body.job_id).toBe(11)
+      expect(body).not.toHaveProperty('job_id')
+      expect(body.company_id).toBe(1)
+      expect(body.job_posting_id).toBe(7)
+      expect(body.job_posting).toEqual({
+        job_title: '백엔드 개발자',
+        responsibilities: '주문/배송 API 개발과 대규모 트래픽 처리',
+        requirements: 'Python, Database, REST API 경험',
+        preferred_qualifications: '분산 시스템 경험',
+      })
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
@@ -48,19 +55,21 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('60%').first()).toBeVisible()
 })
 
-test('cover letter profile save request contains question and answer', async ({ page }) => {
+test('cover letter is submitted to analysis without profile save', async ({ page }) => {
   await mockCompanySearch(page)
   await mockManualPosting(page)
+  let analyzePayload = null
   await page.route('**/api/analyze/', async route => {
+    analyzePayload = route.request().postDataJSON()
     await route.fulfill({ status: 201, json: { id: 99 } })
   })
-  let savedCoverLetters = null
+  let profilePutCount = 0
   await page.route('**/api/profile/', async route => {
     if (route.request().method() === 'PUT') {
-      savedCoverLetters = route.request().postDataJSON().cover_letters
-      await route.fulfill({ status: 200, json: { cover_letters: savedCoverLetters } })
+      profilePutCount += 1
+      await route.fulfill({ status: 500, json: { message: 'profile should not be written' } })
     } else {
-      await route.fulfill({ json: { cover_letters: [] } })
+      await route.fulfill({ json: {} })
     }
   })
 
@@ -70,15 +79,12 @@ test('cover letter profile save request contains question and answer', async ({ 
   await page.locator('.cover-answer-input').fill('백엔드 API와 DB 최적화 경험이 있습니다.')
   await page.locator('#next-cover-letter-btn').click()
 
-  expect(savedCoverLetters).toEqual([
-    {
-      question: '직무 역량을 설명해 주세요',
-      answer: '백엔드 API와 DB 최적화 경험이 있습니다.',
-    },
-  ])
+  expect(profilePutCount).toBe(0)
+  expect(analyzePayload.submitted_cover_letter).toContain('Q. 직무 역량을 설명해 주세요')
+  expect(analyzePayload.submitted_cover_letter).toContain('A. 백엔드 API와 DB 최적화 경험이 있습니다.')
 })
 
-test('analyze flow accepts company-only fallback job without criterion warning', async ({ page }) => {
+test('analyze flow accepts supported company posting without a matched legacy job', async ({ page }) => {
   await mockCompanySearch(page)
   await page.route('**/api/job-postings/manual/**', async route => {
     await route.fulfill({
@@ -94,12 +100,8 @@ test('analyze flow accepts company-only fallback job without criterion warning',
           culture_keywords: ['실험', '속도'],
         },
         job_posting: { id: 7, resolved: true },
-        matched_job: { id: 77, job_title: '우주선 조종사' },
-        jobs: [{
-          id: 77,
-          job_title: '우주선 조종사',
-          interview_stages: [],
-        }],
+        matched_job: null,
+        jobs: [],
         jobs_meta: { count: 1, page: 1, page_size: 30 },
       },
     })
@@ -185,16 +187,6 @@ async function mockManualPosting(page) {
         jobs_meta: { count: 1, page: 1, page_size: 30 },
       },
     })
-  })
-}
-
-async function mockProfileSave(page) {
-  await page.route('**/api/profile/', async route => {
-    if (route.request().method() === 'PUT') {
-      await route.fulfill({ status: 200, json: route.request().postDataJSON() })
-    } else {
-      await route.fulfill({ json: { cover_letters: [] } })
-    }
   })
 }
 

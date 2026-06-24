@@ -1,0 +1,1 @@
+﻿{'has_graph_label': True, 'has_private_label': True, 'has_quote_label': True, 'has_injection_text': True, 'has_old_salary_field': False, 'has_old_applicant_field': False}

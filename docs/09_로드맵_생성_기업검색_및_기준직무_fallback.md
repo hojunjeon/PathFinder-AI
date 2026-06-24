@@ -1,6 +1,8 @@
-# 로드맵 생성 기업 검색 및 기준 직무 Fallback 개선
+# 로드맵 생성 기업 검색 및 기준 직무 미매칭 처리
 
 ## 배경
+
+> 현재 구현에서는 기준 직무가 없을 때 더 이상 fallback `Job` row를 생성하지 않는다. 사용자가 입력한 채용공고는 `job_postings`에 저장하고, 분석은 `company_id + job_posting` 계약으로 진행한다. GraphRAG/KG 설계의 전체 기준은 `docs/10_GraphRAG_기업_KG_구현.md`를 따른다.
 
 로드맵 생성 화면은 사용자가 채용공고를 직접 입력한 뒤, 지원 기업을 DB에 있는 회사와 연결하고 다음 단계에서 자기소개서와 분석 요청을 이어가는 흐름이다.
 
@@ -31,8 +33,8 @@
 | 상황 | 동작 |
 |---|---|
 | 회사가 DB에 없거나 roadmap 지원 대상이 아님 | 기존처럼 진행 불가 |
-| 회사가 DB에 있고 기존 Job이 있음 | 직무명 키워드가 맞으면 해당 Job, 없으면 회사의 기존 Job 목록 사용 |
-| 회사가 DB에 있지만 기존 Job이 없음 | 입력한 직무명과 채용공고 내용을 기반으로 fallback Job 생성 후 진행 |
+| 회사가 DB에 있고 기존 Job이 있음 | 직무명 키워드가 맞으면 참고용 `matched_job`을 반환할 수 있음 |
+| 회사가 DB에 있지만 기존 Job이 없음 | fallback `Job`을 만들지 않고 `matched_job: null`, `jobs: []`로 응답하며 입력 공고 기반으로 진행 |
 
 ## 백엔드 변경
 
@@ -47,33 +49,21 @@
 -> "선택한 회사에 연결할 수 있는 기준 직무가 없습니다."
 ```
 
-개선 후 흐름은 다음과 같다.
+현재 흐름은 다음과 같다.
 
 ```text
 회사 매칭 성공
 -> Job 매칭 결과 없음
--> 입력 직무명과 채용공고 원문으로 fallback Job 생성
 -> JobPosting 저장
+-> matched_job: null, jobs: []
 -> 201 Created
 ```
 
-fallback Job에는 다음 값이 저장된다.
-
-| 필드 | 값 |
-|---|---|
-| `company` | 선택한 DB 회사 |
-| `job_title` | 사용자가 입력한 직무명 |
-| `job_description` | 수동 입력 채용공고를 조합한 원문 |
-| `required_skills` | 빈 배열 |
-| `preferred_qualifications` | 빈 배열 |
-| `recommended_study_areas` | 빈 배열 |
-| `interview_stages` | 빈 배열 |
-
-이 방식은 직무명 일치를 강제하지 않으면서도 기존 분석 API가 기대하는 `matched_job`/`jobs` 응답 구조를 유지한다.
+이 방식은 직무명 일치를 강제하지 않으면서도 사용자가 입력한 공고를 분석의 1차 근거로 유지한다. 유사 직무명으로 기술스택이나 담당 업무를 임의 추론하지 않기 위해 fallback `Job` 생성은 제거했다.
 
 ## 프론트엔드 검증
 
-E2E 테스트에 회사만 DB에 있고 기준 직무가 없는 fallback 시나리오를 추가했다.
+E2E 테스트에 회사만 DB에 있고 기준 직무가 없는 시나리오를 추가했다.
 
 검증 시나리오는 다음과 같다.
 
@@ -155,6 +145,4 @@ backend/companies/fixtures/companies.json
 
 ## Git 반영 대상
 
-작업 브랜치는 `feat/roadmap-page`이다.
-
-원격 저장소는 GitLab `origin`이며, 동명 브랜치 `origin/feat/roadmap-page`로 push한다.
+이 문서는 과거 `feat/roadmap-page` 작업 기록을 현재 GraphRAG 설계에 맞게 정정한 것이다. 현재 GraphRAG 구현 작업 브랜치는 `codex/graphrag-plan`이다.

@@ -35,11 +35,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['name', 'major', 'education', 'careers',
-                  'cover_letters', 'projects', 'awards', 'certificates', 'updated_at']
+                  'projects', 'awards', 'certificates', 'updated_at']
         read_only_fields = ['updated_at']
 
     def validate(self, attrs):
-        for field in ['careers', 'cover_letters', 'projects', 'awards', 'certificates']:
+        for field in ['careers', 'projects', 'awards', 'certificates']:
             if field not in attrs:
                 continue
             encoded = json.dumps(attrs[field], ensure_ascii=False)

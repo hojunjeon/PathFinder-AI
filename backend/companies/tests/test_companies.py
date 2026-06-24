@@ -269,9 +269,9 @@ def test_manual_job_posting_accepts_supported_company_with_no_jobs(auth_client):
     assert resp.status_code == 201
     assert resp.data['supported'] is True
     assert 'message' not in resp.data
-    assert resp.data['matched_job']['job_title'] == '백엔드 개발자'
-    assert resp.data['jobs'][0]['job_title'] == '백엔드 개발자'
-    assert Job.objects.filter(company=company, job_title='백엔드 개발자').exists()
+    assert resp.data['matched_job'] is None
+    assert resp.data['jobs'] == []
+    assert not Job.objects.filter(company=company, job_title='백엔드 개발자').exists()
     assert JobPosting.objects.filter(company_name='삼성전자').exists()
 
 

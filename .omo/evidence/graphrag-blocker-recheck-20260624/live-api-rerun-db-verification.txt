@@ -1,0 +1,6 @@
+﻿22 objects imported automatically (use -v 2 for details).
+
+job_postings_for_user_company= 1
+posting_ids= [37]
+profile_has_cover_letters_field= False
+analysis_job_posting_ids= [37]

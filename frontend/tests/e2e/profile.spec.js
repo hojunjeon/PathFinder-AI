@@ -16,7 +16,6 @@ test('profile loading and successful save', async ({ page }) => {
           education: '한국대학교 학사 졸업',
           careers: [],
           projects: [],
-          cover_letters: [],
           awards: [],
           certificates: [],
         },
@@ -31,6 +30,7 @@ test('profile loading and successful save', async ({ page }) => {
 
   await page.goto('/profile')
   await expect(page.locator('input[placeholder="이름"]')).toHaveValue('홍길동')
+  await expect(page.getByRole('heading', { name: '자기소개서' })).toHaveCount(0)
 
   await page.locator('input[placeholder="이름"]').fill('김철수')
   await page.locator('#save-profile-btn').click()
@@ -48,7 +48,6 @@ test('profile save failure displays error message', async ({ page }) => {
           education: '한국대학교 학사 졸업',
           careers: [],
           projects: [],
-          cover_letters: [],
           awards: [],
           certificates: [],
         },

@@ -1,0 +1,4 @@
+﻿stamp=20260624123822
+company_name=QA GraphRAG Live 20260624123822
+company_id=519
+email=qa-graphrag-live-20260624123822@example.com

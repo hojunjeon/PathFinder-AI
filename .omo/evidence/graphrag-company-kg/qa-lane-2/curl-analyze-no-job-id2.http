@@ -1,0 +1,13 @@
+﻿HTTP/1.1 201 Created
+Date: Wed, 24 Jun 2026 03:23:35 GMT
+Server: WSGIServer/0.2 CPython/3.11.9
+Content-Type: application/json
+Vary: Accept, origin
+Allow: POST, OPTIONS
+X-Frame-Options: DENY
+Content-Length: 473
+X-Content-Type-Options: nosniff
+Referrer-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin
+
+{"id":7,"company_name":"QA Lane2 GraphRAG 1782271412","job_title":"GraphRAG New Role","job_posting_url":"","selected_interview_types":["technical"],"interview_type_etc_text":"","competency_gap":{"strengths":["curl API QA"],"gaps":["GraphRAG 운영"]},"text_roadmap":"curl 기반 Wave 1 QA 로드맵","timeline_data":[{"week":1,"title":"GraphRAG API 계약 검증","tasks":["회사+공고+자소서 분석"]}],"status":"done","created_at":"2026-06-24T12:23:35.075084+09:00"}

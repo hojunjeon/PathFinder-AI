@@ -34,6 +34,8 @@ class RoadmapRequest(BaseModel):
     user_profile: dict
     job_posting_text: str = Field(max_length=MAX_PROMPT_CHARS)
     company_info: dict
+    company_graph_context: dict = Field(default_factory=dict)
+    private_evidence_context: dict = Field(default_factory=dict)
     job_info: dict
     selected_interview_types: list[str] = Field(min_length=1, max_length=7)
     interview_type_etc_text: str = Field(default="", max_length=100)

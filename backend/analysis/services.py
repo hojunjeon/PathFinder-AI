@@ -4,16 +4,19 @@ import re
 from bs4 import BeautifulSoup
 from django.conf import settings
 from accounts.models import Profile
+from companies.knowledge import build_company_graph_context
 from companies.job_titles import display_job_title
-from companies.models import Job
+from companies.models import Company, JobPosting
 from urllib.parse import urlparse
 
 MAX_JOB_POSTING_TEXT_CHARS = 8000
 
-def build_llm_payload(user, job: Job, job_posting_url: str,
+def build_llm_payload(user, job_posting_url: str,
                       submitted_cover_letter: str, selected_interview_types: list,
                       job_posting_text: str = '',
-                      interview_type_etc_text: str = '') -> dict:
+                      interview_type_etc_text: str = '',
+                      company: Company | None = None,
+                      job_posting: JobPosting | None = None) -> dict:
     try:
         profile = user.profile
         user_profile = {
@@ -21,17 +24,23 @@ def build_llm_payload(user, job: Job, job_posting_url: str,
             '학력': profile.education,
             '경력사항': profile.careers,
             '프로젝트': profile.projects,
-            '자소서': submitted_cover_letter or profile.cover_letters,
             '자격증': profile.certificates,
             '수상내역': profile.awards,
         }
     except Profile.DoesNotExist:
         user_profile = {}
 
-    company = job.company
-    job_title = display_job_title(job.job_title)
+    job_title = display_job_title(job_posting.job_title) if job_posting else ''
+    job_description = job_posting.responsibilities if job_posting else ''
+    required_skills = job_posting.requirements if job_posting else ''
+    preferred_qualifications = job_posting.preferred_qualifications if job_posting else ''
+    recommended_study_areas = []
+    interview_stages = []
     if not job_posting_text:
-        job_posting_text = fetch_job_posting_text(job_posting_url)
+        if job_posting and job_posting.raw_text:
+            job_posting_text = job_posting.raw_text
+        else:
+            job_posting_text = fetch_job_posting_text(job_posting_url)
     return {
         'user_profile': user_profile,
         'job_posting_text': job_posting_text,
@@ -40,22 +49,47 @@ def build_llm_payload(user, job: Job, job_posting_url: str,
             'text': job_posting_text,
         },
         'company_info': {
-            '회사명': company.company_name,
-            '산업': company.industry,
-            '인재상': company.talent_description,
-            '기업규모': company.get_size_display(),
-            '조직문화_키워드': company.culture_keywords,
+            '회사명': company.company_name if company else '',
+            '산업': company.industry if company else '',
+            '인재상': company.talent_description if company else '',
+            '기업규모': company.get_size_display() if company else '',
+            '조직문화_키워드': company.culture_keywords if company else [],
+        },
+        'company_graph_context': build_company_graph_context(company) if company else {
+            'company_id': None,
+            'company_name': '',
+            'facts': [],
+        },
+        'private_evidence_context': {
+            'profile': {
+                'trust': 'user_profile',
+                'major': user_profile.get('전공', ''),
+                'education': user_profile.get('학력', ''),
+                'careers': user_profile.get('경력사항', []),
+                'projects': user_profile.get('프로젝트', []),
+                'certificates': user_profile.get('자격증', []),
+                'awards': user_profile.get('수상내역', []),
+            },
+            'job_posting': {
+                'trust': 'user_posting',
+                'job_title': job_title,
+                'responsibilities': job_description,
+                'requirements': required_skills,
+                'preferred_qualifications': preferred_qualifications,
+                'raw_text': job_posting_text,
+            },
+            'cover_letter': {
+                'trust': 'cover_letter',
+                'content': submitted_cover_letter,
+            },
         },
         'job_info': {
             '직무명': job_title,
-            '직무설명': job.job_description,
-            '요구경력': job.required_experience_years,
-            '예상지원자수': job.applicant_count,
-            '예상연봉': job.annual_salary_krw,
-            'interview_stages': job.interview_stages,
-            '요구역량': job.required_skills,
-            '우대사항': job.preferred_qualifications,
-            '학습추천분야': job.recommended_study_areas,
+            '직무설명': job_description,
+            'interview_stages': interview_stages,
+            '요구역량': required_skills,
+            '우대사항': preferred_qualifications,
+            '학습추천분야': recommended_study_areas,
         },
         'selected_interview_types': selected_interview_types,
         'interview_type_etc_text': interview_type_etc_text,

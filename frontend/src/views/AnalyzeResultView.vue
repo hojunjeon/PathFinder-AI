@@ -54,6 +54,7 @@
                   {{ typeLabel(type) }}
                 </span>
                 <span class="chip" v-if="roadmapItems.length">{{ roadmapItems.length }}개 영역</span>
+                <span class="chip" v-if="interviewQuestionCount">{{ interviewQuestionCount }}개 질문</span>
               </div>
             </div>
             <div class="hero-summary">
@@ -99,6 +100,8 @@
           </section>
 
           <!-- Roadmap Checklist Timeline -->
+          <PreparationKeywordBoard :roadmap-items="roadmapItems" />
+
           <section class="section-card" id="roadmap" data-od-id="result-roadmap">
             <div class="section-head">
               <div>
@@ -117,6 +120,8 @@
               <p class="roadmap-empty">타임라인 데이터가 없습니다.</p>
             </div>
           </section>
+
+          <InterviewDrill :roadmap-items="roadmapItems" />
         </div>
       </main>
     </div>
@@ -128,6 +133,8 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api'
 import CompetencyGap from '../components/result/CompetencyGap.vue'
+import InterviewDrill from '../components/result/InterviewDrill.vue'
+import PreparationKeywordBoard from '../components/result/PreparationKeywordBoard.vue'
 import RoadmapTimeline from '../components/result/RoadmapTimeline.vue'
 import { useRoadmapProgress } from '../composables/useRoadmapProgress'
 
@@ -139,7 +146,9 @@ const pageSections = [
   { id: 'summary', label: '분석 요약' },
   { id: 'gap', label: '역량 분석' },
   { id: 'scores', label: '근거 커버리지' },
+  { id: 'prep-keywords', label: '준비 키워드' },
   { id: 'roadmap', label: '준비 항목' },
+  { id: 'interview-drill', label: '질문 리허설' },
 ]
 const {
   activeItemDesc,
@@ -177,6 +186,14 @@ const evidenceCoverageRows = computed(() => {
     }
   })
   return rows.length ? rows : [{ name: '준비 항목', value: 0, colorClass: 'low' }]
+})
+
+const interviewQuestionCount = computed(() => {
+  return roadmapItems.value.reduce((count, category) => {
+    return count + category.subtopics.reduce((subCount, subtopic) => {
+      return subCount + subtopic.questions.length
+    }, 0)
+  }, 0)
 })
 
 function hasEvidenceTrace(subtopic) {

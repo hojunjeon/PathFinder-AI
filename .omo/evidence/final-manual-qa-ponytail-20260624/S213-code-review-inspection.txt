@@ -1,0 +1,103 @@
+﻿Invocation: Get-Content -Raw .omo/evidence/ponytail-refactor-20260624-code-review.md
+# Ponytail Refactor 20260624 Code Review
+
+codeQualityStatus: CLEAR
+recommendation: APPROVE
+decision: UNCONDITIONAL APPROVAL
+reportPath: .omo/evidence/ponytail-refactor-20260624-code-review.md
+blockers: []
+
+## Scope
+
+Read-only final current-state review after programming-check cleanup.
+
+Reviewed task files:
+
+- `llm_server/main.py`
+- `llm_server/roadmap_processing_competency.py`
+- `llm_server/roadmap_processing_timeline.py`
+- `llm_server/roadmap_processing_values.py`
+- `llm_server/tests/test_roadmap_processing_values.py`
+- `llm_server/tests/test_roadmap_repair_branch.py`
+
+Current task-file status:
+
+- `M llm_server/main.py`
+- `?? llm_server/roadmap_processing_competency.py`
+- `?? llm_server/roadmap_processing_timeline.py`
+- `?? llm_server/roadmap_processing_values.py`
+- `?? llm_server/tests/test_roadmap_processing_values.py`
+- `?? llm_server/tests/test_roadmap_repair_branch.py`
+
+Unrelated dirty files remain present and were not reverted. `llm_server/roadmap_prompt.py` is dirty but outside the user-named current task files; I inspected it only for the requested live `re` import check and broader regression impact.
+
+## Skill Perspective Check
+
+Ran.
+
+- Loaded `omo:remove-ai-slops` and applied its review pass for overfit/slop in production code and tests.
+- Loaded `omo:programming` and `references/python/README.md` and applied its Python maintainability, strict import, test-shape, no-excuse checker, and 250 pure-LOC perspective.
+
+Remove-ai-slops perspective result: no scoped violation. The new tests are not deletion-only, do not merely assert a requested removal, are not tautological, and do not mirror implementation constants as their only proof.
+
+Programming perspective result: no scoped violation. The six user-named task files pass the bundled no-excuse checker, remain under the file-size ceiling, introduce no new untyped escape hatch, and keep parsing/normalization at the LLM response boundary where it already existed.
+
+Scope note: running the same checker over dirty `llm_server/roadmap_prompt.py` also flags `oversized-module` for that pre-existing prompt file. I did not treat that as a blocker for this scoped review because the requested current task file list excludes it and the user specifically asked to ignore stale prior rejects.
+
+## Evidence Inspected
+
+Submitted evidence artifacts inspected as untrusted inputs:
+
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C001-ponytail-install.txt`
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C002-llm-main-pytest.txt`
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C003-diff-review.txt`
+- `.omo/evidence/ponytail-refactor-direct-verification-20260624.txt`
+
+Independent current-state checks run during this review:
+
+- `git status --short` showed the requested LLM task files plus unrelated dirty frontend/PT/docs/evidence artifacts.
+- Initial `trihead run --hint diff -- git diff -- llm_server/main.py llm_server/roadmap_prompt.py` failed on Windows CP949 decoding; rerun with `PYTHONUTF8=1` and `PYTHONIOENCODING=utf-8` succeeded.
+- `python C:\Users\user\.codex\plugins\cache\sisyphuslabs\omo\4.13.0\skills\programming\scripts\python\check-no-excuse-rules.py llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py` -> `no violations in 6 file(s)`.
+- `cd llm_server; python -m pytest tests/test_roadmap_processing_values.py tests/test_roadmap_repair_branch.py` -> `2 passed in 0.45s`.
+- `cd llm_server; python -m pytest -q` -> `29 passed in 0.58s`.
+- `cd backend; .\venv\Scripts\python.exe -m pytest -q` -> `84 passed in 44.08s`.
+- `cd frontend; npx playwright test` -> `16 passed (8.4s)`.
+- `cd llm_server; python -m py_compile main.py roadmap_processing_competency.py roadmap_processing_timeline.py roadmap_processing_values.py` -> exit 0.
+- `git diff --check -- llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py` -> exit 0 with only the known CRLF warning for `llm_server/main.py`.
+
+## Findings
+
+### CRITICAL
+
+None.
+
+### HIGH
+
+None.
+
+### MEDIUM
+
+None.
+
+### LOW
+
+None.
+
+## Requested Invariants
+
+Pass: no duplicate local `import json, re` remains in `llm_server/main.py`; `_parse_response()` uses live module-level `json` and `re` imports at `llm_server/main.py:6`, `llm_server/main.py:8`, `llm_server/main.py:255`, `llm_server/main.py:259`, and `llm_server/main.py:265`.
+
+Pass: `llm_server/roadmap_processing_values.py` has no `json` or `re` import.
+
+Pass: retained imports are live: `llm_server/roadmap_processing_timeline.py:3` uses `json.dumps()` at line 83, `llm_server/roadmap_processing_timeline.py:4` uses `re.findall()` and `re.sub()` at lines 141 and 206, and dirty pre-existing `llm_server/roadmap_prompt.py:1` uses `re` at lines 331, 334, 342, 345, and 350.
+
+Pass: `_allowed_text` is absent from `llm_server/roadmap_processing_competency.py` and exists only in `llm_server/roadmap_processing_values.py` with live call sites at lines 47, 78, and 135.
+
+Pass: no behavior, auth, security, data-loss, or test-stability regression was found in the scoped current state. The repair fallback remains behavior-equivalent: `llm_server/main.py:162-184` keeps the original result unless repaired timeline quality improves, and HTTP errors in the repair call return the already-built result.
+
+Pass: no new dependency or dependency-manifest change was found.
+
+Pass: unrelated user dirty files were not reverted.
+
+Final status: APPROVE.
+

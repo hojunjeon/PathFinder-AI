@@ -1,0 +1,9 @@
+Invocation: curl.exe -i -X POST http://127.0.0.1:8093/llm/roadmap -H "X-Internal-Token: test-internal-token" -H "Content-Type: application/json" --data-binary "@.omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair_http_error.json"
+HTTP/1.1 200 OK
+date: Wed, 24 Jun 2026 12:21:49 GMT
+server: uvicorn
+content-length: 667
+content-type: application/json
+
+{"competency_gap":{"summary":"","competency_map":[],"strengths":[],"gaps":[],"required_competencies":[]},"text_roadmap":"original-before-repair-error","timeline_data":[{"category":"Robot control","responsibility_index":1,"responsibility":"Robot control algorithm development","priority":1,"experience_match":"none","subtopics":[{"title":"fallback values","preparation_type":"study","questions":[],"job_reason":"","matched_experience":"","experience_source":"없음","experience_connection":{"evidence":"","transferable_point":"","gap":""},"study_focus":[],"preparation_steps":[]}],"priority_reason":"","experience_keywords":[],"competency_keywords":[],"sources":[]}]}
+ExitCode: 0

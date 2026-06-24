@@ -15,6 +15,8 @@ const requiredFiles = [
   'src/components/analyze/StepCoverLetter.vue',
   'src/components/analyze/StepInterviewType.vue',
   'src/components/result/CompetencyGap.vue',
+  'src/components/result/InterviewDrill.vue',
+  'src/components/result/PreparationKeywordBoard.vue',
   'src/components/result/RoadmapTimeline.vue',
   'src/composables/useJobsData.js',
   'public/data/jobs_careers.jsonl',

@@ -1,0 +1,140 @@
+{
+    "codeReview":  {
+                       "by":  "lazycodex-code-reviewer",
+                       "recommendation":  "APPROVE",
+                       "codeQualityStatus":  "CLEAR",
+                       "reportPath":  ".omo/evidence/ponytail-refactor-20260624-code-review.md",
+                       "evidence":  "Current code review approved after remove-ai-slops and programming perspectives; scoped programming checker reports no violations in 6 file(s).",
+                       "blockers":  [
+
+                                    ]
+                   },
+    "manualQa":  {
+                     "by":  "lazycodex-qa-executor",
+                     "status":  "passed",
+                     "evidence":  "Manual QA current-state matrix passed with non-empty artifacts; tests and HTTP roadmap behavior evidence passed.",
+                     "surfaceEvidence":  [
+                                             {
+                                                 "id":  "surface-install",
+                                                 "criterionRef":  "C001",
+                                                 "surface":  "cli",
+                                                 "invocation":  "codex plugin marketplace add DietrichGebert/ponytail; codex plugin add ponytail@ponytail --json",
+                                                 "verdict":  "passed",
+                                                 "artifactRefs":  [
+                                                                      "artifact-install"
+                                                                  ]
+                                             },
+                                             {
+                                                 "id":  "surface-tests",
+                                                 "criterionRef":  "C002",
+                                                 "surface":  "cli",
+                                                 "invocation":  "pytest suites, py_compile, programming checker, frontend Playwright",
+                                                 "verdict":  "passed",
+                                                 "artifactRefs":  [
+                                                                      "artifact-verification"
+                                                                  ]
+                                             },
+                                             {
+                                                 "id":  "surface-scope",
+                                                 "criterionRef":  "C003",
+                                                 "surface":  "data",
+                                                 "invocation":  "git status and diff review of scoped first-wave files",
+                                                 "verdict":  "passed",
+                                                 "artifactRefs":  [
+                                                                      "artifact-scope"
+                                                                  ]
+                                             }
+                                         ],
+                     "adversarialCases":  [
+                                              {
+                                                  "id":  "adv-malformed-values",
+                                                  "criterionRef":  "C002",
+                                                  "scenario":  "Invalid timeline enum-like values are normalized to fallbacks.",
+                                                  "expectedBehavior":  "Unsupported values fall back without changing response shape.",
+                                                  "verdict":  "passed",
+                                                  "artifactRefs":  [
+                                                                       "artifact-verification"
+                                                                   ]
+                                              },
+                                              {
+                                                  "id":  "adv-repair-failure",
+                                                  "criterionRef":  "C002",
+                                                  "scenario":  "Repair LLM call raises httpx.HTTPError.",
+                                                  "expectedBehavior":  "Endpoint returns the original parsed roadmap result.",
+                                                  "verdict":  "passed",
+                                                  "artifactRefs":  [
+                                                                       "artifact-manualqa"
+                                                                   ]
+                                              },
+                                              {
+                                                  "id":  "adv-user-dirty-files",
+                                                  "criterionRef":  "C003",
+                                                  "scenario":  "Repository starts with unrelated dirty user files.",
+                                                  "expectedBehavior":  "First-wave refactor leaves unrelated dirty files unreverted.",
+                                                  "verdict":  "passed",
+                                                  "artifactRefs":  [
+                                                                       "artifact-scope"
+                                                                   ]
+                                              }
+                                          ],
+                     "artifactRefs":  [
+                                          {
+                                              "id":  "artifact-install",
+                                              "kind":  "cli-transcript",
+                                              "description":  "Ponytail plugin installation evidence.",
+                                              "path":  ".omo/ulw-loop/ponytail-refactor-20260624/evidence/C001-ponytail-install.txt"
+                                          },
+                                          {
+                                              "id":  "artifact-verification",
+                                              "kind":  "cli-transcript",
+                                              "description":  "Programming checker and test verification evidence.",
+                                              "path":  ".omo/ulw-loop/ponytail-refactor-20260624/evidence/C002-llm-main-pytest.txt"
+                                          },
+                                          {
+                                              "id":  "artifact-scope",
+                                              "kind":  "data-diff",
+                                              "description":  "Scope, dirty-file, and Ponytail diff review evidence.",
+                                              "path":  ".omo/ulw-loop/ponytail-refactor-20260624/evidence/C003-diff-review.txt"
+                                          },
+                                          {
+                                              "id":  "artifact-manualqa",
+                                              "kind":  "log",
+                                              "description":  "Manual QA matrix with current-state artifact references.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/manualQa.json"
+                                          }
+                                      ]
+                 },
+    "gateReview":  {
+                       "by":  "lazycodex-gate-reviewer",
+                       "recommendation":  "APPROVE",
+                       "reportPath":  ".omo/evidence/ponytail-refactor-20260624-gate-review.md",
+                       "evidence":  "Final gate approved after direct programming checker, tests, code review, manual QA, and artifact non-empty checks.",
+                       "blockers":  [
+
+                                    ]
+                   },
+    "iteration":  {
+                      "fullRerun":  true,
+                      "status":  "passed",
+                      "rerunCommands":  [
+                                            "python check-no-excuse-rules.py \u003csix scoped files\u003e",
+                                            "cd llm_server; python -m pytest -q",
+                                            "cd backend; .\\venv\\Scripts\\python.exe -m pytest -q",
+                                            "cd frontend; npx playwright test"
+                                        ],
+                      "evidence":  "Focused and broader verification reran cleanly after programming-check cleanup."
+                  },
+    "criteriaCoverage":  {
+                             "totalCriteria":  3,
+                             "passCount":  3,
+                             "originalIntent":  "Install Ponytail and complete a Ponytail-first, low-risk first-wave behavior-preserving refactor without broad rewrites or new dependencies.",
+                             "desiredOutcome":  "Scoped LLM roadmap-processing refactor is easier to maintain, keeps behavior stable, preserves user changes, and has artifact-backed verification.",
+                             "userOutcomeReview":  "Ponytail was installed, LLM server helpers were split by responsibility, all requested test surfaces passed, and final review/QA/gate artifacts approve the current state.",
+                             "adversarialClassesCovered":  [
+                                                               "malformed_input",
+                                                               "repair_failure_fallback",
+                                                               "stale_dirty_worktree",
+                                                               "programming_slop_regression"
+                                                           ]
+                         }
+}

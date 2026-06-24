@@ -1,0 +1,6 @@
+Invocation: rg -n "normalize|repair|HTTPError|original|preparation_type|info_source|timeline|_allowed_text" llm_server\main.py llm_server\roadmap_processing_values.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_competency.py llm_server\tests\test_roadmap_processing_values.py llm_server\tests\test_roadmap_repair_branch.py
+llm_server\roadmap_processing_values.py:37:def _allowed_text(value: str, allowed_values: tuple[str, ...], fallback: str) -> str:
+llm_server\roadmap_processing_values.py:47:        experience_match = _allowed_text(_first_text(raw_category, "experience_match"), ("direct", "related", "none"), "none")
+llm_server\roadmap_processing_values.py:78:    preparation_type = _allowed_text(_first_text(raw_subtopic, "preparation_type"), ("appeal", "organize", "study"), "study")
+llm_server\roadmap_processing_values.py:135:    question_type = _allowed_text(_first_text(raw_question, "type"), ("concept", "experience", "application"), "concept")
+ExitCode: 0

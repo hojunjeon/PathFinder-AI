@@ -1,0 +1,16 @@
+﻿Broader verification attempted:
+
+Backend command 1:
+- cd backend; python -m pytest -q
+- Result: collection failed because system Python lacks Django/rest_framework.
+- Error signatures: ModuleNotFoundError: No module named 'django'; ModuleNotFoundError: No module named 'rest_framework'; PytestConfigWarning unknown DJANGO_SETTINGS_MODULE.
+
+Frontend command:
+- cd frontend; npx playwright test
+- Result: 16 passed in 11.0s.
+
+Diff check:
+- git diff --check -- llm_server/main.py llm_server/tests/test_main.py
+- Result: no whitespace errors; Git warned LF will be replaced by CRLF next time Git touches the files.
+
+Cleanup: Playwright command completed; no browser context remains under this shell command. No tmux session, container, bound port, or temp dir created by these verification commands.

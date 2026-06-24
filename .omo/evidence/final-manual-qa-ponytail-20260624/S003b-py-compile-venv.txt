@@ -1,0 +1,5 @@
+﻿Scenario S003b CLI compile smoke
+Invocation: backend\venv\Scripts\python.exe -m py_compile llm_server\main.py llm_server\roadmap_prompt.py llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_values.py
+Exit code: 0
+Observable: no compiler traceback emitted.
+Verdict: PASS

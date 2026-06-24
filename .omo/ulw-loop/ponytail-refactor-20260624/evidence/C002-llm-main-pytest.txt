@@ -1,0 +1,24 @@
+﻿C002 behavior and verification evidence refreshed after programming-check cleanup (2026-06-24).
+
+Commands run after the last product-code edit:
+- python C:\Users\user\.codex\plugins\cache\sisyphuslabs\omo\4.13.0\skills\programming\scripts\python\check-no-excuse-rules.py llm_server\main.py llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_values.py llm_server\tests\test_roadmap_processing_values.py llm_server\tests\test_roadmap_repair_branch.py
+  Result: no violations in 6 file(s).
+- cd llm_server; $env:PYTHONPATH='.'; python -m pytest tests/test_roadmap_repair_branch.py tests/test_roadmap_processing_values.py -q
+  Result: 2 passed in 0.53s.
+- cd llm_server; $env:PYTHONPATH='.'; python -m pytest -q
+  Result: 29 passed in 0.74s.
+- cd backend; .\venv\Scripts\python.exe -m pytest -q
+  Result: 84 passed in 45.83s.
+- cd frontend; npx playwright test
+  Result: 16 passed in 10.7s.
+- python -m py_compile llm_server\main.py llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_values.py
+  Result: exit 0.
+- git diff --check -- llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py
+  Result: exit 0; warning only that llm_server/main.py LF will be replaced by CRLF when Git touches it.
+
+Behavior preserved:
+- Full llm_server, backend, and frontend test surfaces passed after the final product-code edit.
+- Test coverage exercises invalid fallback values, valid pass-through values, and the GMS repair branch that calls _timeline_repair_targets and merges repaired timeline categories.
+- The repair HTTP fallback path still returns the original roadmap result if the repair call raises httpx.HTTPError; the fallback is now explicit instead of silent pass.
+
+Cleanup: commands exited; no long-running process, tmux session, browser context, container, bound port, or temp dir left by this verification step.

@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>역량 지도 &amp; 액션 플래너 — 일산로보틱스 로봇 SW 개발</title>
+  <meta name="description" content="면접 준비생을 위한 역량 현황 시각화와 3일 스프린트 플랜 — 일산로보틱스 로봇 SW 개발 직무" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #fafaf8; --bg-card: #ffffff; --bg-subtle: #f4f4f0;
+      --text: #1c1c1e; --text-muted: #6b7280; --text-light: #9ca3af;
+      --border: #e5e5e0;
+      --green: #059669; --green-light: #d1fae5;
+      --amber: #d97706; --amber-light: #fef3c7;
+      --rose: #e11d48; --rose-light: #ffe4e6;
+      --indigo: #4f46e5; --indigo-light: #eef2ff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,.12);
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit;cursor:pointer;border:none;background:none}
+    ul,ol{list-style:none}
+    .page-wrapper{max-width:1200px;margin:0 auto;padding:0 20px 120px}
+
+    /* Header */
+    .site-header{padding:28px 0 0;border-bottom:1px solid var(--border);margin-bottom:36px}
+    .header-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:20px}
+    .header-meta{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+    .header-meta .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+    .header-title{font-size:clamp(22px,4vw,32px);font-weight:700;letter-spacing:-.02em;line-height:1.2}
+    .header-title span{color:var(--indigo)}
+    .header-subtitle{margin-top:6px;font-size:14px;color:var(--text-muted)}
+    .header-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--indigo-light);color:var(--indigo);border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap;margin-top:4px}
+
+    /* Stats */
+    .stats-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+    .stat-card{flex:1;min-width:140px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:14px}
+    .stat-card.green{border-left:3px solid var(--green)}.stat-card.amber{border-left:3px solid var(--amber)}
+    .stat-card.rose{border-left:3px solid var(--rose)}.stat-card.indigo{border-left:3px solid var(--indigo)}
+    .stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .stat-icon.green{background:var(--green-light)}.stat-icon.amber{background:var(--amber-light)}
+    .stat-icon.rose{background:var(--rose-light)}.stat-icon.indigo{background:var(--indigo-light)}
+    .stat-value{font-size:24px;font-weight:700;line-height:1}
+    .stat-label{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+    /* Main grid */
+    .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:40px}
+    @media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+
+    .section-heading{font-size:16px;font-weight:700;letter-spacing:-.01em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .section-heading::before{content:'';display:block;width:4px;height:18px;background:var(--indigo);border-radius:2px;flex-shrink:0}
+
+    /* Radar */
+    .radar-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-sm)}
+    .radar-container{position:relative;width:100%;aspect-ratio:1;max-width:420px;margin:0 auto}
+    #radarSvg{width:100%;height:100%;overflow:visible}
+    .radar-legend{display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+    .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);font-weight:500}
+    .legend-swatch{width:24px;height:4px;border-radius:2px}
+    .legend-swatch.current{background:var(--indigo);opacity:.8}
+    .legend-swatch.required{background:transparent;border:2px dashed var(--rose)}
+
+    /* Cards */
+    .cards-panel{display:flex;flex-direction:column;gap:0}
+    .cards-scroll{display:flex;flex-direction:column;gap:10px;max-height:480px;overflow-y:auto;padding-right:4px}
+    .cards-scroll::-webkit-scrollbar{width:4px}
+    .cards-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .comp-card{background:var(--bg-card);border:1px solid var(--border);border-left-width:3px;border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow-sm)}
+    .comp-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+    .comp-card.active{box-shadow:var(--shadow-md);transform:translateY(-1px);background:#fefefe}
+    .comp-card.strength{border-left-color:var(--green)}
+    .comp-card.articulate{border-left-color:var(--amber)}
+    .comp-card.study{border-left-color:var(--rose)}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .card-keyword{font-size:14px;font-weight:600;line-height:1.3;flex:1}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+    .badge.strength{background:var(--green-light);color:var(--green)}
+    .badge.articulate{background:var(--amber-light);color:var(--amber)}
+    .badge.study{background:var(--rose-light);color:var(--rose)}
+    .badge.required{background:var(--indigo-light);color:var(--indigo)}
+    .badge.preferred{background:#f3f4f6;color:#6b7280}
+    .card-scores{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .score-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)}
+    .score-bar-track{width:60px;height:4px;background:var(--bg-subtle);border-radius:2px;overflow:hidden}
+    .score-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+    .score-bar-fill.my{background:var(--indigo)}.score-bar-fill.job{background:var(--rose)}
+    .card-signal{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5;display:none}
+    .card-action-row{display:none;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+    .action-tag{font-size:11px;font-weight:500;color:var(--text-muted);background:var(--bg-subtle);padding:4px 10px;border-radius:99px;flex:1}
+    .day-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--indigo-light);color:var(--indigo);flex-shrink:0}
+    .comp-card.expanded .card-signal{display:block}
+    .comp-card.expanded .card-action-row{display:flex}
+    .card-chevron{font-size:14px;color:var(--text-light);transition:transform .2s;margin-left:6px;flex-shrink:0}
+    .comp-card.expanded .card-chevron{transform:rotate(180deg)}
+
+    /* Sprint */
+    .sprint-section{margin-bottom:40px}
+    .sprint-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media(max-width:700px){.sprint-grid{grid-template-columns:1fr}}
+    .sprint-day{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)}
+    .sprint-day-header{padding:14px 18px;display:flex;align-items:center;gap:10px}
+    .sprint-day-header.d1{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%)}
+    .sprint-day-header.d2{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)}
+    .sprint-day-header.d3{background:linear-gradient(135deg,#ffe4e6 0%,#fecdd3 100%)}
+    .sprint-day-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+    .d1 .sprint-day-num{background:var(--green);color:#fff}
+    .d2 .sprint-day-num{background:var(--amber);color:#fff}
+    .d3 .sprint-day-num{background:var(--rose);color:#fff}
+    .sprint-day-title{font-size:13px;font-weight:700}
+    .sprint-day-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px}
+    .sprint-tasks{padding:12px 16px 16px}
+    .sprint-task{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+    .sprint-task:last-child{border-bottom:none}
+    .task-check{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
+    .sprint-task.done .task-check{background:var(--green);border-color:var(--green)}
+    .sprint-task.done .task-check::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+    .task-text{font-size:12px;line-height:1.5;color:var(--text);transition:color .2s,opacity .2s}
+    .sprint-task.done .task-text{color:var(--text-muted);text-decoration:line-through;opacity:.6}
+    .sprint-progress{padding:4px 16px 12px;font-size:11px;color:var(--text-muted)}
+    .sprint-progress-bar{height:4px;background:var(--bg-subtle);border-radius:2px;margin-top:4px;overflow:hidden}
+    .sprint-progress-fill{height:100%;border-radius:2px;transition:width .4s ease}
+    .d1 .sprint-progress-fill{background:var(--green)}
+    .d2 .sprint-progress-fill{background:var(--amber)}
+    .d3 .sprint-progress-fill{background:var(--rose)}
+
+    /* FAB */
+    .fab{position:fixed;bottom:28px;right:28px;z-index:100;display:flex;align-items:center;gap:10px;padding:14px 22px;background:var(--indigo);color:#fff;border-radius:99px;font-size:14px;font-weight:600;box-shadow:var(--shadow-lg);transition:transform .2s,box-shadow .2s}
+    .fab:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 20px 48px rgba(79,70,229,.35)}
+    .fab-icon{font-size:18px}
+    .fab-pulse{width:8px;height:8px;border-radius:50%;background:#86efac;animation:pulse 1.8s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+    /* Drawer */
+    .drawer-overlay{position:fixed;inset:0;z-index:200;background:rgba(28,28,30,.35);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .drawer-overlay.open{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;right:0;top:0;bottom:0;z-index:201;width:min(420px,100vw);background:var(--bg-card);box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .32s cubic-bezier(.22,.61,.36,1);overflow-y:auto;padding:28px 24px 40px}
+    .drawer.open{transform:translateX(0)}
+    .drawer-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+    .drawer-title{font-size:18px;font-weight:700}
+    .drawer-close{width:32px;height:32px;border-radius:50%;background:var(--bg-subtle);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .drawer-close:hover{background:var(--border)}
+    .drawer-day-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--green-light);color:var(--green);border-radius:99px;font-size:12px;font-weight:700;margin-bottom:20px}
+    .drawer-task-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity .15s}
+    .drawer-task-item:last-child{border-bottom:none}
+    .drawer-task-item.done{opacity:.55}
+    .drawer-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
+    .drawer-task-item.done .drawer-check{background:var(--green);border-color:var(--green)}
+    .drawer-task-item.done .drawer-check::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+    .drawer-task-body{flex:1}
+    .drawer-task-kw{font-size:13px;font-weight:600;margin-bottom:3px}
+    .drawer-task-action{font-size:12px;color:var(--text-muted);line-height:1.5}
+
+    /* Animations */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .fade-up{animation:fadeUp .45s ease both}
+    .delay-1{animation-delay:.07s}.delay-2{animation-delay:.14s}.delay-3{animation-delay:.21s}.delay-4{animation-delay:.28s}
+
+    /* Tooltip */
+    .radar-tooltip{position:absolute;background:var(--text);color:#fff;padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;font-weight:500;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .15s;z-index:10;transform:translate(-50%,-110%)}
+    .radar-tooltip.visible{opacity:1}
+
+    @media(max-width:600px){
+      .stats-row{gap:8px}.stat-card{min-width:120px;padding:14px}.stat-value{font-size:20px}
+      .fab{bottom:20px;right:16px;padding:12px 16px;font-size:13px}
+      .radar-panel{padding:20px 16px}
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+  <header class="site-header fade-up">
+    <div class="header-inner">
+      <div>
+        <div class="header-meta"><div class="dot"></div><span>PathFinder AI · 역량 분석 #2</span></div>
+        <h1 class="header-title">역량 지도 &amp; <span>액션 플래너</span></h1>
+        <p class="header-subtitle">일산로보틱스 · 로봇 SW 개발 직무 기준 매핑</p>
+      </div>
+      <div><div class="header-badge">⚡ 3-Day Sprint Ready</div></div>
+    </div>
+  </header>
+
+  <div class="stats-row fade-up delay-1">
+    <div class="stat-card green"><div class="stat-icon green">💪</div><div><div class="stat-value">5</div><div class="stat-label">어필 가능 역량</div></div></div>
+    <div class="stat-card amber"><div class="stat-icon amber">📝</div><div><div class="stat-value">2</div><div class="stat-label">답변 정리 필요</div></div></div>
+    <div class="stat-card rose"><div class="stat-icon rose">📚</div><div><div class="stat-value">1</div><div class="stat-label">학습 필요</div></div></div>
+    <div class="stat-card indigo"><div class="stat-icon indigo">🎯</div><div><div class="stat-value">8</div><div class="stat-label">전체 역량 항목</div></div></div>
+  </div>
+
+  <div class="main-grid fade-up delay-2">
+    <div class="radar-panel">
+      <h2 class="section-heading">역량 레이더 차트</h2>
+      <div class="radar-container">
+        <svg id="radarSvg" viewBox="0 0 400 400" aria-label="역량 레이더 차트"></svg>
+        <div class="radar-tooltip" id="radarTooltip"></div>
+      </div>
+      <div class="radar-legend">
+        <div class="legend-item"><div class="legend-swatch current"></div><span>현재 역량</span></div>
+        <div class="legend-item"><div class="legend-swatch required"></div><span>직무 요구</span></div>
+      </div>
+    </div>
+    <div class="cards-panel">
+      <h2 class="section-heading">역량 상세 카드</h2>
+      <div class="cards-scroll" id="cardsContainer"></div>
+    </div>
+  </div>
+
+  <section class="sprint-section fade-up delay-3">
+    <h2 class="section-heading">3일 스프린트 플랜</h2>
+    <div class="sprint-grid" id="sprintGrid"></div>
+  </section>
+</div>
+
+<button class="fab fade-up delay-4" id="fabBtn" aria-label="오늘 할 일 열기">
+  <span class="fab-icon">📋</span><span>오늘 할 일</span><div class="fab-pulse"></div>
+</button>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="오늘 할 일">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title">오늘 할 일</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Day 1 · 강점 어필 연습</div>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="drawer-day-badge">📅 Day 1 — 강점 어필</div>
+  <div id="drawerTasks"></div>
+</aside>
+
+<script>
+const competencies = [
+  {keyword:"로봇 제어 SW 개발",status:"strength",importance:"required",radar_score:85,job_score:90,signal:"사과 수확 로봇, 제어 로직 직접 구현 경험 다수. 모션 플래닝/기구학 연계 보유",action:"실무 사례를 면접에서 구체적으로 제시",sprint_day:1},
+  {keyword:"산업용 통신 프로토콜",status:"articulate",importance:"required",radar_score:45,job_score:80,signal:"EtherCAT/TCP/IP 연동 경험은 제한적; 관련 프로젝트에서 구조 이해는 보유하나 구현 깊이 보완 필요",action:"기술 개념 정리 및 간단한 모듈 리딩/리뷰",sprint_day:2},
+  {keyword:"임베디드 HW 연동",status:"strength",importance:"required",radar_score:80,job_score:85,signal:"라즈베리파이/아두이노/Dynamixel 핀/시퀀스 정의 경험",action:"현업 적용 시나리오 구체화",sprint_day:1},
+  {keyword:"실시간 제어/OS",status:"articulate",importance:"required",radar_score:50,job_score:85,signal:"실시간 제어 개념은 경험이 있지만 구현 깊이는 보완 필요",action:"Linux 기반 실시간 제어 관련 코드 리뷰 및 자가 학습",sprint_day:2},
+  {keyword:"역기구학/동역학",status:"strength",importance:"required",radar_score:80,job_score:90,signal:"6축 로봇팔 역기구학 수식 적용 및 제어각 역산 구현",action:"면접 설명 정리",sprint_day:1},
+  {keyword:"C++ 최적화",status:"study",importance:"required",radar_score:30,job_score:80,signal:"경험 근거 부족. Python 주력",action:"핵심 개념(RAII, 메모리 풀, 스레드) 집중 학습",sprint_day:3},
+  {keyword:"ROS2/시뮬레이션",status:"strength",importance:"preferred",radar_score:75,job_score:70,signal:"ROS2 Foxy + Gazebo 시뮬레이션 경험",action:"어필",sprint_day:1},
+  {keyword:"모션 플래닝",status:"strength",importance:"required",radar_score:70,job_score:80,signal:"Intel RealSense + YOLOv5 연동, 경로 생성 경험",action:"어필",sprint_day:1}
+];
+const STATUS_LABELS={strength:"어필 가능",articulate:"답변 정리",study:"학습 필요"};
+const DAY_THEME=["","d1","d2","d3"];
+const STORAGE_KEY="competency_sprint_tasks";
+function loadChecked(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch{return{}}}
+function saveChecked(o){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(o))}catch{}}
+let checkedState=loadChecked();
+function taskId(day,kw){return`d${day}_${kw}`}
+
+/* ─── Radar ─── */
+const CX=200,CY=200,R=148;
+function polar(angle,r){const rad=(angle-90)*Math.PI/180;return{x:CX+r*Math.cos(rad),y:CY+r*Math.sin(rad)}}
+function ns(tag){return document.createElementNS('http://www.w3.org/2000/svg',tag)}
+function buildRadar(){
+  const svg=document.getElementById('radarSvg');
+  const n=competencies.length,step=360/n;
+  [20,40,60,80,100].forEach(p=>{
+    const rr=R*p/100;
+    const pts=competencies.map((_,i)=>{const q=polar(i*step,rr);return`${q.x},${q.y}`}).join(' ');
+    const poly=ns('polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');
+    poly.setAttribute('stroke','#e5e5e0');poly.setAttribute('stroke-width','1');svg.appendChild(poly);
+    if(p<100){const lp=polar(0,rr);const t=ns('text');t.setAttribute('x',lp.x+3);t.setAttribute('y',lp.y-2);
+      t.setAttribute('font-size','8');t.setAttribute('fill','#d1d5db');t.setAttribute('font-family','DM Sans,sans-serif');t.textContent=p;svg.appendChild(t);}
+  });
+  competencies.forEach((c,i)=>{
+    const angle=i*step;const outer=polar(angle,R+6);
+    const ln=ns('line');ln.setAttribute('x1',CX);ln.setAttribute('y1',CY);ln.setAttribute('x2',outer.x);ln.setAttribute('y2',outer.y);
+    ln.setAttribute('stroke','#e5e5e0');ln.setAttribute('stroke-width','1');svg.appendChild(ln);
+    const lp=polar(angle,R+28);
+    const txt=ns('text');txt.setAttribute('x',lp.x);txt.setAttribute('y',lp.y);
+    txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size','9.5');txt.setAttribute('font-weight','600');
+    txt.setAttribute('font-family','Noto Sans KR,DM Sans,sans-serif');txt.setAttribute('fill','#6b7280');
+    txt.setAttribute('data-idx',i);txt.style.cursor='pointer';
+    const parts=c.keyword.split('/');
+    if(parts.length>1){parts.forEach((w,wi)=>{const ts=ns('tspan');ts.setAttribute('x',lp.x);ts.setAttribute('dy',wi===0?'-6':'13');ts.textContent=w;txt.appendChild(ts)});}
+    else{txt.textContent=c.keyword;}
+    txt.addEventListener('click',()=>activateCard(i));svg.appendChild(txt);
+  });
+  // job polygon
+  const jobPts=competencies.map((c,i)=>{const p=polar(i*step,R*c.job_score/100);return`${p.x},${p.y}`}).join(' ');
+  const jobPoly=ns('polygon');jobPoly.setAttribute('points',jobPts);jobPoly.setAttribute('fill','none');
+  jobPoly.setAttribute('stroke','#e11d48');jobPoly.setAttribute('stroke-width','2');
+  jobPoly.setAttribute('stroke-dasharray','6 4');jobPoly.setAttribute('opacity','0.75');svg.appendChild(jobPoly);
+  // my polygon
+  const myPts=competencies.map((c,i)=>{const p=polar(i*step,R*c.radar_score/100);return`${p.x},${p.y}`}).join(' ');
+  const myPoly=ns('polygon');myPoly.setAttribute('id','myPoly');myPoly.setAttribute('points',myPts);
+  myPoly.setAttribute('fill','#4f46e5');myPoly.setAttribute('fill-opacity','0.18');
+  myPoly.setAttribute('stroke','#4f46e5');myPoly.setAttribute('stroke-width','2.5');
+  myPoly.setAttribute('stroke-linejoin','round');myPoly.setAttribute('opacity','0');svg.appendChild(myPoly);
+  setTimeout(()=>{myPoly.style.transition='opacity 0.8s ease';myPoly.setAttribute('opacity','1')},300);
+  // dots
+  const tooltip=document.getElementById('radarTooltip');
+  const svgEl=document.getElementById('radarSvg');
+  competencies.forEach((c,i)=>{
+    const p=polar(i*step,R*c.radar_score/100);
+    const circ=ns('circle');circ.setAttribute('cx',p.x);circ.setAttribute('cy',p.y);circ.setAttribute('r','5');
+    circ.setAttribute('fill','#4f46e5');circ.setAttribute('stroke','#fff');circ.setAttribute('stroke-width','2');
+    circ.setAttribute('opacity','0');circ.setAttribute('data-idx',i);circ.style.cursor='pointer';
+    circ.style.transition=`opacity 0.4s ease ${0.35+i*0.06}s`;svg.appendChild(circ);
+    setTimeout(()=>circ.setAttribute('opacity','1'),350+i*60);
+    circ.addEventListener('mouseenter',()=>{
+      const rc=svgEl.closest('.radar-container').getBoundingClientRect();
+      const sr=svgEl.getBoundingClientRect();
+      tooltip.textContent=`${c.keyword}: ${c.radar_score}점`;
+      tooltip.style.left=(p.x/400)*sr.width+(sr.left-rc.left)+'px';
+      tooltip.style.top=(p.y/400)*sr.height+(sr.top-rc.top)+'px';
+      tooltip.classList.add('visible');
+    });
+    circ.addEventListener('mouseleave',()=>tooltip.classList.remove('visible'));
+    circ.addEventListener('click',()=>activateCard(i));
+  });
+}
+
+/* ─── Cards ─── */
+function buildCards(){
+  const c=document.getElementById('cardsContainer');c.innerHTML='';
+  competencies.forEach((item,i)=>{
+    const card=document.createElement('div');
+    card.className=`comp-card ${item.status}`;card.id=`card-${i}`;
+    card.setAttribute('tabindex','0');card.setAttribute('role','button');card.setAttribute('aria-expanded','false');
+    card.innerHTML=`
+      <div class="card-top">
+        <div class="card-keyword">${item.keyword}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0">
+          <span class="badge ${item.status}">${STATUS_LABELS[item.status]}</span>
+          <span class="badge ${item.importance}">${item.importance==='required'?'필수':'우대'}</span>
+        </div>
+        <span class="card-chevron">▾</span>
+      </div>
+      <div class="card-scores">
+        <div class="score-item"><span style="min-width:44px">내 역량</span>
+          <div class="score-bar-track"><div class="score-bar-fill my" style="width:${item.radar_score}%"></div></div>
+          <span style="font-weight:600;color:var(--indigo)">${item.radar_score}</span></div>
+        <div class="score-item"><span style="min-width:44px">직무 요구</span>
+          <div class="score-bar-track"><div class="score-bar-fill job" style="width:${item.job_score}%"></div></div>
+          <span style="font-weight:600;color:var(--rose)">${item.job_score}</span></div>
+      </div>
+      <div class="card-signal">${item.signal}</div>
+      <div class="card-action-row">
+        <span class="action-tag">🎯 ${item.action}</span>
+        <span class="day-tag">Day ${item.sprint_day}</span>
+      </div>`;
+    card.addEventListener('click',()=>toggleCard(i));
+    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')toggleCard(i)});
+    c.appendChild(card);
+  });
+}
+function toggleCard(idx){
+  const card=document.getElementById(`card-${idx}`);
+  const wasExp=card.classList.contains('expanded');
+  document.querySelectorAll('.comp-card.expanded').forEach(c=>{c.classList.remove('expanded','active');c.setAttribute('aria-expanded','false')});
+  if(!wasExp){card.classList.add('expanded','active');card.setAttribute('aria-expanded','true');highlightAxis(idx);}
+}
+function activateCard(idx){
+  document.getElementById(`card-${idx}`).scrollIntoView({behavior:'smooth',block:'nearest'});
+  toggleCard(idx);
+}
+function highlightAxis(idx){
+  document.querySelectorAll('#radarSvg text').forEach(t=>{t.setAttribute('fill','#6b7280');t.setAttribute('font-size','9.5')});
+  document.querySelectorAll(`#radarSvg text[data-idx="${idx}"]`).forEach(t=>{t.setAttribute('fill','#4f46e5');t.setAttribute('font-size','10.5')});
+}
+
+/* ─── Sprint ─── */
+const sprintData=[
+  {day:1,theme:"강점 어필 연습",tasks:competencies.filter(c=>c.sprint_day===1).map(c=>({keyword:c.keyword,action:c.action}))},
+  {day:2,theme:"답변 정리 & 자가 학습",tasks:[
+    {keyword:"산업용 통신 프로토콜",action:"EtherCAT/CAN 개념 정리, 모듈 코드 리딩"},
+    {keyword:"실시간 제어/OS",action:"Linux 실시간 제어 코드 리뷰 및 자가 학습"},
+    {keyword:"EtherCAT 기술 개념",action:"핵심 용어 암기 및 질문 시나리오 준비"}
+  ]},
+  {day:3,theme:"모의 면접 & C++ 집중",tasks:[
+    {keyword:"C++ 최적화",action:"RAII, 메모리 풀, 스레드 핵심 개념 압축 학습"},
+    {keyword:"전체 모의 면접",action:"8개 역량 항목 전체 질문 모의 면접 (2분 답변)"},
+    {keyword:"약점 보완 정리",action:"C++ 답변 구조 작성 및 피드백 반영"}
+  ]}
+];
+function buildSprint(){
+  const grid=document.getElementById('sprintGrid');grid.innerHTML='';
+  sprintData.forEach(day=>{
+    const col=document.createElement('div');col.className='sprint-day';
+    const hdr=document.createElement('div');hdr.className=`sprint-day-header ${DAY_THEME[day.day]}`;
+    hdr.innerHTML=`<div class="sprint-day-num">${day.day}</div><div><div class="sprint-day-title">Day ${day.day}</div><div class="sprint-day-subtitle">${day.theme}</div></div>`;
+    col.appendChild(hdr);
+    const tl=document.createElement('div');tl.className='sprint-tasks';
+    day.tasks.forEach(task=>{
+      const id=taskId(day.day,task.keyword);const done=!!checkedState[id];
+      const item=document.createElement('div');item.className=`sprint-task${done?' done':''}`;item.id=`sprint-task-${id}`;
+      item.innerHTML=`<div class="task-check"></div><div class="task-text"><strong>${task.keyword}</strong><br>${task.action}</div>`;
+      item.addEventListener('click',()=>toggleSprintTask(day.day,task.keyword,day));
+      tl.appendChild(item);
+    });
+    col.appendChild(tl);
+    const total=day.tasks.length;
+    const doneCount=day.tasks.filter(t=>!!checkedState[taskId(day.day,t.keyword)]).length;
+    const pct=total?Math.round(doneCount/total*100):0;
+    const pg=document.createElement('div');pg.className=`sprint-progress ${DAY_THEME[day.day]}`;
+    pg.innerHTML=`<span id="prog-label-${day.day}">${doneCount}/${total} 완료</span><div class="sprint-progress-bar"><div class="sprint-progress-fill" id="prog-${day.day}" style="width:${pct}%"></div></div>`;
+    col.appendChild(pg);
+    grid.appendChild(col);
+  });
+}
+function toggleSprintTask(dayNum,keyword,dayData){
+  if(!dayData)dayData=sprintData.find(d=>d.day===dayNum);
+  const id=taskId(dayNum,keyword);checkedState[id]=!checkedState[id];saveChecked(checkedState);
+  [document.getElementById(`sprint-task-${id}`),document.getElementById(`drawer-task-${id}`)].forEach(el=>{
+    if(el)el.classList.toggle('done',!!checkedState[id]);
+  });
+  if(dayData){
+    const total=dayData.tasks.length;
+    const doneCount=dayData.tasks.filter(t=>!!checkedState[taskId(dayNum,t.keyword)]).length;
+    const pct=total?Math.round(doneCount/total*100):0;
+    const pb=document.getElementById(`prog-${dayNum}`);if(pb)pb.style.width=pct+'%';
+    const pl=document.getElementById(`prog-label-${dayNum}`);if(pl)pl.textContent=`${doneCount}/${total} 완료`;
+  }
+}
+
+/* ─── Drawer ─── */
+function buildDrawer(){
+  const c=document.getElementById('drawerTasks');c.innerHTML='';
+  sprintData[0].tasks.forEach(task=>{
+    const id=taskId(1,task.keyword);const done=!!checkedState[id];
+    const item=document.createElement('div');item.className=`drawer-task-item${done?' done':''}`;item.id=`drawer-task-${id}`;
+    item.innerHTML=`<div class="drawer-check"></div><div class="drawer-task-body"><div class="drawer-task-kw">${task.keyword}</div><div class="drawer-task-action">${task.action}</div></div>`;
+    item.addEventListener('click',()=>toggleSprintTask(1,task.keyword,sprintData[0]));
+    c.appendChild(item);
+  });
+}
+function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  buildRadar();buildCards();buildSprint();buildDrawer();
+  document.getElementById('fabBtn').addEventListener('click',openDrawer);
+  document.getElementById('drawerClose').addEventListener('click',closeDrawer);
+  document.getElementById('drawerOverlay').addEventListener('click',closeDrawer);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+});
+</script>
+</body>
+</html>

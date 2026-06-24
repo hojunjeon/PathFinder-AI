@@ -1,0 +1,13 @@
+﻿{
+    "repair_status":  true,
+    "repair_timeline_count":  2,
+    "repair_first_preparation_type":  "study",
+    "repair_second_preparation_type":  "organize",
+    "repair_first_experience_match":  "none",
+    "repair_second_responsibility":  "EtherCAT 湲곕컲 ?쒕낫 紐⑦꽣 ?ㅼ떆媛??쒖뼱",
+    "httperror_status":  true,
+    "httperror_text_roadmap":  "original-before-repair-error",
+    "httperror_timeline_count":  1,
+    "httperror_first_preparation_type":  "study",
+    "httperror_first_responsibility":  "Robot control algorithm development"
+}

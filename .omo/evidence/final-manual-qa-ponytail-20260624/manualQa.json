@@ -1,0 +1,374 @@
+﻿{
+    "manualQa":  {
+                     "surfaceEvidence":  [
+                                             {
+                                                 "scenarioId":  "S200",
+                                                 "criterionRef":  "programming checker no violations in six touched task files",
+                                                 "surface":  "CLI scoped programming checker",
+                                                 "exactInvocation":  "llm_server\\venv\\Scripts\\python.exe C:\\Users\\user\\.codex\\plugins\\cache\\sisyphuslabs\\omo\\4.13.0\\skills\\programming\\scripts\\python\\check-no-excuse-rules.py llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A200"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S201",
+                                                 "criterionRef":  "llm_server pytest expected result is 29 passed",
+                                                 "surface":  "CLI pytest full LLM server suite",
+                                                 "exactInvocation":  "cd llm_server \u0026\u0026 venv\\Scripts\\python.exe -m pytest -q",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A201"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S202",
+                                                 "criterionRef":  "backend pytest expected result is 84 passed",
+                                                 "surface":  "CLI pytest full backend suite",
+                                                 "exactInvocation":  "cd backend \u0026\u0026 venv\\Scripts\\python.exe -m pytest -q",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A202"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S203",
+                                                 "criterionRef":  "frontend Playwright expected result is 16 passed",
+                                                 "surface":  "CLI Playwright full frontend E2E suite",
+                                                 "exactInvocation":  "cd frontend \u0026\u0026 npx playwright test",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A203"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S204",
+                                                 "criterionRef":  "targeted observable roadmap processing tests cover fallback/pass-through normalization and repair branch",
+                                                 "surface":  "CLI pytest targeted roadmap behavior tests",
+                                                 "exactInvocation":  "cd llm_server \u0026\u0026 venv\\Scripts\\python.exe -m pytest tests/test_roadmap_processing_values.py tests/test_roadmap_repair_branch.py -q",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A204"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S205",
+                                                 "criterionRef":  "changed LLM Python files and tests compile",
+                                                 "surface":  "CLI Python syntax compile touched LLM source and tests",
+                                                 "exactInvocation":  "llm_server\\venv\\Scripts\\python.exe -m py_compile llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A205"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S206",
+                                                 "criterionRef":  "git diff --check exits 0 with CRLF warning only",
+                                                 "surface":  "CLI git whitespace diff check touched LLM files",
+                                                 "exactInvocation":  "git diff --check -- llm_server/main.py llm_server/roadmap_processing_competency.py llm_server/roadmap_processing_timeline.py llm_server/roadmap_processing_values.py llm_server/tests/test_roadmap_processing_values.py llm_server/tests/test_roadmap_repair_branch.py",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A206"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S207",
+                                                 "criterionRef":  "duplicate import cleanup did not leave dead or duplicate json/re imports",
+                                                 "surface":  "CLI source import/usage search",
+                                                 "exactInvocation":  "rg -n \"^(import (json|re)|from (json|re) import)|import json|import re|\\b(json|re)\\.\" llm_server\\main.py llm_server\\roadmap_processing_values.py llm_server\\roadmap_processing_timeline.py llm_server\\roadmap_prompt.py",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A207"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S208",
+                                                 "criterionRef":  "current code review report is unconditional approval/clear",
+                                                 "surface":  "Filesystem evidence inspection",
+                                                 "exactInvocation":  "Get-Content -Raw .omo/evidence/ponytail-refactor-20260624-code-review.md",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A213"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S209",
+                                                 "criterionRef":  "HTTP route returns repaired merged roadmap and normalized values through /llm/roadmap",
+                                                 "surface":  "HTTP FastAPI /llm/roadmap via curl -i against QA harness importing real app",
+                                                 "exactInvocation":  "curl.exe -i -X POST http://127.0.0.1:8092/llm/roadmap -H \"X-Internal-Token: test-internal-token\" -H \"Content-Type: application/json\" --data-binary \"@.omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair.json\"",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A209",
+                                                                      "A211",
+                                                                      "A212",
+                                                                      "A215",
+                                                                      "A217"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S210",
+                                                 "criterionRef":  "repair HTTPError fallback returns the original result through /llm/roadmap",
+                                                 "surface":  "HTTP FastAPI /llm/roadmap via curl -i against QA harness importing real app",
+                                                 "exactInvocation":  "curl.exe -i -X POST http://127.0.0.1:8093/llm/roadmap -H \"X-Internal-Token: test-internal-token\" -H \"Content-Type: application/json\" --data-binary \"@.omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair_http_error.json\"",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A210",
+                                                                      "A211",
+                                                                      "A212",
+                                                                      "A216",
+                                                                      "A218"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S211",
+                                                 "criterionRef":  "parsed HTTP response proves fallback normalization, pass-through retention, repair insertion, and HTTPError original-result fallback",
+                                                 "surface":  "Parsed validation of curl-captured HTTP response bodies",
+                                                 "exactInvocation":  "PowerShell ConvertFrom-Json assertions against S209-http-repair-roadmap-response.txt and S210-http-repair-httperror-response.txt",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A211",
+                                                                      "A212"
+                                                                  ]
+                                             },
+                                             {
+                                                 "scenarioId":  "S212",
+                                                 "criterionRef":  "current workspace state recorded without reverting unrelated dirty files",
+                                                 "surface":  "CLI git status",
+                                                 "exactInvocation":  "git status --short",
+                                                 "verdict":  "PASS",
+                                                 "artifactRefs":  [
+                                                                      "A214"
+                                                                  ]
+                                             }
+                                         ],
+                     "adversarialCases":  [
+                                              {
+                                                  "scenarioId":  "ADV200",
+                                                  "criterionRef":  "prior evidence and review summaries are not trusted without inspection",
+                                                  "adversarialClass":  "stale summary or conditional review hidden behind approval wording",
+                                                  "expectedBehavior":  "Current inspected review artifact states codeQualityStatus CLEAR, decision UNCONDITIONAL APPROVAL, and blockers empty.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A213"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV201",
+                                                  "criterionRef":  "expected pass counts are current and concrete",
+                                                  "adversarialClass":  "stale or summary-only test evidence",
+                                                  "expectedBehavior":  "Fresh command transcripts show llm_server 29 passed, backend 84 passed, and frontend Playwright 16 passed.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A201",
+                                                                       "A202",
+                                                                       "A203"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV202",
+                                                  "criterionRef":  "programming checker cleanup stayed scoped and clean",
+                                                  "adversarialClass":  "unverified checker approval or hidden scoped violation",
+                                                  "expectedBehavior":  "Fresh checker transcript reports no violations in 6 file(s) with exit 0.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A200"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV203",
+                                                  "criterionRef":  "import cleanup did not leave duplicate local json/re imports or remove live imports",
+                                                  "adversarialClass":  "duplicate import cleanup regression",
+                                                  "expectedBehavior":  "Import scan shows live retained json/re call sites and no roadmap_processing_values.py json/re hits.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A207",
+                                                                       "A208"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV204",
+                                                  "criterionRef":  "fallback/pass-through normalization is observable, not inferred from source only",
+                                                  "adversarialClass":  "tautological implementation-only check",
+                                                  "expectedBehavior":  "Targeted tests pass and HTTP response shows invalid values normalized to safe defaults while valid preparation_type organize is retained.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A204",
+                                                                       "A209",
+                                                                       "A211",
+                                                                       "A212"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV205",
+                                                  "criterionRef":  "repair branch is exercised through a route-level path",
+                                                  "adversarialClass":  "untested conditional repair branch or stale NameError path",
+                                                  "expectedBehavior":  "HTTP /llm/roadmap with a two-duty posting returns two timeline rows after the mocked first GMS response omits the second duty.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A209",
+                                                                       "A211",
+                                                                       "A212",
+                                                                       "A215",
+                                                                       "A217"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV206",
+                                                  "criterionRef":  "repair HTTPError fallback returns original result instead of failing or replacing data",
+                                                  "adversarialClass":  "repair fallback regression on outbound HTTP failure",
+                                                  "expectedBehavior":  "HTTP /llm/roadmap returns 200 OK, text_roadmap original-before-repair-error, and the original one-row timeline when the repair call raises httpx.HTTPError.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A210",
+                                                                       "A211",
+                                                                       "A212",
+                                                                       "A216",
+                                                                       "A218"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV207",
+                                                  "criterionRef":  "syntax and whitespace gates are current after final cleanup",
+                                                  "adversarialClass":  "syntax error or diff whitespace regression after import cleanup",
+                                                  "expectedBehavior":  "py_compile exits 0 and git diff --check exits 0 with only the expected CRLF warning for llm_server/main.py.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A205",
+                                                                       "A206"
+                                                                   ]
+                                              },
+                                              {
+                                                  "scenarioId":  "ADV208",
+                                                  "criterionRef":  "PASS entries have non-empty evidence artifacts",
+                                                  "adversarialClass":  "empty, skipped, inferred, or placeholder artifact",
+                                                  "expectedBehavior":  "Every artifact referenced by PASS matrix entries exists and has non-zero length.",
+                                                  "verdict":  "PASS",
+                                                  "artifactRefs":  [
+                                                                       "A219"
+                                                                   ]
+                                              }
+                                          ],
+                     "artifactRefs":  [
+                                          {
+                                              "id":  "A200",
+                                              "kind":  "txt",
+                                              "description":  "Scoped programming checker transcript showing no violations in six task files and exit 0.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S200-programming-checker.txt"
+                                          },
+                                          {
+                                              "id":  "A201",
+                                              "kind":  "txt",
+                                              "description":  "Fresh full LLM server pytest transcript showing 29 passed, one warning, and exit 0.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S201-llm-pytest.txt"
+                                          },
+                                          {
+                                              "id":  "A202",
+                                              "kind":  "txt",
+                                              "description":  "Fresh backend pytest transcript showing 84 passed and exit 0.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S202-backend-pytest.txt"
+                                          },
+                                          {
+                                              "id":  "A203",
+                                              "kind":  "txt",
+                                              "description":  "Fresh frontend Playwright transcript showing 16 passed and exit 0.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S203-frontend-playwright.txt"
+                                          },
+                                          {
+                                              "id":  "A204",
+                                              "kind":  "txt",
+                                              "description":  "Targeted roadmap behavior pytest transcript for fallback/pass-through normalization and repair branch tests.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S204-targeted-roadmap-pytest.txt"
+                                          },
+                                          {
+                                              "id":  "A205",
+                                              "kind":  "txt",
+                                              "description":  "py_compile transcript for touched LLM source and tests with exit 0.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S205-py-compile.txt"
+                                          },
+                                          {
+                                              "id":  "A206",
+                                              "kind":  "txt",
+                                              "description":  "git diff --check transcript for touched LLM files with exit 0 and the expected CRLF warning only.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S206-git-diff-check.txt"
+                                          },
+                                          {
+                                              "id":  "A207",
+                                              "kind":  "txt",
+                                              "description":  "Import usage scan for json/re cleanup and live retained imports.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S207-import-usage.txt"
+                                          },
+                                          {
+                                              "id":  "A208",
+                                              "kind":  "txt",
+                                              "description":  "Roadmap behavior source scan locating normalization, repair, HTTPError, and _allowed_text paths.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S208-roadmap-behavior-source-scan.txt"
+                                          },
+                                          {
+                                              "id":  "A209",
+                                              "kind":  "txt",
+                                              "description":  "Raw curl -i HTTP response from /llm/roadmap exercising repair merge and normalization.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S209-http-repair-roadmap-response.txt"
+                                          },
+                                          {
+                                              "id":  "A210",
+                                              "kind":  "txt",
+                                              "description":  "Raw curl -i HTTP response from /llm/roadmap exercising repair HTTPError fallback to original result.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S210-http-repair-httperror-response.txt"
+                                          },
+                                          {
+                                              "id":  "A211",
+                                              "kind":  "json",
+                                              "description":  "Parsed HTTP validation facts for repair merge, fallback normalization, pass-through retention, and HTTPError original-result fallback.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S211-http-roadmap-validation.json"
+                                          },
+                                          {
+                                              "id":  "A212",
+                                              "kind":  "txt",
+                                              "description":  "Human-readable parsed HTTP validation receipt for the two curl scenarios.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S212-http-roadmap-validation.txt"
+                                          },
+                                          {
+                                              "id":  "A213",
+                                              "kind":  "txt",
+                                              "description":  "Inspected current code review report showing CLEAR, UNCONDITIONAL APPROVAL, and no blockers.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S213-code-review-inspection.txt"
+                                          },
+                                          {
+                                              "id":  "A214",
+                                              "kind":  "txt",
+                                              "description":  "Current git status transcript showing the workspace state at this manual QA pass.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S214-git-status-short.txt"
+                                          },
+                                          {
+                                              "id":  "A215",
+                                              "kind":  "py",
+                                              "description":  "QA-only HTTP harness importing the real app and stubbing outbound GMS calls for successful repair.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_app.py"
+                                          },
+                                          {
+                                              "id":  "A216",
+                                              "kind":  "py",
+                                              "description":  "QA-only HTTP harness importing the real app and forcing httpx.HTTPError on the repair call.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_app_repair_http_error.py"
+                                          },
+                                          {
+                                              "id":  "A217",
+                                              "kind":  "json",
+                                              "description":  "HTTP repair scenario request payload.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair.json"
+                                          },
+                                          {
+                                              "id":  "A218",
+                                              "kind":  "json",
+                                              "description":  "HTTP repair HTTPError scenario request payload.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair_http_error.json"
+                                          },
+                                          {
+                                              "id":  "A219",
+                                              "kind":  "txt",
+                                              "description":  "Artifact existence and non-empty length check for all artifactRefs in this manualQa matrix.",
+                                              "path":  ".omo/evidence/final-manual-qa-ponytail-20260624/S215-artifact-nonempty-check.txt"
+                                          }
+                                      ]
+                 }
+}

@@ -1,0 +1,42 @@
+﻿C003 scope and Ponytail review evidence refreshed after programming-check cleanup (2026-06-24).
+
+Product source/test files changed by this task:
+- llm_server/main.py
+- llm_server/roadmap_processing_competency.py
+- llm_server/roadmap_processing_timeline.py
+- llm_server/roadmap_processing_values.py
+- llm_server/tests/test_roadmap_processing_values.py
+- llm_server/tests/test_roadmap_repair_branch.py
+
+Ponytail review:
+- No new dependency added to product code or manifests.
+- Main route/auth/request/response behavior stays in llm_server/main.py; normalization and repair helpers moved into focused modules.
+- Existing private helper names imported back into main.py for test compatibility.
+- Removed unused _allowed_text from llm_server/roadmap_processing_competency.py.
+- Removed unused json/re imports from llm_server/roadmap_processing_values.py.
+- Removed duplicate local import json, re from llm_server/main.py; module-level json/re remain because _parse_response uses them.
+- json/re imports in llm_server/roadmap_processing_timeline.py and the pre-existing llm_server/roadmap_prompt.py are live and intentionally retained.
+- Added TypedDict return annotations for normalized dict-shaped roadmap items without changing returned JSON shape.
+- Replaced the silent repair HTTPError pass with explicit return of the already-built result, preserving fallback behavior.
+- Replaced a dynamic isinstance if/elif branch with match/case while preserving the old continue behavior for unsupported study_focus entries.
+- No route, model, environment variable, prompt, auth, request-size, GMS payload, or response field change intended.
+- First-wave scope remains LLM server only; backend/companies/knowledge.py is documented as a later low-risk candidate but not executed in this wave.
+
+Size gate after final cleanup:
+- llm_server/main.py: pure_loc=237 total=266
+- llm_server/roadmap_processing_values.py: pure_loc=149 total=176
+- llm_server/roadmap_processing_timeline.py: pure_loc=231 total=265
+- llm_server/roadmap_processing_competency.py: pure_loc=213 total=247
+- llm_server/tests/test_roadmap_processing_values.py: pure_loc=32 total=36
+- llm_server/tests/test_roadmap_repair_branch.py: pure_loc=64 total=75
+
+Existing dirty user files still present and not reverted:
+- PT/DESIGN.md
+- frontend/scripts/verify-design.mjs
+- frontend/src/views/AnalyzeResultView.vue
+- frontend/tests/e2e/analyze-flow.spec.js
+- llm_server/roadmap_prompt.py
+- llm_server/tests/test_roadmap_prompt.py
+
+Commit/staging: not performed because user did not explicitly request a commit.
+Cleanup: no runtime process, tmux session, browser context, container, bound port, or temp dir left by this review step.

@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>면접 준비 로드맵 플래너 | Interview Roadmap Kanban</title>
+<meta name="description" content="14개 면접 준비 항목을 Kanban 보드로 관리하는 면접 준비 로드맵 플래너">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Design Tokens ── */
+  :root {
+    --bg:          #fffbf0;
+    --bg-card:     #ffffff;
+    --bg-col:      #f5f0e8;
+    --navy:        #0f172a;
+    --navy-mid:    #1e293b;
+    --navy-light:  #334155;
+    --coral:       #e11d48;
+    --coral-light: #fce7ec;
+    --amber:       #f59e0b;
+    --amber-light: #fef3c7;
+    --blue:        #3b82f6;
+    --blue-light:  #eff6ff;
+    --slate:       #94a3b8;
+    --slate-light: #f1f5f9;
+    --text:        #1e293b;
+    --text-sub:    #64748b;
+    --border:      #e2d9c8;
+    --shadow:      rgba(15,23,42,.08);
+    --shadow-md:   rgba(15,23,42,.14);
+    --radius:      10px;
+    --radius-sm:   6px;
+    --transition:  .2s ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: 0 2px 12px var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-left h1 span.emoji { font-size: 1.1rem; }
+
+  .header-left p {
+    font-size: .78rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* Progress stats */
+  .stat-group {
+    display: flex;
+    gap: 16px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f8fafc;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: .68rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  .stat-val.coral { color: #fb7185; }
+  .stat-val.amber { color: #fcd34d; }
+
+  /* Checklist button */
+  #checklist-btn {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #e11d48, #be123c);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    animation: pulse-glow 2s infinite;
+  }
+
+  #checklist-btn.visible { display: flex; }
+
+  #checklist-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(225,29,72,.4);
+    animation: none;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(225,29,72,.4); }
+    50%       { box-shadow: 0 0 0 6px rgba(225,29,72,0); }
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    background: var(--bg-col);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-label {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-sub);
+    margin-right: 4px;
+  }
+
+  .time-filters {
+    display: flex;
+    gap: 6px;
+  }
+
+  .time-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .75rem;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .time-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: var(--blue-light);
+  }
+
+  .time-btn.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+
+  .legend {
+    margin-left: auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .72rem;
+    color: var(--text-sub);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.coral { background: var(--coral); }
+  .legend-dot.amber { background: var(--amber); }
+  .legend-dot.slate { background: var(--slate); }
+
+  /* ── Kanban Board ── */
+  .board-wrapper {
+    flex: 1;
+    padding: 24px 20px;
+    overflow-x: auto;
+  }
+
+  .board {
+    display: flex;
+    gap: 18px;
+    min-height: 560px;
+    min-width: 680px;
+    align-items: flex-start;
+  }
+
+  /* Column */
+  .column {
+    flex: 1;
+    min-width: 220px;
+    background: var(--bg-col);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+  }
+
+  .column.drag-over {
+    border-color: var(--blue);
+    background: #edf4ff;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  }
+
+  .col-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .col-title {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .col-icon { font-size: 1rem; }
+
+  .col-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .72rem;
+    font-weight: 600;
+    background: var(--navy-light);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .col-count.done-count { background: #16a34a; }
+
+  .col-hours {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .68rem;
+    color: var(--text-sub);
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,.02);
+  }
+
+  .cards-area {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 80px;
+  }
+
+  /* Empty drop zone hint */
+  .drop-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-sub);
+    font-size: .75rem;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  .column.drag-over .drop-hint { opacity: 1; }
+
+  /* ── Card ── */
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    border-left: 4px solid transparent;
+    padding: 12px 12px 10px;
+    cursor: grab;
+    transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+    position: relative;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-md);
+    border-color: var(--border);
+  }
+
+  .card:active { cursor: grabbing; }
+
+  .card.priority-must { border-left-color: var(--coral); }
+  .card.priority-should { border-left-color: var(--amber); }
+  .card.priority-nice { border-left-color: var(--slate); }
+
+  /* dim non-highlighted cards during filter */
+  .card.dimmed {
+    opacity: .35;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .card.dragging {
+    opacity: .4;
+    transform: rotate(2deg);
+    box-shadow: 0 12px 32px var(--shadow-md);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .card-name {
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--navy);
+    flex: 1;
+    line-height: 1.35;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .card-name:hover { color: var(--blue); }
+
+  .priority-badge {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .62rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 1px;
+  }
+
+  .priority-badge.must { background: var(--coral-light); color: var(--coral); }
+  .priority-badge.should { background: var(--amber-light); color: #92400e; }
+  .priority-badge.nice { background: var(--slate-light); color: var(--navy-light); }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-size: .68rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .chip-hours {
+    background: var(--blue-light);
+    color: var(--blue);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .chip-exp.direct   { background: #dcfce7; color: #16a34a; }
+  .chip-exp.indirect { background: #fef9c3; color: #854d0e; }
+  .chip-exp.learn    { background: #fce7ec; color: var(--coral); }
+
+  .chip-evidence {
+    background: #f3f0ff;
+    color: #6d28d9;
+    font-size: .64rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .drag-handle {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    color: var(--slate);
+    font-size: .8rem;
+    opacity: .5;
+    cursor: grab;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.55);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn .18s ease;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .modal {
+    background: var(--bg-card);
+    border-radius: 14px;
+    max-width: 580px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(15,23,42,.25);
+    animation: slideUp .2s ease;
+    position: relative;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 2;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.3;
+  }
+
+  .modal-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--text-sub);
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: var(--transition);
+    flex-shrink: 0;
+  }
+
+  .modal-close:hover { background: var(--slate-light); color: var(--navy); }
+
+  .modal-body {
+    padding: 18px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .modal-section {}
+
+  .section-label {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--text-sub);
+    margin-bottom: 7px;
+  }
+
+  .section-label.coral { color: var(--coral); }
+  .section-label.blue  { color: var(--blue); }
+
+  .responsibility-text {
+    font-size: .84rem;
+    color: var(--text-sub);
+    line-height: 1.6;
+    padding: 10px 12px;
+    background: var(--slate-light);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--blue);
+  }
+
+  .evidence-box {
+    font-size: .84rem;
+    color: var(--navy-mid);
+    line-height: 1.6;
+    padding: 10px 12px;
+    background: #f5f0ff;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid #7c3aed;
+  }
+
+  .concepts-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .concept-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .73rem;
+    padding: 4px 10px;
+    background: var(--navy);
+    color: #e2e8f0;
+    border-radius: 4px;
+  }
+
+  .questions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .questions-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: .84rem;
+    line-height: 1.55;
+    color: var(--navy-mid);
+    padding: 9px 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .q-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--coral);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .prep-time-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .prep-time-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .prep-time-unit {
+    font-size: .8rem;
+    color: var(--text-sub);
+  }
+
+  .prep-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--slate-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .prep-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--blue), #6366f1);
+    transition: width .4s ease;
+  }
+
+  /* ── Checklist Overlay ── */
+  .checklist-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.6);
+    backdrop-filter: blur(5px);
+    z-index: 600;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn .18s ease;
+  }
+
+  .checklist-overlay.open { display: flex; }
+
+  .checklist-box {
+    background: var(--bg-card);
+    border-radius: 14px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(15,23,42,.3);
+    animation: slideUp .2s ease;
+  }
+
+  .checklist-header {
+    padding: 20px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: 14px 14px 0 0;
+  }
+
+  .checklist-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .checklist-body {
+    padding: 18px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .check-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--coral);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .check-item label {
+    font-size: .84rem;
+    line-height: 1.5;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--slate); }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy);
+    color: #fff;
+    font-size: .82rem;
+    padding: 9px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: all .3s ease;
+    pointer-events: none;
+    z-index: 700;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    header { padding: 14px 16px; }
+    .toolbar { padding: 8px 14px; }
+    .board-wrapper { padding: 14px 10px; }
+    .legend { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-left">
+    <h1><span class="emoji">🗂️</span> 면접 준비 로드맵 플래너</h1>
+    <p>현대로보틱스 로봇 SW 개발 · 14개 항목 드래그 &amp; 드롭 관리</p>
+  </div>
+  <div class="header-right">
+    <div class="stat-group">
+      <div class="stat">
+        <div class="stat-val" id="stat-done">0</div>
+        <div class="stat-label">완료 / 14</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val amber" id="stat-hours">0h</div>
+        <div class="stat-label">남은 준비 시간</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val coral" id="stat-total">37h</div>
+        <div class="stat-label">총 예상 시간</div>
+      </div>
+    </div>
+    <button id="checklist-btn" onclick="openChecklist()" aria-label="면접 당일 체크리스트">
+      ✅ 면접 당일 체크리스트
+    </button>
+  </div>
+</header>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <span class="toolbar-label">⏱ 준비 기간:</span>
+  <div class="time-filters" role="group" aria-label="준비 기간 필터">
+    <button class="time-btn" id="filter-1" onclick="setFilter(1)">1일</button>
+    <button class="time-btn" id="filter-3" onclick="setFilter(3)">3일</button>
+    <button class="time-btn" id="filter-7" onclick="setFilter(7)">7일</button>
+    <button class="time-btn active" id="filter-0" onclick="setFilter(0)">전체</button>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot coral"></div> MUST (P1–3)</div>
+    <div class="legend-item"><div class="legend-dot amber"></div> SHOULD (P4–6)</div>
+    <div class="legend-item"><div class="legend-dot slate"></div> NICE (P7+)</div>
+  </div>
+</div>
+
+<!-- Board -->
+<div class="board-wrapper">
+  <div class="board" id="board">
+    <!-- Column: 준비 예정 -->
+    <div class="column" id="col-todo" data-col="todo"
+         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <div class="col-header">
+        <div class="col-title"><span class="col-icon">📋</span> 준비 예정</div>
+        <span class="col-count" id="count-todo">0</span>
+      </div>
+      <div class="col-hours" id="hours-todo">예상 시간: 0h</div>
+      <div class="cards-area" id="area-todo">
+        <div class="drop-hint">여기에 카드를 드롭하세요</div>
+      </div>
+    </div>
+
+    <!-- Column: 진행 중 -->
+    <div class="column" id="col-doing" data-col="doing"
+         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <div class="col-header">
+        <div class="col-title"><span class="col-icon">⚡</span> 진행 중</div>
+        <span class="col-count" id="count-doing">0</span>
+      </div>
+      <div class="col-hours" id="hours-doing">예상 시간: 0h</div>
+      <div class="cards-area" id="area-doing">
+        <div class="drop-hint">여기에 카드를 드롭하세요</div>
+      </div>
+    </div>
+
+    <!-- Column: 완료 -->
+    <div class="column" id="col-done" data-col="done"
+         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <div class="col-header">
+        <div class="col-title"><span class="col-icon">✅</span> 완료</div>
+        <span class="col-count done-count" id="count-done">0</span>
+      </div>
+      <div class="col-hours" id="hours-done">완료 시간: 0h</div>
+      <div class="cards-area" id="area-done">
+        <div class="drop-hint">여기에 카드를 드롭하세요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">-</div>
+        <div class="modal-badges" id="modal-badges"></div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()" aria-label="닫기">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="section-label blue">📌 담당 직무</div>
+        <div class="responsibility-text" id="modal-resp"></div>
+      </div>
+      <div class="modal-section">
+        <div class="section-label" style="color:#7c3aed">💡 내 경험 근거</div>
+        <div class="evidence-box" id="modal-evidence"></div>
+      </div>
+      <div class="modal-section">
+        <div class="section-label">🔑 핵심 개념</div>
+        <div class="concepts-list" id="modal-concepts"></div>
+      </div>
+      <div class="modal-section">
+        <div class="section-label coral">❓ 예상 질문</div>
+        <ul class="questions-list" id="modal-questions"></ul>
+      </div>
+      <div class="modal-section">
+        <div class="section-label">⏱ 예상 준비 시간</div>
+        <div class="prep-time-bar">
+          <span class="prep-time-val" id="modal-hours">0</span>
+          <span class="prep-time-unit">시간</span>
+          <div class="prep-bar-bg">
+            <div class="prep-bar-fill" id="modal-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Checklist Overlay -->
+<div class="checklist-overlay" id="checklist-overlay" onclick="closeChecklistOuter(event)" role="dialog" aria-modal="true" aria-labelledby="checklist-heading">
+  <div class="checklist-box">
+    <div class="checklist-header">
+      <h2 id="checklist-heading">🎯 면접 당일 체크리스트</h2>
+      <button class="modal-close" onclick="closeChecklistDirect()" aria-label="닫기" style="color:#fff">✕</button>
+    </div>
+    <div class="checklist-body" id="checklist-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Data ── */
+const TOPICS = [
+  {id:1, category:"실시간 서보 제어", priority:1, priority_band:"must",
+   responsibility:"양팔/협동 로봇 기구학/동역학 및 모션 플래닝 SW개발",
+   prep_hours:4, my_evidence:"6축 로봇팔 역기구학 수식 직접 구현, Jacobian 기반 속도 제어 (사과 수확 로봇)",
+   key_concepts:["역기구학 수식","Jacobian 행렬","모션 플래닝","실시간 제어 루프"],
+   sample_questions:["역기구학을 직접 구현한 경험을 설명하세요","Jacobian이란 무엇인가요?","시뮬레이터와 실기 차이를 어떻게 극복했나요?"],
+   experience_match:"직접 경험"},
+
+  {id:2, category:"임베디드 시스템 통합", priority:2, priority_band:"must",
+   responsibility:"외부 장치/IO 인터페이스 연결 SW 개발",
+   prep_hours:3, my_evidence:"Raspberry Pi/Arduino/Dynamixel Shield 연동, Intel RealSense 3D 카메라 좌표 획득",
+   key_concepts:["핀 시퀀스 설계","SPI/I2C/UART","센서 융합","실시간 데이터 처리"],
+   sample_questions:["하드웨어 인터페이스 설계 경험을 설명하세요","센서 데이터 처리 방법은?"],
+   experience_match:"직접 경험"},
+
+  {id:3, category:"C++ 실시간 제어 최적화", priority:3, priority_band:"must",
+   responsibility:"로봇 제어 SW 개발 전반",
+   prep_hours:5, my_evidence:"Python 주력 → C++ 전환 학습 중. 알고리즘 최적화 경험 보유",
+   key_concepts:["메모리 관리 (RAII)","스레드 동기화","실시간 루프 최적화","스마트 포인터"],
+   sample_questions:["실시간 루프에서 동적 메모리를 피하는 이유?","RAII 패턴이란?"],
+   experience_match:"학습 필요"},
+
+  {id:4, category:"산업용 통신 프로토콜", priority:4, priority_band:"should",
+   responsibility:"EtherCAT, TCP/IP 등 표준 통신 인터페이스 SW 개발",
+   prep_hours:3, my_evidence:"TCP/IP 소켓 코드 작성 (제한적), EtherCAT 구조 이해 보유",
+   key_concepts:["EtherCAT 프레임 구조","마스터-슬레이브 토폴로지","TCP 소켓 프로그래밍","실시간 통신 지연"],
+   sample_questions:["EtherCAT의 장점은?","TCP/IP 소켓 통신 구현 경험을 설명하세요"],
+   experience_match:"간접 경험"},
+
+  {id:5, category:"ROS2 활용", priority:5, priority_band:"should",
+   responsibility:"로봇 시스템 통합 및 튜닝",
+   prep_hours:2, my_evidence:"ROS2 Foxy + Gazebo 시뮬레이션, Nav2/MoveIt2 파이프라인 사용",
+   key_concepts:["노드 설계 패턴","DDS 통신","QoS 설정","실시간 타이머 콜백"],
+   sample_questions:["ROS2 실시간 제어 노드 설계 방법?","Gazebo를 어떻게 활용했나요?"],
+   experience_match:"직접 경험"},
+
+  {id:6, category:"이상감지 알고리즘", priority:6, priority_band:"should",
+   responsibility:"로봇 모니터링, 이상 감지, 고장 진단 SW 개발",
+   prep_hours:3, my_evidence:"물리적 한계 기반 이상 탐지 시스템 설계, 시뮬레이션 검증",
+   key_concepts:["임계값 기반 탐지","통계적 이상 탐지","물리적 한계 모델","실시간 모니터링"],
+   sample_questions:["이상감지를 어떻게 구현하셨나요?","오탐 비율을 어떻게 줄였나요?"],
+   experience_match:"간접 경험"},
+
+  {id:7, category:"Parameter ID 관리", priority:7, priority_band:"nice",
+   responsibility:"로봇 Parameter ID 관리 및 튜닝 SW 개발",
+   prep_hours:2, my_evidence:"로봇 제어 SW 파라미터 조정 경험",
+   key_concepts:["파라미터 ID 체계","동적 파라미터 튜닝","성능 기준 설정"],
+   sample_questions:["파라미터 튜닝 경험을 설명하세요"],
+   experience_match:"간접 경험"},
+
+  {id:8, category:"로봇 SW 모듈화", priority:8, priority_band:"nice",
+   responsibility:"로봇 SW 모듈, 튜닝 및 고도화",
+   prep_hours:2, my_evidence:"Python 알고리즘 데이터 처리/제어 파이프라인 모듈화 경험",
+   key_concepts:["소프트웨어 아키텍처","모듈 인터페이스 설계","코드 재사용성"],
+   sample_questions:["SW 모듈화 설계 경험을 설명하세요"],
+   experience_match:"간접 경험"},
+
+  {id:9, category:"로봇 시스템 통합 인터페이스", priority:9, priority_band:"nice",
+   responsibility:"로봇 시스템 통합 및 인터페이스",
+   prep_hours:2, my_evidence:"HW/SW 통합 시스템 아키텍처 설계 경험",
+   key_concepts:["시스템 인터페이스 설계","HAL 추상화","드라이버 개발"],
+   sample_questions:["시스템 통합 인터페이스를 어떻게 설계했나요?"],
+   experience_match:"간접 경험"},
+
+  {id:10, category:"튜닝 및 최적화", priority:10, priority_band:"nice",
+   responsibility:"튜닝 및 최적화",
+   prep_hours:2, my_evidence:"목표 위치 도달 성능 Jacobian 기반 속도 제어 튜닝, 80% 이상 도달",
+   key_concepts:["PID 튜닝","성능 측정 지표","반복 최적화 과정"],
+   sample_questions:["로봇 성능 튜닝 경험을 설명하세요"],
+   experience_match:"직접 경험"},
+
+  {id:11, category:"SDK/API 설계", priority:11, priority_band:"nice",
+   responsibility:"로봇 관련 SW 기반 SDK/API 기반 고도화",
+   prep_hours:1, my_evidence:"로봇 제어 SW 관련 API 연동 경험",
+   key_concepts:["API 설계 원칙","호환성 유지","문서화"],
+   sample_questions:["SDK/API 설계에서 중요한 것은?"],
+   experience_match:"간접 경험"},
+
+  {id:12, category:"이상감지 심화", priority:12, priority_band:"nice",
+   responsibility:"이상감지 알고리즘 심화",
+   prep_hours:2, my_evidence:"물리적 한계 기반 이상 탐지 + ML 보조 이상 감지",
+   key_concepts:["머신러닝 이상감지","One-Class SVM","Autoencoder"],
+   sample_questions:["ML 기반 이상감지를 구현한 경험은?"],
+   experience_match:"간접 경험"},
+
+  {id:13, category:"시뮬레이터 환경", priority:13, priority_band:"nice",
+   responsibility:"시뮬레이터",
+   prep_hours:1, my_evidence:"ROS2 Foxy + Gazebo 시뮬레이션 환경 구축 경험",
+   key_concepts:["물리 엔진 파라미터","URDF 모델링","시뮬레이션 검증"],
+   sample_questions:["시뮬레이터 환경을 어떻게 구성했나요?"],
+   experience_match:"직접 경험"},
+
+  {id:14, category:"테스트 알고리즘 설계", priority:14, priority_band:"nice",
+   responsibility:"테스트 환경 활용 알고리즘 설계",
+   prep_hours:2, my_evidence:"시뮬레이션/실기 검증 및 체크리스트 활용 경험",
+   key_concepts:["속도-정확도-안전 성능 지표","테스트 자동화","회귀 테스트"],
+   sample_questions:["테스트 체크리스트를 어떻게 구성했나요?"],
+   experience_match:"간접 경험"}
+];
+
+const TOTAL_HOURS = TOPICS.reduce((s,t) => s + t.prep_hours, 0); // 37
+const STORAGE_KEY = 'roadmap_planner_v1';
+
+/* ── State ── */
+let state = {}; // { topicId: 'todo'|'doing'|'done' }
+let draggingId = null;
+let activeFilter = 0; // 0=all, 1, 3, 7
+
+/* ── Init ── */
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && typeof saved === 'object') {
+      state = saved;
+      return;
+    }
+  } catch(e) {}
+  // default: all in todo
+  TOPICS.forEach(t => { state[t.id] = 'todo'; });
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/* ── Render ── */
+function render() {
+  const cols = { todo: [], doing: [], done: [] };
+  TOPICS.forEach(t => {
+    const col = state[t.id] || 'todo';
+    cols[col].push(t);
+  });
+
+  // Sort within each col by priority
+  Object.values(cols).forEach(arr => arr.sort((a,b) => a.priority - b.priority));
+
+  ['todo','doing','done'].forEach(col => {
+    const area = document.getElementById('area-' + col);
+    // Remove existing cards (keep drop-hint)
+    Array.from(area.querySelectorAll('.card')).forEach(c => c.remove());
+    // Insert cards
+    cols[col].forEach(t => {
+      const card = createCard(t);
+      area.appendChild(card);
+    });
+    document.getElementById('count-' + col).textContent = cols[col].length;
+    const hrs = cols[col].reduce((s,t) => s + t.prep_hours, 0);
+    const hoursEl = document.getElementById('hours-' + col);
+    hoursEl.textContent = col === 'done'
+      ? `완료 시간: ${hrs}h`
+      : `예상 시간: ${hrs}h`;
+  });
+
+  updateStats();
+  applyFilter(activeFilter);
+  checkChecklistVisibility();
+}
+
+function createCard(topic) {
+  const card = document.createElement('div');
+  card.className = `card priority-${topic.priority_band}`;
+  card.dataset.id = topic.id;
+  card.draggable = true;
+
+  const expClass = topic.experience_match === '직접 경험' ? 'direct'
+                 : topic.experience_match === '간접 경험' ? 'indirect'
+                 : 'learn';
+
+  const bandLabel = topic.priority_band === 'must' ? 'MUST'
+                  : topic.priority_band === 'should' ? 'SHOULD'
+                  : 'NICE';
+
+  const evidenceShort = topic.my_evidence.length > 38
+    ? topic.my_evidence.slice(0, 38) + '…'
+    : topic.my_evidence;
+
+  card.innerHTML = `
+    <span class="drag-handle" aria-hidden="true">⠿</span>
+    <div class="card-top">
+      <span class="card-name" role="button" tabindex="0" aria-label="${topic.category} 상세보기">${topic.category}</span>
+      <span class="priority-badge ${topic.priority_band}">P${topic.priority} ${bandLabel}</span>
+    </div>
+    <div class="card-meta">
+      <span class="chip chip-hours">⏱ ${topic.prep_hours}h</span>
+      <span class="chip chip-exp ${expClass}">${topic.experience_match}</span>
+      <span class="chip chip-evidence" title="${topic.my_evidence}">💡 ${evidenceShort}</span>
+    </div>
+  `;
+
+  // Drag events
+  card.addEventListener('dragstart', e => {
+    draggingId = topic.id;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', topic.id);
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    draggingId = null;
+    document.querySelectorAll('.column').forEach(c => c.classList.remove('drag-over'));
+  });
+
+  // Click → modal (anywhere on card except drag handle)
+  card.addEventListener('click', e => {
+    if (e.target.classList.contains('drag-handle')) return;
+    openModal(topic);
+  });
+
+  card.querySelector('.card-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openModal(topic);
+    }
+  });
+
+  return card;
+}
+
+/* ── Drag & Drop ── */
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const col = e.currentTarget;
+  col.classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  // Only remove class if truly leaving the column element
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drag-over');
+  }
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const col = e.currentTarget;
+  col.classList.remove('drag-over');
+  const id = parseInt(e.dataTransfer.getData('text/plain'), 10);
+  if (!id) return;
+  const targetCol = col.dataset.col;
+  const prevCol = state[id];
+  if (prevCol === targetCol) return;
+  state[id] = targetCol;
+  saveState();
+  render();
+  const topic = TOPICS.find(t => t.id === id);
+  const colName = {todo:'준비 예정', doing:'진행 중', done:'완료'}[targetCol];
+  showToast(`"${topic.category}" → ${colName} ✓`);
+}
+
+/* ── Stats ── */
+function updateStats() {
+  const done = Object.values(state).filter(v => v === 'done').length;
+  document.getElementById('stat-done').textContent = done;
+
+  const remainHours = TOPICS
+    .filter(t => state[t.id] !== 'done')
+    .reduce((s,t) => s + t.prep_hours, 0);
+  document.getElementById('stat-hours').textContent = remainHours + 'h';
+  document.getElementById('stat-total').textContent = TOTAL_HOURS + 'h';
+}
+
+/* ── Checklist visibility ── */
+function checkChecklistVisibility() {
+  const mustTopics = TOPICS.filter(t => t.priority <= 3);
+  const allDone = mustTopics.every(t => state[t.id] === 'done');
+  const btn = document.getElementById('checklist-btn');
+  btn.classList.toggle('visible', allDone);
+}
+
+/* ── Filter ── */
+function setFilter(days) {
+  activeFilter = days;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  const map = {0:'filter-0', 1:'filter-1', 3:'filter-3', 7:'filter-7'};
+  document.getElementById(map[days]).classList.add('active');
+  applyFilter(days);
+}
+
+function applyFilter(days) {
+  if (days === 0) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('dimmed'));
+    return;
+  }
+  const maxPriority = days === 1 ? 2 : days === 3 ? 4 : 8;
+  document.querySelectorAll('.card').forEach(c => {
+    const id = parseInt(c.dataset.id, 10);
+    const topic = TOPICS.find(t => t.id === id);
+    c.classList.toggle('dimmed', topic.priority > maxPriority);
+  });
+}
+
+/* ── Modal ── */
+function openModal(topic) {
+  document.getElementById('modal-title').textContent = topic.category;
+
+  const bandLabel = topic.priority_band === 'must' ? 'MUST' : topic.priority_band === 'should' ? 'SHOULD' : 'NICE';
+  const expClass = topic.experience_match === '직접 경험' ? 'direct' : topic.experience_match === '간접 경험' ? 'indirect' : 'learn';
+  const badgesEl = document.getElementById('modal-badges');
+  badgesEl.innerHTML = `
+    <span class="priority-badge ${topic.priority_band}">P${topic.priority} ${bandLabel}</span>
+    <span class="chip chip-hours">⏱ ${topic.prep_hours}h</span>
+    <span class="chip chip-exp ${expClass}">${topic.experience_match}</span>
+  `;
+
+  document.getElementById('modal-resp').textContent = topic.responsibility;
+  document.getElementById('modal-evidence').textContent = topic.my_evidence;
+
+  const conceptsEl = document.getElementById('modal-concepts');
+  conceptsEl.innerHTML = topic.key_concepts.map(c =>
+    `<span class="concept-tag">${c}</span>`
+  ).join('');
+
+  const qList = document.getElementById('modal-questions');
+  qList.innerHTML = topic.sample_questions.map((q, i) =>
+    `<li><span class="q-num">Q${i+1}</span><span>${q}</span></li>`
+  ).join('');
+
+  document.getElementById('modal-hours').textContent = topic.prep_hours;
+  const pct = Math.min(100, (topic.prep_hours / 5) * 100); // max 5h = 100%
+  document.getElementById('modal-bar').style.width = pct + '%';
+
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    closeModalDirect();
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Checklist ── */
+const CHECKLIST_ITEMS = [
+  "역기구학 수식과 Jacobian 개념 5분 복습",
+  "임베디드 시스템 핀 시퀀스 및 통신 프로토콜 핵심 정리 노트 확인",
+  "C++ 메모리 관리 (RAII, 스마트 포인터) 예시 코드 리뷰",
+  "면접장 위치 및 교통 경로 재확인",
+  "복장 및 준비물 점검 (신분증, 이력서 출력본 등)",
+  "지원 직무 JD 핵심 키워드 마지막 확인",
+  "예상 질문 3개 소리 내어 연습",
+  "면접 시작 30분 전 도착 목표 시간 설정",
+  "핸드폰 무음 모드 설정",
+  "마음 안정: 깊은 호흡 3회"
+];
+
+function openChecklist() {
+  const body = document.getElementById('checklist-body');
+  body.innerHTML = CHECKLIST_ITEMS.map((item, i) => `
+    <div class="check-item">
+      <input type="checkbox" id="chk-${i}" name="chk-${i}">
+      <label for="chk-${i}">${item}</label>
+    </div>
+  `).join('');
+  document.getElementById('checklist-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChecklistOuter(e) {
+  if (e.target === document.getElementById('checklist-overlay')) closeChecklistDirect();
+}
+
+function closeChecklistDirect() {
+  document.getElementById('checklist-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ── Keyboard ESC ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModalDirect();
+    closeChecklistDirect();
+  }
+});
+
+/* ── Bootstrap ── */
+loadState();
+render();
+</script>
+</body>
+</html>

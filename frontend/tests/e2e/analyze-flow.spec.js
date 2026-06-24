@@ -13,7 +13,13 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.route('**/api/analyze/', async route => {
     if (route.request().method() === 'POST') {
       const body = route.request().postDataJSON()
-      expect(body.job_id).toBe(11)
+      expect(body.company_id).toBe(1)
+      expect(body.job_posting).toMatchObject({
+        job_title: '백엔드 개발자',
+        responsibilities: '주문/배송 API 개발과 대규모 트래픽 처리',
+        requirements: 'Python, Database, REST API 경험',
+        preferred_qualifications: '분산 시스템 경험',
+      })
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
@@ -45,17 +51,33 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()
   await expect(page.getByText('우선순위 1 · 담당업무')).toBeVisible()
-  await expect(page.getByText('직접 경험', { exact: true })).toBeVisible()
+  await expect(page.locator('#roadmap').getByText('직접 경험', { exact: true })).toBeVisible()
   await expect(page.getByText('업무 연결').first()).toBeVisible()
   await expect(page.getByText('내 연결점').first()).toBeVisible()
   await expect(page.getByText('핵심 개념').first()).toBeVisible()
   await expect(page.getByText('준비 순서').first()).toBeVisible()
   await expect(page.getByText('로봇 팔 제어 정확도 개선 경험', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText('FK와 IK 차이')).toBeVisible()
+  await expect(page.locator('#roadmap').getByText('FK와 IK 차이')).toBeVisible()
   await expect(page.getByText(/직접 연결 경험 없음/).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: '준비 키워드' })).toBeVisible()
+  const prepKeywords = page.locator('#prep-keywords')
+  await expect(prepKeywords.getByText('대주제 키워드', { exact: true })).toBeVisible()
+  await expect(prepKeywords.getByText('소주제 키워드', { exact: true })).toBeVisible()
+  await expect(prepKeywords.getByText('로보틱스').first()).toBeVisible()
+  await expect(prepKeywords.getByText('역기구학').first()).toBeVisible()
+  await expect(prepKeywords.getByText('특이점').first()).toBeVisible()
   await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: '질문 리허설' })).toBeVisible()
+  const rehearsal = page.locator('#interview-drill')
+  await expect(rehearsal.getByText('회사/업무 맥락', { exact: true }).first()).toBeVisible()
+  await expect(rehearsal.getByText('내 경험 근거', { exact: true }).first()).toBeVisible()
+  await expect(rehearsal.getByText('답변 방향', { exact: true }).first()).toBeVisible()
+  await expect(rehearsal.getByText('꼬리질문', { exact: true }).first()).toBeVisible()
+  await expect(rehearsal.getByText('산업용 로봇 제어 알고리즘 개발').first()).toBeVisible()
+  await expect(rehearsal.getByText('로봇 팔 제어 정확도 개선 경험').first()).toBeVisible()
+  await expect(rehearsal.getByText('실시간성이 깨질 때 fallback은 무엇인가요?')).toBeVisible()
   await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
   await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
   await page.getByLabel('EtherCAT').check()
@@ -63,20 +85,16 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByLabel('EtherCAT')).toBeChecked()
 })
 
-test('cover letter profile save request contains question and answer', async ({ page }) => {
+test('cover letter submit request contains question and answer', async ({ page }) => {
   await mockCompanySearch(page)
   await mockManualPosting(page)
+  let submittedCoverLetter = null
   await page.route('**/api/analyze/', async route => {
+    submittedCoverLetter = route.request().postDataJSON().submitted_cover_letter
     await route.fulfill({ status: 201, json: { id: 99 } })
   })
-  let savedCoverLetters = null
   await page.route('**/api/profile/', async route => {
-    if (route.request().method() === 'PUT') {
-      savedCoverLetters = route.request().postDataJSON().cover_letters
-      await route.fulfill({ status: 200, json: { cover_letters: savedCoverLetters } })
-    } else {
-      await route.fulfill({ json: { cover_letters: [] } })
-    }
+    await route.fulfill({ json: { cover_letters: [] } })
   })
 
   await fillManualPosting(page)
@@ -85,12 +103,8 @@ test('cover letter profile save request contains question and answer', async ({ 
   await page.locator('.cover-answer-input').fill('백엔드 API와 DB 최적화 경험이 있습니다.')
   await page.locator('#next-cover-letter-btn').click()
 
-  expect(savedCoverLetters).toEqual([
-    {
-      question: '직무 역량을 설명해 주세요',
-      answer: '백엔드 API와 DB 최적화 경험이 있습니다.',
-    },
-  ])
+  expect(submittedCoverLetter).toContain('Q. 직무 역량을 설명해 주세요')
+  expect(submittedCoverLetter).toContain('A. 백엔드 API와 DB 최적화 경험이 있습니다.')
 })
 
 test('analyze flow accepts company-only fallback job without criterion warning', async ({ page }) => {

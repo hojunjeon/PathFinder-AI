@@ -1,0 +1,461 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>질문 리허설 코치 — 로보틱스 SW 개발자 면접 준비</title>
+<meta name="description" content="로보틱스 SW 개발자 면접 질문을 STAR 구조로 연습하는 리허설 코치. 타이머, 자기평가, 꼬리질문 제공." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --surface2: #0f3460;
+  --accent: #6c63ff;
+  --accent-dim: #4f48b8;
+  --amber: #f59e0b;
+  --amber-dim: #d97706;
+  --text: #e8e8f0;
+  --text-muted: #8888aa;
+  --border: rgba(108,99,255,0.18);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font-kr: 'Noto Sans KR', sans-serif;
+  --font-ui: 'Space Grotesk', sans-serif;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-kr); min-height: 100vh; line-height: 1.6; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+textarea { font-family: var(--font-kr); resize: vertical; border: none; outline: none; background: transparent; color: var(--text); width: 100%; font-size: 0.92rem; line-height: 1.7; min-height: 80px; }
+textarea::placeholder { color: var(--text-muted); }
+
+.app-wrapper { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+.app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.app-title { font-family: var(--font-ui); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.4px; }
+.app-title span { color: var(--accent); }
+.progress-badge { font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; color: var(--amber); background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); padding: 5px 14px; border-radius: 20px; white-space: nowrap; }
+
+.filter-row { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.filter-btn { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; padding: 7px 18px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-muted); background: var(--surface); transition: var(--transition); letter-spacing: 0.3px; }
+.filter-btn:hover { color: var(--text); border-color: var(--accent); }
+.filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 18px rgba(108,99,255,0.35); }
+
+.nav-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 10px; }
+.nav-btn { font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; padding: 9px 22px; border-radius: 10px; border: 1px solid var(--border); color: var(--text-muted); background: var(--surface); transition: var(--transition); }
+.nav-btn:not(:disabled):hover { color: var(--accent); border-color: var(--accent); }
+.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.nav-counter { font-family: var(--font-ui); font-size: 0.88rem; color: var(--text-muted); }
+.nav-counter strong { color: var(--text); }
+
+.question-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 28px 22px; margin-bottom: 20px; position: relative; overflow: hidden; animation: fadeUp 0.3s ease; }
+.question-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--amber)); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.badge { font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700; padding: 4px 11px; border-radius: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+.badge-category { background: rgba(108,99,255,0.15); color: var(--accent); border: 1px solid rgba(108,99,255,0.3); }
+.badge-appeal   { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+.badge-organize { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+.badge-study    { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+.badge-type     { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+.question-text  { font-size: 1.18rem; font-weight: 700; line-height: 1.55; color: var(--text); }
+
+.timer-section { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.timer-svg-wrap { position: relative; flex-shrink: 0; }
+.timer-svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+.timer-bg-circle { fill: none; stroke: rgba(108,99,255,0.12); stroke-width: 5; }
+.timer-progress { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 188.5; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.5s; filter: drop-shadow(0 0 5px rgba(108,99,255,0.6)); }
+.timer-progress.warning { stroke: var(--amber); filter: drop-shadow(0 0 5px rgba(245,158,11,0.6)); }
+.timer-progress.urgent  { stroke: #f87171; filter: drop-shadow(0 0 5px rgba(248,113,113,0.6)); }
+.timer-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transform: rotate(90deg); font-family: var(--font-ui); font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.timer-controls { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.timer-title { font-family: var(--font-ui); font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.timer-btns { display: flex; gap: 8px; }
+.timer-btn { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; padding: 6px 16px; border-radius: 8px; border: 1px solid var(--border); color: var(--text-muted); background: rgba(255,255,255,0.04); transition: var(--transition); }
+.timer-btn:hover { color: var(--accent); border-color: var(--accent); }
+.timer-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; transition: background var(--transition); }
+.panel-header:hover { background: rgba(108,99,255,0.06); }
+.panel-title { font-family: var(--font-ui); font-size: 0.88rem; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.panel-icon { font-size: 1rem; }
+.panel-chevron { font-size: 0.75rem; color: var(--text-muted); transition: transform var(--transition); }
+.panel.open .panel-chevron { transform: rotate(180deg); }
+.panel-body { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); }
+.panel.open .panel-body { max-height: 1200px; }
+.panel-inner { padding: 4px 20px 18px; }
+
+.star-grid { display: grid; gap: 12px; }
+.star-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius-sm); padding: 14px 16px; transition: border-color var(--transition); }
+.star-item:focus-within { border-color: rgba(108,99,255,0.4); }
+.star-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.8px; text-transform: uppercase; }
+.star-prompt { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+
+.evidence-block { background: rgba(108,99,255,0.07); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; margin-bottom: 10px; }
+.evidence-label { font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+.evidence-text { font-size: 0.88rem; line-height: 1.6; }
+.transferable-block { background: rgba(245,158,11,0.07); border-left: 3px solid var(--amber); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; }
+.transferable-label { font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+
+.guide-reveal-btn { font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; padding: 9px 20px; border-radius: var(--radius-sm); border: 1px dashed rgba(245,158,11,0.4); color: var(--amber); background: rgba(245,158,11,0.06); width: 100%; transition: var(--transition); margin-bottom: 10px; }
+.guide-reveal-btn:hover { background: rgba(245,158,11,0.12); border-style: solid; }
+.guide-content { display: none; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 0.9rem; line-height: 1.7; animation: fadeUp 0.25s ease; }
+.guide-content.visible { display: block; }
+
+.followup-list { display: flex; flex-direction: column; gap: 8px; }
+.followup-item { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.18); border-radius: var(--radius-sm); padding: 11px 14px 11px 34px; font-size: 0.88rem; line-height: 1.5; position: relative; }
+.followup-item::before { content: '↩'; position: absolute; left: 12px; color: #f87171; font-size: 0.9rem; }
+
+.rating-row { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; }
+.rating-label { font-family: var(--font-ui); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); flex-shrink: 0; }
+.stars { display: flex; gap: 6px; }
+.star-btn { font-size: 1.5rem; color: rgba(255,255,255,0.12); transition: color var(--transition), transform 0.15s; line-height: 1; }
+.star-btn:hover { transform: scale(1.2); }
+.star-btn.lit { color: var(--amber); }
+.rating-saved-msg { font-family: var(--font-ui); font-size: 0.75rem; color: #34d399; opacity: 0; transition: opacity 0.4s; }
+.rating-saved-msg.show { opacity: 1; }
+
+.dot-tracker { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 18px 0 4px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: var(--transition); cursor: pointer; }
+.dot.current { background: var(--accent); box-shadow: 0 0 8px rgba(108,99,255,0.6); transform: scale(1.3); }
+.dot.rated-1, .dot.rated-2 { background: #f87171; }
+.dot.rated-3 { background: var(--amber); }
+.dot.rated-4, .dot.rated-5 { background: #34d399; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 3px; }
+
+@media (max-width: 600px) {
+  .app-wrapper { padding: 18px 14px 50px; }
+  .question-text { font-size: 1.05rem; }
+  .timer-section { flex-wrap: wrap; }
+  .timer-btns { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+  <header class="app-header">
+    <h1 class="app-title"><span>&#x223F;</span> 질문 리허설 코치</h1>
+    <div class="progress-badge" id="progressBadge">0 / 15 완료</div>
+  </header>
+
+  <div class="filter-row" role="tablist" aria-label="질문 유형 필터">
+    <button class="filter-btn active" data-filter="all"     id="filter-all">전체</button>
+    <button class="filter-btn"        data-filter="appeal"  id="filter-appeal">어필</button>
+    <button class="filter-btn"        data-filter="organize" id="filter-organize">답변정리</button>
+    <button class="filter-btn"        data-filter="study"   id="filter-study">학습</button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← 이전</button>
+    <span class="nav-counter"><strong id="navCurrent">1</strong> / <span id="navTotal">15</span></span>
+    <button class="nav-btn" id="nextBtn" onclick="navigate(1)">다음 →</button>
+  </div>
+
+  <div class="timer-section">
+    <div class="timer-svg-wrap">
+      <svg class="timer-svg" viewBox="0 0 72 72" aria-label="답변 타이머">
+        <circle class="timer-bg-circle" cx="36" cy="36" r="30"/>
+        <circle class="timer-progress" id="timerRing" cx="36" cy="36" r="30"/>
+      </svg>
+      <div class="timer-label" id="timerLabel">2:00</div>
+    </div>
+    <div class="timer-controls">
+      <div class="timer-title">답변 타이머 (2분)</div>
+      <div class="timer-btns">
+        <button class="timer-btn" id="timerStartBtn" onclick="timerToggle()">&#9654; 시작</button>
+        <button class="timer-btn" id="timerResetBtn" onclick="timerReset()">&#8635; 리셋</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="question-card" id="questionCard">
+    <div class="card-meta" id="cardMeta"></div>
+    <p class="question-text" id="questionText"></p>
+  </div>
+
+  <div class="rating-row">
+    <span class="rating-label">자기평가</span>
+    <div class="stars" id="starsRow" role="group" aria-label="1~5점 자기평가"></div>
+    <span class="rating-saved-msg" id="ratingSavedMsg">저장됨 ✓</span>
+  </div>
+
+  <div class="panel open" id="panelEvidence">
+    <div class="panel-header" onclick="togglePanel('panelEvidence')" role="button" tabindex="0" aria-expanded="true">
+      <span class="panel-title"><span class="panel-icon">🎯</span> 나의 근거 &amp; 전이 가능성</span>
+      <span class="panel-chevron">▾</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-inner">
+        <div class="evidence-block">
+          <div class="evidence-label">직접 경험 근거</div>
+          <div class="evidence-text" id="evidenceText"></div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="transferable-block">
+          <div class="transferable-label">전이 가능 역량</div>
+          <div class="evidence-text" id="transferableText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panelGuide">
+    <div class="panel-header" onclick="togglePanel('panelGuide')" role="button" tabindex="0" aria-expanded="false">
+      <span class="panel-title"><span class="panel-icon">💡</span> 답변 방향 가이드</span>
+      <span class="panel-chevron">▾</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-inner">
+        <button class="guide-reveal-btn" id="guideRevealBtn" onclick="revealGuide()">답변 방향 보기 →</button>
+        <div class="guide-content" id="guideContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panelStar">
+    <div class="panel-header" onclick="togglePanel('panelStar')" role="button" tabindex="0" aria-expanded="false">
+      <span class="panel-title"><span class="panel-icon">⭐</span> STAR 구조 답변 연습</span>
+      <span class="panel-chevron">▾</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-inner">
+        <div class="star-grid">
+          <div class="star-item">
+            <div class="star-label">S — 상황 (Situation)</div>
+            <div class="star-prompt">어떤 맥락/배경이었나요? 언제, 어디서, 어떤 프로젝트?</div>
+            <textarea id="starS" placeholder="상황을 구체적으로 적어보세요…" aria-label="상황 입력"></textarea>
+          </div>
+          <div class="star-item">
+            <div class="star-label">T — 과제 (Task)</div>
+            <div class="star-prompt">내가 해결해야 했던 핵심 문제/목표는 무엇이었나요?</div>
+            <textarea id="starT" placeholder="과제/목표를 명확히 적어보세요…" aria-label="과제 입력"></textarea>
+          </div>
+          <div class="star-item">
+            <div class="star-label">A — 행동 (Action)</div>
+            <div class="star-prompt">구체적으로 어떤 기술적 행동을 취했나요? 내 역할은?</div>
+            <textarea id="starA" placeholder="본인이 직접 한 행동을 중심으로…" aria-label="행동 입력"></textarea>
+          </div>
+          <div class="star-item">
+            <div class="star-label">R — 결과 (Result)</div>
+            <div class="star-prompt">결과는? 수치나 성과를 포함하면 더 효과적입니다.</div>
+            <textarea id="starR" placeholder="결과와 배운 점을 적어보세요…" aria-label="결과 입력"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panelFollowup">
+    <div class="panel-header" onclick="togglePanel('panelFollowup')" role="button" tabindex="0" aria-expanded="false">
+      <span class="panel-title"><span class="panel-icon">🔗</span> 예상 꼬리질문</span>
+      <span class="panel-chevron">▾</span>
+    </div>
+    <div class="panel-body">
+      <div class="panel-inner">
+        <div class="followup-list" id="followupList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dot-tracker" id="dotTracker" aria-label="질문 진행 현황"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {id:1,category:"실시간 서보 제어",type_label:"어필",prep_type:"appeal",question:"6축 로봇팔의 역기구학 수식을 어떻게 구현하고 적용하셨나요?",type:"experience",evidence:"6축 로봇팔의 역기구학 수식 적용 및 제어각 역산 구현 (사과 수확 로봇 프로젝트)",transferable:"실시간 제어 루프에 역기구학을 연결하는 능력",answer_guide:"경험 정리 → 모션 플래닝 개념 연결 → 성과 검증 순서로 설명",follow_ups:["특이점(singularity) 처리 방법은?","실시간 제어 루프에서 연산 지연이 생기면 어떻게 처리하나요?"]},
+  {id:2,category:"실시간 서보 제어",type_label:"어필",prep_type:"appeal",question:"Jacobian 행렬을 이용한 속도 제어란 무엇인가요?",type:"concept",evidence:"Jacobian 수식 적용 및 제어각 역산 구현 경험 보유",transferable:"이론을 실제 코드로 연결하는 능력",answer_guide:"수식 유도 → 실제 구현 → 한계점 설명",follow_ups:["특이점(singularity)이란 무엇이며 어떻게 처리하나요?","Jacobian pseudo-inverse를 언제 사용하나요?"]},
+  {id:3,category:"실시간 서보 제어",type_label:"어필",prep_type:"appeal",question:"시뮬레이터와 실제 하드웨어 사이의 차이를 어떻게 극복했나요?",type:"application",evidence:"ROS2 + Gazebo 시뮬레이션 후 실기 전환 경험",transferable:"시뮬레이션-실기 갭 해소 능력",answer_guide:"갭 원인 분석 → 파라미터 튜닝 → 반복 검증 과정 설명",follow_ups:["물리 파라미터가 틀렸을 때 어떻게 발견했나요?"]},
+  {id:4,category:"산업용 통신 프로토콜",type_label:"답변정리",prep_type:"organize",question:"EtherCAT 프로토콜의 장점은 무엇인가요?",type:"concept",evidence:"EtherCAT/TCP/IP 연동 경험은 제한적; 구조 이해는 보유",transferable:"통신 프로토콜 구조 이해 → EtherCAT 적용 가능",answer_guide:"실시간성, 토폴로지, 마스터-슬레이브 구조 순서로 설명",follow_ups:["TCP/IP와 비교하면?","EtherCAT 슬레이브 구현 경험이 있나요?"]},
+  {id:5,category:"산업용 통신 프로토콜",type_label:"답변정리",prep_type:"organize",question:"로봇 시스템에서 TCP/IP 소켓 통신을 구현한 경험을 설명하세요.",type:"experience",evidence:"TCP/IP 규격 코드 작성 경험 (제한적)",transferable:"네트워크 프로그래밍 → 로봇 제어 통신 적용",answer_guide:"구현 목적 → 설계 방식 → 문제 해결 → 결과 순서로 설명",follow_ups:["실시간 데이터 전송 시 지연 처리 방법은?"]},
+  {id:6,category:"C++ 최적화",type_label:"학습",prep_type:"study",question:"실시간 제어 루프에서 동적 메모리 할당을 피하는 이유는?",type:"concept",evidence:"Python 경험 다수, C++ 실시간 최적화 경험 부족",transferable:"소프트웨어 최적화 개념 이해 → C++ 적용 학습",answer_guide:"메모리 파편화 → GC/할당 지연 → 실시간 루프 영향 설명",follow_ups:["메모리 풀(memory pool)을 어떻게 구현하나요?"]},
+  {id:7,category:"C++ 최적화",type_label:"학습",prep_type:"study",question:"RAII 패턴과 스마트 포인터를 어떻게 활용하나요?",type:"concept",evidence:"C++ 기초 학습 중",transferable:"파이썬 컨텍스트 매니저 개념 → C++ RAII 이해",answer_guide:"RAII 정의 → unique_ptr/shared_ptr 활용 → 실제 예시",follow_ups:["순환 참조(circular reference)가 발생하면 어떻게 해결하나요?"]},
+  {id:8,category:"ROS2 활용",type_label:"어필",prep_type:"appeal",question:"ROS2에서 실시간 제어를 위한 노드 설계 방법을 설명하세요.",type:"application",evidence:"ROS2 Foxy + Gazebo 시뮬레이션 경험",transferable:"ROS2 노드 설계 → 실시간 제어 루프 적용",answer_guide:"타이머 콜백 설계 → QoS 설정 → DDS 통신 최적화",follow_ups:["ROS2 실시간 제어에서 DDS 설정이 왜 중요한가요?"]},
+  {id:9,category:"ROS2 활용",type_label:"어필",prep_type:"appeal",question:"Gazebo 시뮬레이션을 실제 로봇 개발에 어떻게 활용했나요?",type:"experience",evidence:"ROS2 Foxy + Gazebo 시뮬레이션으로 알고리즘 검증 후 실기 전환",transferable:"시뮬레이션 기반 검증 방법론을 실무에 적용",answer_guide:"시뮬레이션 목적 → 검증 과정 → 실기 전환 과정 → 결과",follow_ups:["시뮬레이션에서 나타나지 않던 실기 문제 경험이 있나요?"]},
+  {id:10,category:"이상감지 알고리즘",type_label:"답변정리",prep_type:"organize",question:"로봇 제어에서 이상감지를 어떻게 구현하셨나요?",type:"experience",evidence:"물리적 한계 기반 이상 탐지 시스템 및 시뮬레이션 경험",transferable:"이상 탐지 패턴을 실시간 제어에 적용",answer_guide:"탐지 기준 설계 → 임계값 결정 → 대응 로직 순서로 설명",follow_ups:["오탐(false positive) 비율을 어떻게 낮췄나요?","실시간 탐지 vs 사후 분석 trade-off는?"]},
+  {id:11,category:"이상감지 알고리즘",type_label:"답변정리",prep_type:"organize",question:"센서 데이터의 노이즈를 필터링하는 방법을 설명하세요.",type:"concept",evidence:"센서 데이터 처리 및 필터링 관련 학습 경험",transferable:"신호 처리 기초 → 로봇 센서 데이터 적용",answer_guide:"칼만 필터 vs 이동 평균 → 적용 시나리오 → 구현 예시",follow_ups:["칼만 필터의 예측/업데이트 단계를 설명하세요.","저역통과 필터와 칼만 필터의 차이는?"]},
+  {id:12,category:"C++ 최적화",type_label:"학습",prep_type:"study",question:"캐시 친화적(cache-friendly) 데이터 구조란 무엇인가요?",type:"concept",evidence:"C++ 성능 최적화 학습 중",transferable:"알고리즘 복잡도 이해 → 메모리 지역성 개념 적용",answer_guide:"캐시 라인 → 데이터 지역성 → AoS vs SoA 비교",follow_ups:["실시간 제어에서 SoA가 AoS보다 유리한 경우는?"]},
+  {id:13,category:"실시간 서보 제어",type_label:"어필",prep_type:"appeal",question:"PID 제어기를 실제로 튜닝해본 경험을 설명하세요.",type:"experience",evidence:"서보 모터 PID 튜닝 및 제어 경험 (사과 수확 로봇 프로젝트)",transferable:"제어 이론 실무 적용 및 파라미터 최적화 능력",answer_guide:"Ziegler–Nichols or 수동 튜닝 방법 → 발진/오버슈트 처리 → 결과 수치",follow_ups:["적분 와인드업(integral windup)이란 무엇이고 어떻게 방지하나요?","피드포워드를 PID에 추가하면 어떤 이점이 있나요?"]},
+  {id:14,category:"산업용 통신 프로토콜",type_label:"답변정리",prep_type:"organize",question:"Modbus RTU와 Modbus TCP의 차이를 설명하세요.",type:"concept",evidence:"산업용 프로토콜 이론 학습, 직접 구현 경험 제한적",transferable:"프로토콜 스택 이해 → 산업 현장 적용 가능",answer_guide:"전송 매체 차이 → 프레임 구조 → 응용 시나리오 비교",follow_ups:["Modbus 레지스터 맵을 설계할 때 고려사항은?"]},
+  {id:15,category:"ROS2 활용",type_label:"어필",prep_type:"appeal",question:"ROS2 패키지의 의존성 관리와 빌드 시스템(colcon)을 설명하세요.",type:"concept",evidence:"ROS2 Foxy 환경에서 colcon 빌드 및 패키지 구성 경험",transferable:"빌드 시스템 이해 → 대규모 ROS2 프로젝트 관리 가능",answer_guide:"package.xml 의존성 → CMakeLists.txt → colcon build 흐름",follow_ups:["ament_cmake와 ament_python의 차이는?","빌드 캐시 문제가 생기면 어떻게 해결하나요?"]}
+];
+
+let filtered = [...QUESTIONS];
+let idx = 0;
+let currentFilter = 'all';
+const TIMER_TOTAL = 120;
+let timerRemaining = TIMER_TOTAL;
+let timerRunning = false;
+let timerInterval = null;
+
+function lsKey(id, field) { return 'ic_q' + id + '_' + field; }
+function saveRating(id, val) { localStorage.setItem(lsKey(id,'rating'), val); }
+function loadRating(id) { return parseInt(localStorage.getItem(lsKey(id,'rating'))) || 0; }
+function ratedCount() { return QUESTIONS.filter(q => loadRating(q.id) > 0).length; }
+
+function render() {
+  if (!filtered.length) return;
+  const q = filtered[idx];
+  const prepClass = {appeal:'badge-appeal',organize:'badge-organize',study:'badge-study'}[q.prep_type] || '';
+  const typeMap = {experience:'경험형',concept:'개념형',application:'적용형'};
+  document.getElementById('cardMeta').innerHTML =
+    '<span class="badge badge-category">'+q.category+'</span> '+
+    '<span class="badge '+prepClass+'">'+q.type_label+'</span> '+
+    '<span class="badge badge-type">'+(typeMap[q.type]||q.type)+'</span>';
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('evidenceText').textContent = q.evidence;
+  document.getElementById('transferableText').textContent = q.transferable;
+  document.getElementById('guideContent').textContent = q.answer_guide;
+  document.getElementById('guideContent').classList.remove('visible');
+  document.getElementById('guideRevealBtn').style.display = '';
+  document.getElementById('followupList').innerHTML = q.follow_ups.map(f=>'<div class="followup-item">'+f+'</div>').join('');
+  document.getElementById('navCurrent').textContent = idx + 1;
+  document.getElementById('navTotal').textContent = filtered.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === filtered.length - 1;
+  renderStars(q.id);
+  document.getElementById('progressBadge').textContent = ratedCount() + ' / ' + QUESTIONS.length + ' 완료';
+  renderDots();
+  timerReset();
+  document.getElementById('panelGuide').classList.remove('open');
+  document.getElementById('panelStar').classList.remove('open');
+  document.getElementById('panelFollowup').classList.remove('open');
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  requestAnimationFrame(function(){ card.style.animation = ''; });
+}
+
+function renderStars(qId) {
+  const current = loadRating(qId);
+  const row = document.getElementById('starsRow');
+  row.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'star-btn' + (i <= current ? ' lit' : '');
+    btn.textContent = '★';
+    btn.setAttribute('aria-label', i + '점');
+    btn.id = 'star-' + i;
+    (function(val){ btn.addEventListener('click', function(){ setRating(qId, val); }); })(i);
+    (function(val){ btn.addEventListener('mouseenter', function(){ highlightStars(val); }); })(i);
+    btn.addEventListener('mouseleave', function(){ renderStars(qId); });
+    row.appendChild(btn);
+  }
+}
+
+function highlightStars(upTo) {
+  document.querySelectorAll('.star-btn').forEach(function(b, i){ b.classList.toggle('lit', i < upTo); });
+}
+
+function setRating(qId, val) {
+  saveRating(qId, val);
+  renderStars(qId);
+  renderDots();
+  document.getElementById('progressBadge').textContent = ratedCount() + ' / ' + QUESTIONS.length + ' 완료';
+  const msg = document.getElementById('ratingSavedMsg');
+  msg.classList.add('show');
+  setTimeout(function(){ msg.classList.remove('show'); }, 1800);
+}
+
+function renderDots() {
+  const tracker = document.getElementById('dotTracker');
+  tracker.innerHTML = '';
+  filtered.forEach(function(q, i) {
+    const r = loadRating(q.id);
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === idx ? ' current' : '') + (r > 0 ? ' rated-' + r : '');
+    dot.title = 'Q' + (i+1) + ': ' + q.question.slice(0,20) + '…';
+    dot.setAttribute('role','button');
+    dot.setAttribute('aria-label','질문 ' + (i+1) + '로 이동');
+    (function(j){ dot.addEventListener('click', function(){ idx = j; render(); }); })(i);
+    tracker.appendChild(dot);
+  });
+}
+
+function navigate(dir) {
+  const next = idx + dir;
+  if (next >= 0 && next < filtered.length) { idx = next; render(); }
+}
+
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    filtered = currentFilter === 'all' ? QUESTIONS.slice() : QUESTIONS.filter(function(q){ return q.prep_type === currentFilter; });
+    idx = 0;
+    render();
+  });
+});
+
+function togglePanel(id) {
+  const panel = document.getElementById(id);
+  const isOpen = panel.classList.toggle('open');
+  panel.querySelector('.panel-header').setAttribute('aria-expanded', isOpen);
+}
+
+function revealGuide() {
+  document.getElementById('guideContent').classList.add('visible');
+  document.getElementById('guideRevealBtn').style.display = 'none';
+}
+
+const CIRCUMFERENCE = 2 * Math.PI * 30;
+const ring = document.getElementById('timerRing');
+ring.style.strokeDasharray = CIRCUMFERENCE;
+
+function timerTick() {
+  timerRemaining--;
+  updateTimerDisplay();
+  if (timerRemaining <= 0) { timerStop(); }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerRemaining / 60);
+  const s = timerRemaining % 60;
+  document.getElementById('timerLabel').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  const progress = timerRemaining / TIMER_TOTAL;
+  ring.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+  ring.classList.remove('warning','urgent');
+  if (timerRemaining <= 30) ring.classList.add('urgent');
+  else if (timerRemaining <= 60) ring.classList.add('warning');
+}
+
+function timerToggle() { if (timerRunning) timerStop(); else timerStart(); }
+
+function timerStart() {
+  if (timerRemaining <= 0) timerReset();
+  timerRunning = true;
+  timerInterval = setInterval(timerTick, 1000);
+  document.getElementById('timerStartBtn').textContent = '⏸ 일시정지';
+  document.getElementById('timerStartBtn').classList.add('active');
+}
+
+function timerStop() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timerStartBtn').textContent = '▶ 시작';
+  document.getElementById('timerStartBtn').classList.remove('active');
+}
+
+function timerReset() {
+  timerStop();
+  timerRemaining = TIMER_TOTAL;
+  updateTimerDisplay();
+}
+
+document.querySelectorAll('.panel-header').forEach(function(h) {
+  h.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.click(); }
+  });
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Invocation: rg -n "^(import (json|re)|from (json|re) import)|import json|import re|\b(json|re)\." llm_server\main.py llm_server\roadmap_processing_values.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_prompt.py
+llm_server\roadmap_processing_timeline.py:141:        for token in re.findall(r"[A-Za-z0-9가-힣]+", str(value or ""))
+llm_server\roadmap_processing_timeline.py:206:    return re.sub(r"[\s,.;:ㆍ·/()\-]+", "", str(value or "")).casefold()
+llm_server\roadmap_prompt.py:331:    section_match = re.search(
+llm_server\roadmap_prompt.py:334:        re.IGNORECASE | re.DOTALL,
+llm_server\roadmap_prompt.py:342:        cleaned = re.sub(r"^\s*(?:[-*•·]|\d+[.)])\s*", "", line).strip()
+llm_server\roadmap_prompt.py:345:        raw_items.extend(re.split(r"\s*(?:,|;|ㆍ)\s*", cleaned))
+llm_server\roadmap_prompt.py:350:        item = re.sub(r"\s+", " ", raw_item).strip(" -–—")
+llm_server\main.py:255:    match = re.search(r'\{.*\}', text, re.DOTALL)
+ExitCode: 0

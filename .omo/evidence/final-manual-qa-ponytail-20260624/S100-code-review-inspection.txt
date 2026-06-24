@@ -1,0 +1,110 @@
+﻿# S100 code review report inspection
+Timestamp: 2026-06-24T20:59:52.5076919+09:00
+Surface: Filesystem evidence inspection
+Exact invocation: Get-Content -Raw .omo/evidence/ponytail-refactor-20260624-code-review.md
+
+# Ponytail Refactor 20260624 Code Review
+
+codeQualityStatus: CLEAR
+recommendation: APPROVE
+decision: UNCONDITIONAL APPROVAL
+reportPath: .omo/evidence/ponytail-refactor-20260624-code-review.md
+blockers: []
+
+## Scope
+
+Read-only final review of the current worktree for the duplicate import cleanup and requested task files:
+
+- `llm_server/main.py`
+- `llm_server/roadmap_processing_competency.py`
+- `llm_server/roadmap_processing_timeline.py`
+- `llm_server/roadmap_processing_values.py`
+- `llm_server/tests/test_roadmap_processing_values.py`
+- `llm_server/tests/test_roadmap_repair_branch.py`
+
+Current task-file state:
+
+- `M llm_server/main.py`
+- `?? llm_server/roadmap_processing_competency.py`
+- `?? llm_server/roadmap_processing_timeline.py`
+- `?? llm_server/roadmap_processing_values.py`
+- `?? llm_server/tests/test_roadmap_processing_values.py`
+- `?? llm_server/tests/test_roadmap_repair_branch.py`
+
+Unrelated dirty files remain in the worktree and were not reverted. I treated `llm_server/roadmap_prompt.py` as pre-existing dirty scope except for the requested live `re` import check.
+
+## Skill Perspective Check
+
+Ran.
+
+- Loaded `omo:remove-ai-slops` and applied its dead-code, duplicate-import, test-overfit, needless-complexity, and scope-drift review perspective.
+- Loaded `omo:programming` plus `references/python/README.md` and applied the Python maintainability, strict import, test-shape, and 250 pure-LOC perspective.
+
+Remove-ai-slops perspective result: no violation remains in the requested duplicate import cleanup. The tests are not deletion-only, do not merely assert removal, and do not mirror implementation constants.
+
+Programming perspective result: no blocker for this scoped cleanup. The extracted files are below the 250 pure-LOC ceiling, no new untyped escape hatch or dependency was introduced, and the new tests exercise observable behavior through `main`/FastAPI surfaces rather than only asserting private implementation constants.
+
+## Evidence Inspected
+
+Submitted evidence artifacts inspected as untrusted inputs:
+
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C001-ponytail-install.txt`
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C002-llm-main-pytest.txt`
+- `.omo/ulw-loop/ponytail-refactor-20260624/evidence/C003-diff-review.txt`
+- `.omo/evidence/ponytail-refactor-direct-verification-20260624.txt`
+
+Independent current-state checks:
+
+- `git status --short --branch` showed the requested LLM files plus unrelated dirty frontend/PT/docs artifacts.
+- UTF-8 `trihead run --hint diff -- git diff -- llm_server/main.py llm_server/roadmap_prompt.py llm_server/tests/test_roadmap_prompt.py` succeeded after an initial Windows CP949 decoding failure.
+- `rg -n "^import (json|re)\b|import json, re|\b(json|re)\." llm_server\main.py` showed only module-level imports at lines 6 and 8 plus live parser call sites at lines 255, 259, and 265.
+- `rg -n "^import (json|re)\b|import json, re|\b(json|re)\." llm_server\roadmap_processing_values.py` returned no matches.
+- `rg -n "^import (json|re)\b|import json, re|\b(json|re)\." llm_server\roadmap_processing_timeline.py llm_server\roadmap_prompt.py` showed live import/call sites in both files.
+- `rg -n "_allowed_text" llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_values.py` showed no `_allowed_text` in `roadmap_processing_competency.py` and live call sites in `roadmap_processing_values.py`.
+- `rg -n` over helper imports in `llm_server/main.py` showed every imported extraction helper has a current call site.
+- `git status --short -- requirements*.txt pyproject.toml package.json frontend\package.json llm_server\requirements*.txt backend\requirements*.txt` returned no dependency manifest changes.
+
+Verification run in this review:
+
+- `cd llm_server; $env:PYTHONPATH='.'; python -m pytest -q` -> `29 passed in 0.70s`.
+- `cd backend; .\venv\Scripts\python.exe -m pytest -q` -> `84 passed in 45.43s`.
+- `cd frontend; npx playwright test` -> `16 passed (7.6s)`.
+- `python -m py_compile llm_server\main.py llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_values.py` -> exit 0.
+- `git diff --check -- <requested task files>` -> exit 0 with only the known CRLF warning for `llm_server/main.py`.
+
+## Findings
+
+### CRITICAL
+
+None.
+
+### HIGH
+
+None.
+
+### MEDIUM
+
+None.
+
+### LOW
+
+None.
+
+## Requested Invariants
+
+Pass: no duplicate local `import json, re` remains in `llm_server/main.py`; `_parse_response()` now uses the module-level imports.
+
+Pass: `llm_server/roadmap_processing_values.py` has no `json` or `re` import or call site.
+
+Pass: retained `json`/`re` imports in `llm_server/main.py`, `llm_server/roadmap_processing_timeline.py`, and pre-existing `llm_server/roadmap_prompt.py` all have live call sites.
+
+Pass: no unused `_allowed_text` remains in `llm_server/roadmap_processing_competency.py`; `_allowed_text` remains only in `roadmap_processing_values.py` with live call sites.
+
+Pass: no behavior, auth, security, data-loss, or test-stability regression was found in the scoped current state.
+
+Pass: no new dependencies or dependency manifest changes were found.
+
+Pass: unrelated user dirty files were not reverted.
+
+Final status: APPROVE.
+

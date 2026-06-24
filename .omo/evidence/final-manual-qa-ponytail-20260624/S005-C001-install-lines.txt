@@ -1,0 +1,10 @@
+﻿   1: Command: codex plugin marketplace add DietrichGebert/ponytail
+   2: Result: Added marketplace `ponytail` from https://github.com/DietrichGebert/ponytail.git.
+   3: 
+   4: Command: codex plugin add ponytail@ponytail --json
+   5: Result: {"pluginId":"ponytail@ponytail","name":"ponytail","marketplaceName":"ponytail","version":"4.8.3","installedPath":"C:\\Users\\user\\.codex\\plugins\\cache\\ponytail\\ponytail\\4.8.3","authPolicy":"ON_INSTALL"}
+   6: 
+   7: Command: codex plugin list
+   8: Result: ponytail@ponytail appeared in Marketplace `ponytail`; installation command completed after list check.
+   9: 
+  10: Cleanup: no runtime process, tmux session, browser, container, port, or temp dir created for install evidence.

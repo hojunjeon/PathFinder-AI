@@ -1,0 +1,105 @@
+﻿{
+    "generatedAt":  "2026-06-24T20:17:20.9027153+09:00",
+    "sourceLineCounts":  [
+                             {
+                                 "path":  "llm_server/main.py",
+                                 "exists":  true,
+                                 "lines":  237,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "llm_server/roadmap_prompt.py",
+                                 "exists":  true,
+                                 "lines":  326,
+                                 "le250":  false
+                             },
+                             {
+                                 "path":  "llm_server/roadmap_processing_competency.py",
+                                 "exists":  true,
+                                 "lines":  181,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "llm_server/roadmap_processing_timeline.py",
+                                 "exists":  true,
+                                 "lines":  232,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "llm_server/roadmap_processing_values.py",
+                                 "exists":  true,
+                                 "lines":  126,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "llm_server/tests/test_roadmap_prompt.py",
+                                 "exists":  true,
+                                 "lines":  33,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "llm_server/tests/test_roadmap_processing_values.py",
+                                 "exists":  true,
+                                 "lines":  32,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "frontend/src/views/AnalyzeResultView.vue",
+                                 "exists":  true,
+                                 "lines":  614,
+                                 "le250":  false
+                             },
+                             {
+                                 "path":  "frontend/src/components/result/InterviewDrill.vue",
+                                 "exists":  true,
+                                 "lines":  244,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "frontend/src/components/result/PreparationKeywordBoard.vue",
+                                 "exists":  true,
+                                 "lines":  222,
+                                 "le250":  true
+                             },
+                             {
+                                 "path":  "frontend/tests/e2e/analyze-flow.spec.js",
+                                 "exists":  true,
+                                 "lines":  396,
+                                 "le250":  false
+                             },
+                             {
+                                 "path":  "frontend/scripts/verify-design.mjs",
+                                 "exists":  true,
+                                 "lines":  63,
+                                 "le250":  true
+                             }
+                         ],
+    "dirtySourceFiles":  [
+                             " M frontend/scripts/verify-design.mjs",
+                             " M frontend/src/views/AnalyzeResultView.vue",
+                             " M frontend/tests/e2e/analyze-flow.spec.js",
+                             " M llm_server/main.py",
+                             " M llm_server/roadmap_prompt.py",
+                             " M llm_server/tests/test_roadmap_prompt.py",
+                             "?? frontend/src/components/result/InterviewDrill.vue",
+                             "?? frontend/src/components/result/PreparationKeywordBoard.vue",
+                             "?? llm_server/roadmap_processing_competency.py",
+                             "?? llm_server/roadmap_processing_timeline.py",
+                             "?? llm_server/roadmap_processing_values.py",
+                             "?? llm_server/tests/test_roadmap_processing_values.py"
+                         ],
+    "evidenceC003Mentions":  {
+                                 "llm_server/main.py":  true,
+                                 "llm_server/roadmap_prompt.py":  true,
+                                 "llm_server/roadmap_processing_competency.py":  true,
+                                 "llm_server/roadmap_processing_timeline.py":  true,
+                                 "llm_server/roadmap_processing_values.py":  true,
+                                 "llm_server/tests/test_roadmap_prompt.py":  true,
+                                 "llm_server/tests/test_roadmap_processing_values.py":  true,
+                                 "frontend/src/views/AnalyzeResultView.vue":  true,
+                                 "frontend/src/components/result/InterviewDrill.vue":  false,
+                                 "frontend/src/components/result/PreparationKeywordBoard.vue":  false,
+                                 "frontend/tests/e2e/analyze-flow.spec.js":  true,
+                                 "frontend/scripts/verify-design.mjs":  true
+                             }
+}

@@ -2,10 +2,10 @@
   <div class="container profile-page">
     <header class="profile-hero">
       <p class="eyebrow">Candidate Profile</p>
-      <h1>내 프로필</h1>
+      <h1>프로필</h1>
       <p>
-        지원서와 이력서에 반복해서 들어가는 정보를 항목별로 정리합니다.
-        경력·프로젝트·수상·자격증은 추가 버튼으로 여러 건을 관리할 수 있습니다.
+        채용 분석에 활용할 핵심 경험만 간단히 정리해 주세요.
+        업무와 프로젝트에서 맡은 역할과 성과를 구체적으로 적을수록 분석이 정확해집니다.
       </p>
     </header>
 
@@ -13,82 +13,73 @@
       <section class="card profile-section">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Step 1</p>
-            <h2>기본 정보</h2>
+            <p class="section-kicker">기본 정보</p>
+            <h2>나의 배경</h2>
           </div>
-          <p>로드맵 분석에서 지원자의 배경을 설명하는 기본 프로필입니다.</p>
+          <p>전공과 학력은 지원 직무와의 연관성을 분석할 때 활용됩니다.</p>
         </div>
 
         <div class="form-grid">
           <label class="field">
             <span class="label">이름</span>
-            <input id="profile-name-input" class="input" v-model="form.name" placeholder="이름" autocomplete="name" />
+            <input
+              id="profile-name-input"
+              v-model="form.name"
+              class="input"
+              aria-label="이름"
+              placeholder="홍길동"
+              autocomplete="name"
+            />
           </label>
           <label class="field">
             <span class="label">전공</span>
-            <input class="input" v-model="form.major" placeholder="예: 컴퓨터공학" />
+            <input
+              v-model="form.major"
+              class="input"
+              aria-label="전공"
+              placeholder="컴퓨터공학"
+            />
           </label>
           <label class="field field-wide">
             <span class="label">학력 요약</span>
             <input
-              class="input"
               v-model="form.education"
-              placeholder="예: 한국대학교 컴퓨터공학 학사 졸업"
+              class="input"
+              aria-label="학력 요약"
+              placeholder="한국대학교 컴퓨터공학과 학사 졸업"
             />
-            <small class="hint">학교명, 전공, 학위, 졸업 상태를 한 줄로 정리해 주세요.</small>
+            <small class="hint">학교명, 전공, 학위와 졸업 상태를 한 줄로 적어 주세요.</small>
           </label>
         </div>
       </section>
 
-      <section class="card profile-section">
+      <section
+        v-for="section in profileSections"
+        :key="section.key"
+        class="card profile-section"
+      >
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Step 2</p>
-            <h2>경력사항</h2>
+            <p class="section-kicker">{{ section.kicker }}</p>
+            <h2>{{ section.title }}</h2>
           </div>
-          <p>회사, 직무, 재직 기간, 주요 성과를 구분해 입력합니다.</p>
+          <p>{{ section.description }}</p>
         </div>
-        <CareerForm v-model="form.careers" />
-      </section>
 
-      <section class="card profile-section">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Step 3</p>
-            <h2>프로젝트</h2>
-          </div>
-          <p>프로젝트 기간과 역할, 기술 스택, 결과를 구조화합니다.</p>
-        </div>
-        <ProjectForm v-model="form.projects" />
-      </section>
-
-      <section class="card profile-section">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Step 4</p>
-            <h2>자격증</h2>
-          </div>
-          <p>자격증명, 주관기관, 취득일을 항목별로 추가합니다.</p>
-        </div>
-        <CertificateForm v-model="form.certificates" />
-      </section>
-
-      <section class="card profile-section">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Step 5</p>
-            <h2>수상내역</h2>
-          </div>
-          <p>수상명, 주관기관, 수상일, 설명을 각각 분리해 기록합니다.</p>
-        </div>
-        <AwardForm v-model="form.awards" />
+        <ProfileEntryForm
+          v-model="form[section.key]"
+          :fields="section.fields"
+          :item-label="section.itemLabel"
+          :empty-text="section.emptyText"
+          :title-key="section.titleKey"
+        />
       </section>
 
       <div class="save-bar card">
-        <div>
-          <p v-if="saved" class="feedback success">✓ 저장되었습니다.</p>
-          <p v-else-if="error" class="feedback danger">✗ {{ error }}</p>
-          <p v-else class="save-hint">입력한 내용은 프로필 API에 JSON 형태로 저장됩니다.</p>
+        <div aria-live="polite">
+          <p v-if="saved" class="feedback success">저장되었습니다.</p>
+          <p v-else-if="error" class="feedback danger">{{ error }}</p>
+          <p v-else class="save-hint">저장한 내용은 채용 공고 분석의 입력 자료로 활용됩니다.</p>
         </div>
         <button id="save-profile-btn" type="submit" class="btn" :disabled="loading">
           {{ loading ? '저장 중...' : '프로필 저장' }}
@@ -99,12 +90,105 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import api from '../api'
-import CareerForm from '../components/profile/CareerForm.vue'
-import ProjectForm from '../components/profile/ProjectForm.vue'
-import CertificateForm from '../components/profile/CertificateForm.vue'
-import AwardForm from '../components/profile/AwardForm.vue'
+import ProfileEntryForm from '../components/profile/ProfileEntryForm.vue'
+
+const profileSections = [
+  {
+    key: 'careers',
+    kicker: '경험',
+    title: '경력 사항',
+    description: '회사와 직무, 직접 수행한 업무와 성과만 적어 주세요.',
+    itemLabel: '경력',
+    emptyText: '등록된 경력이 없습니다. 경력이 있다면 핵심 내용만 추가해 주세요.',
+    titleKey: 'company',
+    fields: [
+      { key: 'company', label: '회사명', placeholder: '예: 카카오' },
+      { key: 'title', label: '직무', placeholder: '예: 백엔드 개발자' },
+      {
+        key: 'description',
+        label: '주요 업무 및 성과',
+        type: 'textarea',
+        rows: 4,
+        wide: true,
+        placeholder: '담당 업무와 개선 결과를 함께 적어 주세요.',
+        hint: '예: 결제 API를 개선해 평균 응답 시간을 30% 단축',
+      },
+    ],
+  },
+  {
+    key: 'projects',
+    kicker: '경험',
+    title: '프로젝트',
+    description: '역할과 기술, 해결한 문제와 결과를 중심으로 정리해 주세요.',
+    itemLabel: '프로젝트',
+    emptyText: '등록된 프로젝트가 없습니다.',
+    titleKey: 'name',
+    fields: [
+      { key: 'name', label: '프로젝트명', placeholder: '예: AI 면접 로드맵 서비스' },
+      { key: 'role', label: '역할', placeholder: '예: 백엔드 API 설계 및 개발' },
+      {
+        key: 'stack',
+        label: '기술 스택',
+        placeholder: '예: Vue, Django, PostgreSQL',
+        wide: true,
+      },
+      {
+        key: 'description',
+        label: '프로젝트 설명',
+        type: 'textarea',
+        rows: 3,
+        wide: true,
+        placeholder: '해결하려던 문제와 구현한 핵심 기능을 적어 주세요.',
+      },
+      {
+        key: 'result',
+        label: '결과 및 성과',
+        type: 'textarea',
+        rows: 3,
+        wide: true,
+        placeholder: '정량적 개선, 사용자 반응, 수상 등 결과를 적어 주세요.',
+      },
+    ],
+  },
+  {
+    key: 'certificates',
+    kicker: '증빙',
+    title: '자격증',
+    description: '지원 직무와 관련된 자격증명을 적어 주세요.',
+    itemLabel: '자격증',
+    emptyText: '등록된 자격증이 없습니다.',
+    titleKey: 'name',
+    fields: [
+      { key: 'name', label: '자격증명', placeholder: '예: 정보처리기사', wide: true },
+    ],
+  },
+  {
+    key: 'awards',
+    kicker: '증빙',
+    title: '수상내역',
+    description: '수상명과 어떤 기여로 받은 상인지 간단히 적어 주세요.',
+    itemLabel: '수상내역',
+    emptyText: '등록된 수상내역이 없습니다.',
+    titleKey: 'title',
+    fields: [
+      { key: 'title', label: '수상명', placeholder: '예: 프로젝트 우수상', wide: true },
+      {
+        key: 'description',
+        label: '수상 설명',
+        type: 'textarea',
+        rows: 3,
+        wide: true,
+        placeholder: '수상 배경과 본인의 기여를 적어 주세요.',
+      },
+    ],
+  },
+]
+
+const entryKeys = Object.fromEntries(
+  profileSections.map(section => [section.key, section.fields.map(field => field.key)]),
+)
 
 const emptyProfile = {
   name: '',
@@ -112,11 +196,11 @@ const emptyProfile = {
   education: '',
   careers: [],
   projects: [],
-  awards: [],
   certificates: [],
+  awards: [],
 }
 
-const form = ref({ ...emptyProfile })
+const form = ref(createEmptyProfile())
 const loading = ref(false)
 const saved = ref(false)
 const error = ref('')
@@ -125,8 +209,8 @@ onMounted(async () => {
   try {
     const { data } = await api.get('/api/profile/')
     form.value = normalizeProfile(data)
-  } catch (e) {
-    // 백엔드 미연결 시 빈 폼으로 작성할 수 있게 둔다.
+  } catch {
+    error.value = '프로필을 불러오지 못했습니다. 입력 후 다시 저장해 주세요.'
   }
 })
 
@@ -136,113 +220,50 @@ async function save() {
   error.value = ''
 
   try {
-    const payload = pruneProfile(form.value)
+    const payload = normalizeProfile(form.value)
     const { data } = await api.put('/api/profile/', payload)
     form.value = normalizeProfile({ ...payload, ...data })
     saved.value = true
-  } catch (e) {
-    error.value = e.response?.data?.message || e.message || '프로필 저장에 실패했습니다.'
+  } catch (requestError) {
+    error.value = requestError.response?.data?.message
+      || requestError.message
+      || '프로필 저장에 실패했습니다.'
   } finally {
     loading.value = false
   }
 }
 
-function normalizeProfile(data = {}) {
+function createEmptyProfile() {
   return {
     ...emptyProfile,
-    ...data,
-    careers: normalizeArray(data.careers, normalizeCareer),
-    projects: normalizeArray(data.projects, normalizeProject),
-    awards: normalizeArray(data.awards, normalizeAward),
-    certificates: normalizeArray(data.certificates, normalizeCertificate),
+    careers: [],
+    projects: [],
+    certificates: [],
+    awards: [],
   }
 }
 
-function normalizeArray(value, normalizer) {
-  return Array.isArray(value) ? value.map(normalizer) : []
-}
-
-function normalizeCareer(item = {}) {
-  const { start, end } = splitPeriod(item.period)
+function normalizeProfile(data = {}) {
   return {
-    title: item.title || '',
-    company: item.company || '',
-    employment_type: item.employment_type || '',
-    start_date: item.start_date || start,
-    end_date: item.end_date || end,
-    current: Boolean(item.current),
-    description: item.description || '',
+    ...createEmptyProfile(),
+    name: String(data.name || ''),
+    major: String(data.major || ''),
+    education: String(data.education || ''),
+    ...Object.fromEntries(
+      Object.entries(entryKeys).map(([sectionKey, keys]) => [
+        sectionKey,
+        normalizeEntries(data[sectionKey], keys),
+      ]),
+    ),
   }
 }
 
-function normalizeProject(item = {}) {
-  const { start, end } = splitPeriod(item.period)
-  return {
-    name: item.name || '',
-    role: item.role || '',
-    start_date: item.start_date || start,
-    end_date: item.end_date || end,
-    stack: item.stack || '',
-    description: item.description || '',
-    result: item.result || '',
-  }
-}
+function normalizeEntries(entries, keys) {
+  if (!Array.isArray(entries)) return []
 
-function normalizeAward(item = {}) {
-  return {
-    title: item.title || '',
-    issuer: item.issuer || item.org || '',
-    award_date: item.award_date || item.date || '',
-    description: item.description || '',
-  }
-}
-
-function normalizeCertificate(item = {}) {
-  return {
-    name: item.name || '',
-    issuer: item.issuer || item.org || '',
-    acquired_date: item.acquired_date || item.date || '',
-    credential_id: item.credential_id || '',
-  }
-}
-
-function splitPeriod(period = '') {
-  if (!period || typeof period !== 'string') return { start: '', end: '' }
-  const [start = '', end = ''] = period.split('~').map(part => part.trim())
-  return { start: toDateInput(start), end: toDateInput(end) }
-}
-
-function toDateInput(value = '') {
-  const normalized = value.replaceAll('.', '-').replaceAll('/', '-').trim()
-  if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return normalized
-  if (/^\d{4}-\d{2}$/.test(normalized)) return `${normalized}-01`
-  return ''
-}
-
-function pruneProfile(profile) {
-  return {
-    name: profile.name,
-    major: profile.major,
-    education: profile.education,
-    careers: profile.careers.map(item => ({
-      ...item,
-      end_date: item.current ? '' : item.end_date,
-      period: formatPeriod(item.start_date, item.current ? '' : item.end_date, item.current),
-    })),
-    projects: profile.projects.map(item => ({
-      ...item,
-      period: formatPeriod(item.start_date, item.end_date, false),
-    })),
-    awards: profile.awards,
-    certificates: profile.certificates,
-  }
-}
-
-function formatPeriod(startDate, endDate, current) {
-  if (!startDate && !endDate && !current) return ''
-  const start = startDate || '시작일 미입력'
-  const end = current ? '재직 중' : (endDate || '종료일 미입력')
-  return `${start} ~ ${end}`
+  return entries.map(entry => Object.fromEntries(
+    keys.map(key => [key, String(entry?.[key] || '')]),
+  ))
 }
 </script>
 
@@ -277,11 +298,7 @@ function formatPeriod(startDate, endDate, current) {
   color: var(--muted);
 }
 
-.profile-form {
-  display: grid;
-  gap: var(--space-6);
-}
-
+.profile-form,
 .profile-section {
   display: grid;
   gap: var(--space-6);
@@ -315,7 +332,6 @@ function formatPeriod(startDate, endDate, current) {
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
 }
 
 .field-wide {

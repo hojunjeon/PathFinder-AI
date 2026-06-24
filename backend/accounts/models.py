@@ -40,10 +40,10 @@ class Profile(models.Model):
     name = models.CharField(max_length=50, blank=True)
     major = models.CharField(max_length=100, blank=True)
     education = models.CharField(max_length=200, blank=True)
-    careers = models.JSONField(default=list)        # [{title, company, period, description}]
-    projects = models.JSONField(default=list)       # [{name, period, description, stack}]
-    awards = models.JSONField(default=list)         # [{title, org, date}]
-    certificates = models.JSONField(default=list)   # [{name, date}]
+    careers = models.JSONField(default=list)        # [{company, title, description}]
+    projects = models.JSONField(default=list)       # [{name, role, stack, description, result}]
+    awards = models.JSONField(default=list)         # [{title, description}]
+    certificates = models.JSONField(default=list)   # [{name}]
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

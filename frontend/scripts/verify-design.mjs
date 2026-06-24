@@ -10,8 +10,7 @@ const requiredFiles = [
   'src/views/AnalyzeResultView.vue',
   'src/views/HistoryView.vue',
   'src/views/DashboardView.vue',
-  'src/components/profile/CareerForm.vue',
-  'src/components/profile/ProjectForm.vue',
+  'src/components/profile/ProfileEntryForm.vue',
   'src/components/analyze/StepJobUrl.vue',
   'src/components/analyze/StepCoverLetter.vue',
   'src/components/analyze/StepInterviewType.vue',
@@ -35,6 +34,13 @@ assert(profile.includes("api.get('/api/profile/')"), 'ProfileView must use /api/
 assert(profile.includes("api.put('/api/profile/'"), 'ProfileView must use /api/profile/ PUT')
 assert(!profile.includes('CoverLetterForm'), 'ProfileView must not edit cover letters')
 assert(!profile.includes('cover_letters'), 'ProfileView must not persist cover letters')
+assert(profile.includes("key: 'careers'"), 'ProfileView must configure career inputs')
+assert(profile.includes("key: 'projects'"), 'ProfileView must configure project inputs')
+assert(profile.includes("key: 'certificates'"), 'ProfileView must configure certificate inputs')
+assert(profile.includes("key: 'awards'"), 'ProfileView must configure award inputs')
+for (const removedField of ['employment_type', 'start_date', 'end_date', 'current', 'credential_id', 'acquired_date', 'award_date', 'issuer']) {
+  assert(!profile.includes(removedField), `ProfileView must not persist removed field ${removedField}`)
+}
 
 const stepJobUrl = read('src/components/analyze/StepJobUrl.vue')
 assert(stepJobUrl.includes('/api/job-postings/manual/'), 'StepJobUrl must save manual postings through backend')

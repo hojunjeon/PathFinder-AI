@@ -98,6 +98,25 @@
 - Compatibility constraints: 기존 문자열형 역량 분석과 기존 timeline 응답 지원
 - Test/screenshot expectations: Vite build, 디자인 검증, Playwright 분석 흐름 통과
 
+## Profile input contract
+- Goal: 분석에 직접 활용되는 경험 근거를 빠르게 입력하고 수정할 수 있어야 한다.
+- Evidence reviewed: `frontend/src/views/ProfileView.vue`, `frontend/src/components/profile/*`, `frontend/tests/e2e/profile.spec.js`, `backend/accounts/models.py`, `backend/analysis/services.py`, `llm_server/roadmap_prompt.py`
+- Content hierarchy:
+  - 기본 정보
+  - 경력: 회사명, 직무, 주요 업무 및 성과
+  - 프로젝트: 프로젝트명, 역할, 기술 스택, 프로젝트 설명, 결과 및 성과
+  - 자격증: 자격증명
+  - 수상내역: 수상명, 수상 설명
+- Interaction principles:
+  - 날짜나 등록번호처럼 현재 분석에서 활용하지 않는 정보는 요구하지 않는다.
+  - 각 입력에는 작성 방향을 알 수 있는 예시를 제공한다.
+  - 반복 항목은 동일한 추가·삭제 패턴과 키보드 접근성을 사용한다.
+  - 저장 시 화면에 노출된 필드만 전송해 오래된 불필요 필드를 정리한다.
+- Implementation constraints:
+  - `careers`, `projects`, `certificates`, `awards` 컬렉션명은 유지한다.
+  - LLM 입력 경로와 백엔드 API는 변경하지 않는다.
+  - 반복 폼은 하나의 재사용 컴포넌트로 유지한다.
+
 ## Open questions
 - [ ] 실제 사용자 평가를 통해 상태 분류 명칭과 설명의 이해도를 검증한다.
 - [ ] 질문별 답변 초안과 AI 피드백 기능을 후속 범위에서 결정한다.

@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유일로보틱스 면접 준비 - PathFinder AI</title>
+<meta name="description" content="PathFinder AI 분석 결과: 유일로보틱스 로봇 제어 SW 개발자 기술면접 준비 로드맵">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f7f7f8;
+    --surface-warm: #fafaf9;
+    --fg: #111111;
+    --fg-2: #444444;
+    --muted: #888888;
+    --meta: #aaaaaa;
+    --border: #e0e0e0;
+    --border-soft: #ebebeb;
+    --accent: #2563eb;
+    --accent-bg: #eff4ff;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --warn: #d97706;
+    --warn-bg: #fffbeb;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --neutral-bg: #f4f4f5;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-pill: 999px;
+    --shadow-ring: 0 0 0 1px rgba(0,0,0,.06), 0 1px 4px rgba(0,0,0,.06);
+    --shadow-raised: 0 2px 12px rgba(0,0,0,.09);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+    --font-mono: "SF Mono", "Fira Code", Consolas, monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--surface);
+    color: var(--fg);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== TOP NAV ===== */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 44px;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+  }
+  .topnav-brand {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: -.02em;
+    text-decoration: none;
+  }
+  .topnav-links {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .topnav-links a {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color .15s, background .15s;
+  }
+  .topnav-links a:hover { color: var(--fg); background: var(--surface); }
+
+  /* ===== LAYOUT ===== */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: calc(100vh - 44px);
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position: sticky;
+    top: 44px;
+    height: calc(100vh - 44px);
+    overflow-y: auto;
+    padding: 24px 16px;
+    background: var(--bg);
+    border-right: 1px solid var(--border-soft);
+  }
+  .company-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .company-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--fg);
+  }
+  .company-role {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .side-label {
+    color: var(--meta);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .side-block { margin-bottom: 24px; }
+  .side-nav { display: grid; gap: 2px; }
+  .side-nav-item {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+  }
+  .side-nav-item:hover, .side-nav-item.active {
+    background: var(--surface);
+    color: var(--fg);
+    box-shadow: var(--shadow-ring);
+  }
+  .side-nav-item.active .nav-order { color: var(--accent); }
+  .nav-order {
+    color: var(--meta);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-2);
+    background: var(--bg);
+  }
+  .date-note { color: var(--muted); font-size: 13px; font-weight: 500; }
+
+  /* ===== MAIN CONTENT ===== */
+  .content { padding: 32px clamp(16px, 4vw, 40px); }
+  .content-inner { max-width: 900px; margin: 0 auto; display: grid; gap: 16px; }
+
+  /* ===== HERO ===== */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    padding: 32px 0 16px;
+  }
+  .eyebrow {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.15;
+    color: var(--fg);
+  }
+  .hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .hero-chips .chip { background: var(--surface-warm); }
+  .progress-widget {
+    min-width: 160px;
+    background: #111;
+    color: #fff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: var(--shadow-raised);
+  }
+  .pw-label { color: rgba(255,255,255,.5); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .pw-value { font-size: 36px; font-weight: 700; letter-spacing: -.04em; margin-top: 6px; line-height: 1; }
+  .pw-sub { color: rgba(255,255,255,.55); font-size: 11px; margin-top: 8px; line-height: 1.4; }
+
+  /* ===== PROGRESS CARD ===== */
+  .progress-card {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-ring);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 64px;
+    height: 64px;
+  }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .pc-title { font-weight: 700; font-size: 15px; color: var(--fg); }
+  .pc-desc { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.45; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 0 18px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity .15s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { opacity: .88; }
+
+  /* ===== SECTION CARD ===== */
+  .section-card {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-ring);
+    scroll-margin-top: 64px;
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .section-head h2 { font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+  .section-note { color: var(--muted); font-size: 12px; }
+  .section-desc { color: var(--muted); font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+  /* ===== COMPETENCY BOARD ===== */
+  .comp-summary {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    color: var(--fg-2);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .comp-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .comp-col {
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    min-width: 0;
+  }
+  .comp-col-appeal { background: var(--success-bg); border: 1px solid rgba(22,163,74,.15); }
+  .comp-col-organize { background: var(--warn-bg); border: 1px solid rgba(217,119,6,.15); }
+  .comp-col-hold { background: var(--neutral-bg); border: 1px solid var(--border-soft); }
+  .comp-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .comp-col-appeal .comp-col-title { color: var(--success); }
+  .comp-col-organize .comp-col-title { color: var(--warn); }
+  .comp-col-hold .comp-col-title { color: var(--muted); }
+  .comp-col-count {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.04em;
+    margin-bottom: 10px;
+  }
+  .comp-col-appeal .comp-col-count { color: var(--success); }
+  .comp-col-organize .comp-col-count { color: var(--warn); }
+  .comp-col-hold .comp-col-count { color: var(--fg-2); }
+  .comp-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,.7);
+    margin-bottom: 6px;
+  }
+  .comp-item:last-child { margin-bottom: 0; }
+  .comp-item-name { font-size: 12px; font-weight: 600; color: var(--fg); word-break: keep-all; }
+  .comp-item-level {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .level-required { color: var(--accent); background: var(--accent-bg); }
+  .level-preferred { color: var(--muted); background: var(--neutral-bg); }
+  .comp-item-note { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* ===== SOURCE COVERAGE (replaces 100% bar wall) ===== */
+  .coverage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .coverage-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+  }
+  .coverage-name { font-size: 12px; font-weight: 500; color: var(--fg-2); flex: 1; min-width: 0; word-break: keep-all; }
+  .coverage-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .stag {
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .stag-jd { color: var(--accent); background: var(--accent-bg); }
+  .stag-db { color: #7c3aed; background: #f5f3ff; }
+  .stag-profile { color: var(--success); background: var(--success-bg); }
+  .stag-cl { color: var(--warn); background: var(--warn-bg); }
+  .stag-kg { color: #0891b2; background: #ecfeff; }
+
+  /* ===== ROADMAP LIST ===== */
+  .roadmap-list { display: grid; gap: 10px; }
+
+  /* ===== CATEGORY CARD ===== */
+  .cat-card {
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    background: var(--surface-warm);
+    overflow: hidden;
+    transition: box-shadow .15s;
+  }
+  .cat-card.is-current { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.1); background: var(--bg); }
+
+  /* Collapsible header */
+  .cat-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 16px 18px;
+    text-align: left;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+  .cat-toggle:hover { background: rgba(0,0,0,.02); }
+  .cat-left { display: flex; flex-direction: column; gap: 4px; }
+  .cat-eyebrow {
+    color: var(--meta);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+  }
+  .cat-name { font-size: 15px; font-weight: 700; color: var(--fg); }
+  .cat-responsibility { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cat-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .match-badge {
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .match-direct { color: var(--success); background: var(--success-bg); }
+  .match-related { color: var(--warn); background: var(--warn-bg); }
+  .match-none { color: var(--danger); background: var(--danger-bg); }
+  .cat-status {
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    white-space: nowrap;
+  }
+  .cat-status.now { color: var(--accent); border-color: var(--accent); }
+  .cat-status.done { color: var(--success); border-color: rgba(22,163,74,.3); }
+  .cat-chevron { font-size: 12px; color: var(--meta); transition: transform .2s; }
+  .cat-card.open .cat-chevron { transform: rotate(180deg); }
+
+  /* Category body */
+  .cat-body { display: none; padding: 0 18px 18px; }
+  .cat-card.open .cat-body { display: block; }
+
+  .cat-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .cat-reason {
+    padding-left: 10px;
+    border-left: 3px solid var(--accent);
+    color: var(--fg-2);
+    font-size: 12px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .kw-row { display: flex; gap: 6px; align-items: flex-start; margin-bottom: 8px; }
+  .kw-label { color: var(--meta); font-size: 10px; font-weight: 700; min-width: 60px; padding-top: 2px; }
+  .kw-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .kw-tag {
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-2);
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+  }
+
+  /* Subtopics */
+  .subtopics { display: grid; gap: 8px; margin-top: 14px; }
+
+  /* ===== SUBTOPIC CARD ===== */
+  .sub-card {
+    border: 1px solid var(--border-soft);
+    border-left: 4px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    padding: 14px;
+  }
+  .sub-appeal { border-left-color: var(--success); }
+  .sub-organize { border-left-color: var(--warn); }
+  .sub-study { border-left-color: var(--danger); }
+  .sub-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .type-badge {
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .badge-appeal { color: var(--success); background: var(--success-bg); }
+  .badge-organize { color: var(--warn); background: var(--warn-bg); }
+  .badge-study { color: var(--danger); background: var(--danger-bg); }
+  .sub-title { font-size: 14px; font-weight: 700; color: var(--fg); }
+
+  /* Connection grid - compact 2 col */
+  .conn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .conn-block {
+    padding: 8px 10px;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+  }
+  .block-label {
+    display: block;
+    color: var(--meta);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .conn-block p { font-size: 12px; color: var(--fg-2); line-height: 1.5; }
+  .conn-block p + p { margin-top: 4px; }
+  .conn-block strong { color: var(--fg); font-size: 10px; margin-right: 4px; }
+  .gap-text { color: var(--danger); }
+
+  /* Focus keywords - horizontal pill row */
+  .focus-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+  .focus-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .focus-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+  .focus-kw { font-size: 11px; font-weight: 600; color: var(--fg); }
+  .focus-cp { font-size: 10px; color: var(--muted); }
+
+  /* Steps */
+  .steps-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+  .steps-ol { padding-left: 20px; display: grid; gap: 4px; margin-top: 6px; }
+  .steps-ol li { font-size: 12px; color: var(--fg-2); line-height: 1.5; }
+
+  /* Questions */
+  .question-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+  .q-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .q-head strong { font-size: 12px; color: var(--fg); }
+  .q-head span { font-size: 11px; color: var(--meta); }
+  .question-list { display: grid; gap: 6px; }
+  .question-item {
+    padding: 10px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+  .question-item.is-done {
+    border-color: rgba(22,163,74,.25);
+    background: var(--success-bg);
+  }
+  .q-check {
+    display: grid;
+    grid-template-columns: 20px auto 1fr;
+    align-items: start;
+    gap: 7px;
+    cursor: pointer;
+  }
+  .chk-wrap { position: relative; width: 20px; height: 20px; flex-shrink: 0; }
+  .chk-wrap input[type="checkbox"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    z-index: 2;
+  }
+  .chk-mark {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    transition: background .15s, border-color .15s;
+  }
+  .chk-wrap input:checked + .chk-mark {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .chk-wrap input:checked + .chk-mark::after {
+    content: "";
+    position: absolute;
+    left: 5px; top: 4px;
+    width: 7px; height: 4px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg);
+  }
+  .q-type-badge {
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .qt-concept { color: var(--accent); background: var(--accent-bg); }
+  .qt-experience { color: var(--success); background: var(--success-bg); }
+  .qt-application { color: var(--warn); background: var(--warn-bg); }
+  .q-text { font-size: 12px; font-weight: 600; color: var(--fg); line-height: 1.5; }
+  .q-details { margin-top: 8px; padding-left: 27px; }
+  details summary {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    width: fit-content;
+    list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "+ "; }
+  details[open] summary::before { content: "- "; }
+  details p, details li { font-size: 12px; color: var(--fg-2); line-height: 1.55; margin-top: 4px; }
+  details ul { padding-left: 16px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border-soft);
+      padding: 16px;
+    }
+    .hero { grid-template-columns: 1fr; }
+    .progress-widget { width: 100%; }
+    .comp-board { grid-template-columns: 1fr 1fr; }
+    .coverage-grid { grid-template-columns: 1fr; }
+    .conn-grid { grid-template-columns: 1fr; }
+    .progress-card { grid-template-columns: auto 1fr; }
+    .progress-card .btn-primary { grid-column: 1 / -1; width: 100%; justify-content: center; }
+  }
+  @media (max-width: 560px) {
+    .comp-board { grid-template-columns: 1fr; }
+    .cat-toggle { padding: 14px; }
+    .cat-body { padding: 0 14px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="topnav-brand" href="#">PathFinder AI</a>
+  <div class="topnav-links">
+    <a href="#">로드맵 생성</a>
+    <a href="#">히스토리</a>
+    <a href="#">프로필</a>
+    <a href="#">채용시장 분석</a>
+    <a href="#">로그아웃</a>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="로드맵 사이드바">
+    <div class="company-card">
+      <div class="company-name">유일로보틱스</div>
+      <div class="company-role">로봇 제어 SW 개발자</div>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">섹션 이동</div>
+      <nav class="side-nav">
+        <a href="#summary" class="side-nav-item active">
+          <span class="nav-order">01</span>
+          <span>분석 요약</span>
+        </a>
+        <a href="#gap" class="side-nav-item">
+          <span class="nav-order">02</span>
+          <span>역량 분석</span>
+        </a>
+        <a href="#sources" class="side-nav-item">
+          <span class="nav-order">03</span>
+          <span>근거 출처</span>
+        </a>
+        <a href="#roadmap" class="side-nav-item">
+          <span class="nav-order">04</span>
+          <span>준비 항목</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">선택한 면접 유형</div>
+      <span class="chip">기술면접</span>
+    </div>
+
+    <div class="side-block">
+      <div class="side-label">생성일</div>
+      <p class="date-note">2026년 6월 24일</p>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <div class="content-inner">
+
+      <!-- HERO -->
+      <section class="hero" id="summary">
+        <div>
+          <p class="eyebrow">분석 결과</p>
+          <h1>유일로보틱스 면접 준비</h1>
+          <div class="hero-chips">
+            <span class="chip">기술면접</span>
+            <span class="chip">14개 영역</span>
+            <span class="chip">42개 예상 질문</span>
+          </div>
+        </div>
+        <div class="progress-widget">
+          <div class="pw-label">현재 진행률</div>
+          <div class="pw-value">0%</div>
+          <div class="pw-sub">체크할 준비 항목을 확인하세요.</div>
+        </div>
+      </section>
+
+      <!-- PROGRESS CARD -->
+      <div class="progress-card" aria-label="전체 진행률">
+        <div class="ring-wrap">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#2563eb" stroke-width="8"
+              stroke-dasharray="163.4" stroke-dashoffset="163.4" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-center">0%</div>
+        </div>
+        <div>
+          <div class="pc-title">모션 제어 설계 · 역기구학</div>
+          <p class="pc-desc">정의, 근사화, 실용적 한계 설명</p>
+        </div>
+        <a href="#roadmap" class="btn-primary">준비 항목 보기</a>
+      </div>
+
+      <!-- COMPETENCY ANALYSIS -->
+      <section class="section-card" id="gap">
+        <div class="section-head">
+          <div>
+            <h2>역량 분석</h2>
+            <p class="section-desc">직무 핵심 역량별로 지금 해야 할 행동을 한눈에 확인하세요. 점수가 아닌 경험 근거 기반 상태입니다.</p>
+          </div>
+        </div>
+
+        <div class="comp-summary">
+          실제 로봇 제어 SW 개발 업무에 직접 연결되는 제어 아키텍처 설계 및 임베디드 연동 경험 보유.
+          다만 EtherCAT/TCP/IP 실시간 제어 및 ROS2/C++, Linux 환경의 구체적 활용 경험은 보완 필요.
+        </div>
+
+        <div class="comp-board">
+          <!-- 어필 가능 -->
+          <div class="comp-col comp-col-appeal">
+            <div class="comp-col-title">어필 가능</div>
+            <div class="comp-col-count">2</div>
+            <div class="comp-item">
+              <span class="comp-item-name">로봇 기구학/동역학 모션 플래닝</span>
+              <span class="comp-item-level level-required">필수</span>
+              <span class="comp-item-note">직접 구현 경험: 사과 수확 로봇에서 역기구학 위치제어, 자코비안 속도 제어</span>
+            </div>
+            <div class="comp-item">
+              <span class="comp-item-name">임베디드 기반 센서/IO 연동</span>
+              <span class="comp-item-level level-required">필수</span>
+              <span class="comp-item-note">Raspberry Pi/Arduino/Dynamixel 연동 아키텍처 설계 및 구현</span>
+            </div>
+          </div>
+
+          <!-- 답변 정리 -->
+          <div class="comp-col comp-col-organize">
+            <div class="comp-col-title">답변 정리</div>
+            <div class="comp-col-count">2</div>
+            <div class="comp-item">
+              <span class="comp-item-name">산업용 네트워크 프로토콜 (EtherCAT/TCP-IP)</span>
+              <span class="comp-item-level level-preferred">우대</span>
+              <span class="comp-item-note">실무 요구사항과 연결되나 구체 구현 사례는 더 자세한 설명 필요</span>
+            </div>
+            <div class="comp-item">
+              <span class="comp-item-name">실시간 제어/시뮬레이션 검증</span>
+              <span class="comp-item-level level-required">필수</span>
+              <span class="comp-item-note">시뮬레이터/테스트 환경을 통한 알고리즘 검증 경험 명시 필요</span>
+            </div>
+          </div>
+
+          <!-- 판단 보류 -->
+          <div class="comp-col comp-col-hold">
+            <div class="comp-col-title">판단 보류</div>
+            <div class="comp-col-count">1</div>
+            <div class="comp-item">
+              <span class="comp-item-name">Git/Linux/Rust 기초</span>
+              <span class="comp-item-level level-preferred">우대</span>
+              <span class="comp-item-note">제공된 정보에 Linux/Git/Rust 사용 여부 구체적 사례 부족. 학습 계획 제시</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOURCE COVERAGE (replaces 14x 100% bar wall) -->
+      <section class="section-card" id="sources">
+        <div class="section-head">
+          <div>
+            <h2>근거 출처</h2>
+            <p class="section-desc">각 준비 항목이 채용공고, 직무 DB, 프로필, 자소서, 기업 KG 중 어떤 근거를 추적하는지 확인합니다.</p>
+          </div>
+          <span class="section-note">source 추적</span>
+        </div>
+        <div class="coverage-grid">
+          <div class="coverage-row">
+            <span class="coverage-name">모션 제어 설계</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">EtherCAT</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">임베디드 IO 연동</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">TCP/IP 표준 통신</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">실시간 제어/시뮬레이션 검증</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-cl">자기소개서</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">상태 모니터링 및 이상 감지</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-kg">기업 KG</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">이상 감지</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">안전 제어</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-kg">기업 KG</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">로봇 제어기</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">시뮬레이터</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-kg">기업 KG</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">알고리즘/모션 플래닝 시뮬레이션</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-db">직무 DB</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">로봇 시스템 통합</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-kg">기업 KG</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">현장 튜닝/현장 적용</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-profile">프로필</span>
+            </div>
+          </div>
+          <div class="coverage-row">
+            <span class="coverage-name">SDK/API 설계/개발</span>
+            <div class="coverage-tags">
+              <span class="stag stag-jd">채용공고</span>
+              <span class="stag stag-kg">기업 KG</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROADMAP / PREPARATION ITEMS -->
+      <section class="section-card" id="roadmap">
+        <div class="section-head">
+          <div>
+            <h2>준비 항목</h2>
+            <p class="section-desc">담당업무별 우선순위와 필요한 직무 지식, 준비 순서와 예상 질문을 확인하세요.</p>
+          </div>
+        </div>
+
+        <div class="roadmap-list">
+
+          <!-- CATEGORY 1 - EXPANDED (current) -->
+          <article class="cat-card is-current open" id="cat-1">
+            <button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="true" aria-controls="cat-1-body">
+              <div class="cat-left">
+                <span class="cat-eyebrow">우선순위 1 · 담당업무</span>
+                <span class="cat-name">모션 제어 설계</span>
+                <span class="cat-responsibility">양팔/협동 로봇 기구학/동역학 및 모션 플래닝 SW개발</span>
+              </div>
+              <div class="cat-right">
+                <span class="match-badge match-direct">직접 경험</span>
+                <span class="cat-status now">0/3</span>
+                <span class="cat-chevron">&#9660;</span>
+              </div>
+            </button>
+            <div class="cat-body" id="cat-1-body">
+              <div class="cat-meta">
+                <div class="kw-row" style="width:100%">
+                  <span class="kw-label">연결 경험</span>
+                  <div class="kw-tags">
+                    <span class="kw-tag">역기구학 위치제어</span>
+                    <span class="kw-tag">자코비안 속도제어</span>
+                  </div>
+                </div>
+                <div class="kw-row" style="width:100%">
+                  <span class="kw-label">활용 역량</span>
+                  <div class="kw-tags">
+                    <span class="kw-tag">제어 흐름 설계</span>
+                    <span class="kw-tag">모션 플래닝</span>
+                  </div>
+                </div>
+              </div>
+              <p class="cat-reason">직무 중요도 + 직접 경험(사과 로봇) + 면접 효과</p>
+
+              <div class="subtopics">
+                <!-- SUBTOPIC: 역기구학 -->
+                <div class="sub-card sub-appeal">
+                  <div class="sub-head">
+                    <span class="type-badge badge-appeal">어필</span>
+                    <span class="sub-title">역기구학</span>
+                  </div>
+
+                  <div class="conn-grid">
+                    <div class="conn-block">
+                      <span class="block-label">업무 연결</span>
+                      <p>직무의 모션 플래닝과 기구학 모델의 정확성 판단에 직접 영향</p>
+                    </div>
+                    <div class="conn-block">
+                      <span class="block-label">내 연결점</span>
+                      <p><strong>근거</strong>3D 카메라 인식 좌표 추출 → 역기구학 위치제어</p>
+                      <p><strong>전환</strong>현장 제어 시퀀스의 물리적 위치 대입</p>
+                    </div>
+                  </div>
+
+                  <div class="focus-section">
+                    <span class="block-label">핵심 개념</span>
+                    <div class="focus-row">
+                      <div class="focus-pill">
+                        <span class="focus-kw">역기구학 수식</span>
+                        <span class="focus-cp">관절 각도-좌표 매핑 정확도</span>
+                      </div>
+                      <div class="focus-pill">
+                        <span class="focus-kw">자코비안 기반 속도제어</span>
+                        <span class="focus-cp">목표점 근접 시 속도 감소 메커니즘</span>
+                      </div>
+                      <div class="focus-pill">
+                        <span class="focus-kw">3D 센서 데이터 처리</span>
+                        <span class="focus-cp">실시간 좌표 추정 정확도</span>
+                      </div>
+                      <div class="focus-pill">
+                        <span class="focus-kw">계층적 제어 구조</span>
+                        <span class="focus-cp">제어 흐름 모듈화 수준</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="steps-section">
+                    <span class="block-label">준비 순서</span>
+                    <ol class="steps-ol">
+                      <li>사과 로봇의 제어 흐름 문서화</li>
+                      <li>자코비안 속도 제어 수식 정리</li>
+                      <li>시뮬레이션 예제로 흐름 검증</li>
+                    </ol>
+                  </div>
+
+                  <div class="question-section">
+                    <div class="q-head">
+                      <strong>예상 질문</strong>
+                      <span>3개</span>
+                    </div>
+                    <div class="question-list">
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap">
+                            <input type="checkbox" aria-label="역기구학의 기본 가정과 한계는 무엇인가?">
+                            <span class="chk-mark"></span>
+                          </div>
+                          <span class="q-type-badge qt-concept">개념</span>
+                          <span class="q-text">역기구학의 기본 가정과 한계는 무엇인가?</span>
+                        </label>
+                        <div class="q-details">
+                          <details>
+                            <summary>답변 방향</summary>
+                            <p>정의, 근사화, 실용적 한계 설명</p>
+                            <ul><li>대체 모션 제어 방법</li></ul>
+                          </details>
+                        </div>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap">
+                            <input type="checkbox" aria-label="현 시나리오에서 역기구학 구현 시 직면한 난관은 무엇이었나?">
+                            <span class="chk-mark"></span>
+                          </div>
+                          <span class="q-type-badge qt-experience">경험</span>
+                          <span class="q-text">현 시나리오에서 역기구학 구현 시 직면한 난관은 무엇이었나?</span>
+                        </label>
+                        <div class="q-details">
+                          <details>
+                            <summary>답변 방향</summary>
+                            <p>오차 수렴, 진동 억제 방법 구체화</p>
+                            <ul><li>성능 지표</li></ul>
+                          </details>
+                        </div>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap">
+                            <input type="checkbox" aria-label="목표 위치 근접 시 제어 루프를 어떻게 튜닝했나?">
+                            <span class="chk-mark"></span>
+                          </div>
+                          <span class="q-type-badge qt-application">적용</span>
+                          <span class="q-text">목표 위치 근접 시 제어 루프를 어떻게 튜닝했나?</span>
+                        </label>
+                        <div class="q-details">
+                          <details>
+                            <summary>답변 방향</summary>
+                            <p>속도 감소 전략, 지연 관리</p>
+                            <ul><li>다른 로봇 적용 가능성</li></ul>
+                          </details>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CATEGORY 2 - COLLAPSED -->
+          <article class="cat-card" id="cat-2">
+            <button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false" aria-controls="cat-2-body">
+              <div class="cat-left">
+                <span class="cat-eyebrow">우선순위 2 · 담당업무</span>
+                <span class="cat-name">EtherCAT</span>
+                <span class="cat-responsibility">EtherCAT 산업용 통신 프로토콜 연동</span>
+              </div>
+              <div class="cat-right">
+                <span class="match-badge match-none">경험 부족</span>
+                <span class="cat-status">대기</span>
+                <span class="cat-chevron">&#9660;</span>
+              </div>
+            </button>
+            <div class="cat-body" id="cat-2-body" hidden>
+              <p class="cat-reason">직무 중요도 높고 실무 적용 필요, 현재 입력에 따른 직접 경험 보유 여부 불확실</p>
+              <div class="subtopics">
+                <div class="sub-card sub-organize">
+                  <div class="sub-head">
+                    <span class="type-badge badge-organize">답변 정리</span>
+                    <span class="sub-title">EtherCAT 네트워크 구성</span>
+                  </div>
+                  <div class="conn-grid">
+                    <div class="conn-block">
+                      <span class="block-label">업무 연결</span>
+                      <p>산업용 통신 프로토콜의 안정성 확보 및 네트워크 토폴로지 설계에 필요</p>
+                    </div>
+                    <div class="conn-block">
+                      <span class="block-label">내 연결점</span>
+                      <p><strong>근거</strong>직무 DB 및 채용공고에서 EtherCAT 요구 확인</p>
+                      <p><strong>전환</strong>임베디드와 네트워크 연결 맥락에서의 사용 가능한 지식</p>
+                      <p class="gap-text"><strong>보완</strong>직무에서 EtherCAT 구체 구현 경험 보유 여부 불명</p>
+                    </div>
+                  </div>
+                  <div class="focus-section">
+                    <span class="block-label">핵심 개념</span>
+                    <div class="focus-row">
+                      <div class="focus-pill">
+                        <span class="focus-kw">실시간 네트워크 스케줄링</span>
+                        <span class="focus-cp">주기적 통신 주기와 응답 시간 제약 파악</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="steps-section">
+                    <span class="block-label">준비 순서</span>
+                    <ol class="steps-ol">
+                      <li>EtherCAT 기본 원리와 타임슬롯 이해</li>
+                      <li>기존 프로젝트의 통신 흐름에서 EtherCAT 역할 매핑</li>
+                      <li>간단한 에뮬레이션으로 데이터 흐름 검증</li>
+                      <li>현장 적용 시나리오 문서화</li>
+                    </ol>
+                  </div>
+                  <div class="question-section">
+                    <div class="q-head"><strong>예상 질문</strong><span>3개</span></div>
+                    <div class="question-list">
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="EtherCAT 작동 원리와 정확한 시간 동기화가 왜 중요한가?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-concept">개념</span>
+                          <span class="q-text">EtherCAT 작동 원리와 정확한 시간 동기화가 왜 중요한가?</span>
+                        </label>
+                        <div class="q-details"><details><summary>답변 방향</summary><p>요약, 주기성 보장, 토폴로지 영향 설명</p></details></div>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="프로필에서 EtherCAT 관련 구체적 경험이 있나요?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-experience">경험</span>
+                          <span class="q-text">프로필에서 EtherCAT 관련 구체적 경험이 있나요?</span>
+                        </label>
+                        <div class="q-details"><details><summary>답변 방향</summary><p>경험 여부와 역할, 결과를 연결해 설명</p></details></div>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="EtherCAT 연동 모듈을 설계할 때 가장 중요한 트레이드오프는 무엇인가?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-application">적용</span>
+                          <span class="q-text">EtherCAT 연동 모듈을 설계할 때 가장 중요한 트레이드오프는 무엇인가?</span>
+                        </label>
+                        <div class="q-details"><details><summary>답변 방향</summary><p>타이밍 vs 대역폭, 복잡도 대 안정성 비교</p></details></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- CATEGORY 3 - COLLAPSED -->
+          <article class="cat-card" id="cat-3">
+            <button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false" aria-controls="cat-3-body">
+              <div class="cat-left">
+                <span class="cat-eyebrow">우선순위 3 · 담당업무</span>
+                <span class="cat-name">임베디드 IO 연동</span>
+                <span class="cat-responsibility">로봇 Parameter ID 및 보상 제어 SW 개발</span>
+              </div>
+              <div class="cat-right">
+                <span class="match-badge match-related">유사 경험</span>
+                <span class="cat-status">대기</span>
+                <span class="cat-chevron">&#9660;</span>
+              </div>
+            </button>
+            <div class="cat-body" id="cat-3-body" hidden>
+              <p class="cat-reason">직무 중요도 높고 현장 적용 가능성 증가; 구체 구현 사례 제한</p>
+              <div class="subtopics">
+                <div class="sub-card sub-organize">
+                  <div class="sub-head">
+                    <span class="type-badge badge-organize">답변 정리</span>
+                    <span class="sub-title">센서/IO 연동</span>
+                  </div>
+                  <div class="conn-grid">
+                    <div class="conn-block">
+                      <span class="block-label">업무 연결</span>
+                      <p>외부 센서 연동 모션 플래닝의 데이터 흐름 이해 필요</p>
+                    </div>
+                    <div class="conn-block">
+                      <span class="block-label">내 연결점</span>
+                      <p><strong>근거</strong>3D 카메라 좌표 → 제어 흐름 연결</p>
+                      <p><strong>전환</strong>센서 데이터 포맷 해석 → 제어 입력으로 매핑</p>
+                    </div>
+                  </div>
+                  <div class="question-section" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft)">
+                    <div class="q-head"><strong>예상 질문</strong><span>3개</span></div>
+                    <div class="question-list">
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="센서 데이터 포맷의 중요성은 무엇인가?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-concept">개념</span>
+                          <span class="q-text">센서 데이터 포맷의 중요성은 무엇인가?</span>
+                        </label>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="IO 인터페이스 설계 중 가장 어려웠던 점은?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-experience">경험</span>
+                          <span class="q-text">IO 인터페이스 설계 중 가장 어려웠던 점은?</span>
+                        </label>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="센서 데이터를 보상 제어에 연결하는 구체적 흐름은?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-application">적용</span>
+                          <span class="q-text">센서 데이터를 보상 제어에 연결하는 구체적 흐름은?</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- REMAINING CATEGORIES PLACEHOLDER (4-14) -->
+          <article class="cat-card" id="cat-4">
+            <button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false" aria-controls="cat-4-body">
+              <div class="cat-left">
+                <span class="cat-eyebrow">우선순위 4 · 담당업무</span>
+                <span class="cat-name">TCP/IP 표준 통신</span>
+                <span class="cat-responsibility">TCP/IP 등 표준 산업용 통신 프로토콜 연동 SW 개발</span>
+              </div>
+              <div class="cat-right">
+                <span class="match-badge match-none">경험 부족</span>
+                <span class="cat-status">대기</span>
+                <span class="cat-chevron">&#9660;</span>
+              </div>
+            </button>
+            <div class="cat-body" id="cat-4-body" hidden>
+              <p class="cat-reason">산업용 네트워크 연동 핵심이며 프로젝트 흐름에서 필수</p>
+              <div class="subtopics">
+                <div class="sub-card sub-organize">
+                  <div class="sub-head">
+                    <span class="type-badge badge-organize">답변 정리</span>
+                    <span class="sub-title">네트워크 프로토콜 설계</span>
+                  </div>
+                  <div class="conn-grid">
+                    <div class="conn-block">
+                      <span class="block-label">업무 연결</span>
+                      <p>로봇과 제어 소프트웨어 간 안정적 데이터 전달 필요</p>
+                    </div>
+                    <div class="conn-block">
+                      <span class="block-label">내 연결점</span>
+                      <p class="gap-text"><strong>보완</strong>실제 TCP/IP 모듈 구현 경험 부재</p>
+                    </div>
+                  </div>
+                  <div class="question-section" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft)">
+                    <div class="q-head"><strong>예상 질문</strong><span>3개</span></div>
+                    <div class="question-list">
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="TCP/IP의 기본 동작 원리와 로봇 제어에 필요한 신뢰성은 무엇인가?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-concept">개념</span>
+                          <span class="q-text">TCP/IP의 기본 동작 원리와 로봇 제어에 필요한 신뢰성은 무엇인가?</span>
+                        </label>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="TCP/IP 연동 프로젝트에서 맡은 역할은 무엇이었나요?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-experience">경험</span>
+                          <span class="q-text">TCP/IP 연동 프로젝트에서 맡은 역할은 무엇이었나요?</span>
+                        </label>
+                      </div>
+                      <div class="question-item">
+                        <label class="q-check">
+                          <div class="chk-wrap"><input type="checkbox" aria-label="산업용 네트워크에서 문제가 발생했을 때 트러블슈팅 순서는?"><span class="chk-mark"></span></div>
+                          <span class="q-type-badge qt-application">적용</span>
+                          <span class="q-text">산업용 네트워크에서 문제가 발생했을 때 트러블슈팅 순서는?</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Categories 5-14: collapsed summary rows -->
+          <article class="cat-card" id="cat-5">
+            <button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false" aria-controls="cat-5-body">
+              <div class="cat-left">
+                <span class="cat-eyebrow">우선순위 5 · 담당업무</span>
+                <span class="cat-name">실시간 제어/시뮬레이션 검증</span>
+                <span class="cat-responsibility">외부 센서/IO 연동 모션 플래닝 SW 개발</span>
+              </div>
+              <div class="cat-right">
+                <span class="match-badge match-none">경험 부족</span>
+                <span class="cat-status">대기</span>
+                <span class="cat-chevron">&#9660;</span>
+              </div>
+            </button>
+            <div class="cat-body" id="cat-5-body" hidden>
+              <p class="cat-reason">현장 안정성 확보 및 성능 개선에 직접 연결되나 구체 사례 보완 필요</p>
+              <div class="subtopics">
+                <div class="sub-card sub-organize">
+                  <div class="sub-head"><span class="type-badge badge-organize">답변 정리</span><span class="sub-title">검증 전략 수립</span></div>
+                  <div class="conn-grid">
+                    <div class="conn-block"><span class="block-label">업무 연결</span><p>현장 운영 안정성 확보를 위한 검증 포인트 정의</p></div>
+                    <div class="conn-block"><span class="block-label">내 연결점</span><p><strong>근거</strong>ROS2 Gazebo 기반 시뮬레이션/Docker 의존성 고정</p><p><strong>전환</strong>현장 테스트 전 검증 루프 구성</p></div>
+                  </div>
+                  <div class="question-section" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft)">
+                    <div class="q-head"><strong>예상 질문</strong><span>3개</span></div>
+                    <div class="question-list">
+                      <div class="question-item"><label class="q-check"><div class="chk-wrap"><input type="checkbox" aria-label="재현성 있는 실험 설계의 핵심은?"><span class="chk-mark"></span></div><span class="q-type-badge qt-concept">개념</span><span class="q-text">재현성 있는 실험 설계의 핵심은?</span></label></div>
+                      <div class="question-item"><label class="q-check"><div class="chk-wrap"><input type="checkbox" aria-label="시뮬레이션에서 현장으로의 이행 시 가장 큰 이슈는?"><span class="chk-mark"></span></div><span class="q-type-badge qt-experience">경험</span><span class="q-text">시뮬레이션에서 현장으로의 이행 시 가장 큰 이슈는?</span></label></div>
+                      <div class="question-item"><label class="q-check"><div class="chk-wrap"><input type="checkbox" aria-label="실시간 제어에서의 검증 루프 구성 예시?"><span class="chk-mark"></span></div><span class="q-type-badge qt-application">적용</span><span class="q-text">실시간 제어에서의 검증 루프 구성 예시?</span></label></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Quick-collapse stubs for 6-14 -->
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 6 · 담당업무</span><span class="cat-name">상태 모니터링 및 이상 감지</span><span class="cat-responsibility">로봇 상태 모니터링</span></div><div class="cat-right"><span class="match-badge match-related">유사 경험</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">현장 안전성에 직결, 대외 센서 연동의 핵심</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 7 · 담당업무</span><span class="cat-name">이상 감지</span><span class="cat-responsibility">이상 감지 SW 개발</span></div><div class="cat-right"><span class="match-badge match-related">유사 경험</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">현장 안전과 신뢰성에 직접 영향</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 8 · 담당업무</span><span class="cat-name">안전 제어</span><span class="cat-responsibility">안전 제어 SW 개발</span></div><div class="cat-right"><span class="match-badge match-none">경험 부족</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">현장 안전과 시스템 신뢰성 핵심 영역</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 9 · 담당업무</span><span class="cat-name">로봇 제어기</span><span class="cat-responsibility">로봇 제어기 구조 이해 및 구현</span></div><div class="cat-right"><span class="match-badge match-related">유사 경험</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">핵심 제어 모듈 이해 필요, 직접 경험 여부 불확실</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 10 · 담당업무</span><span class="cat-name">시뮬레이터</span><span class="cat-responsibility">시뮬레이터 기반 알고리즘 검증</span></div><div class="cat-right"><span class="match-badge match-none">경험 부족</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">가상 환경에서 알고리즘 검증은 핵심 역량</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 11 · 담당업무</span><span class="cat-name">알고리즘/모션 플래닝 시뮬레이션</span><span class="cat-responsibility">알고리즘 설계 및 시뮬레이션 검증</span></div><div class="cat-right"><span class="match-badge match-none">경험 부족</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">모션 플래닝과 경로 생성 알고리즘 핵심 역량</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 12 · 담당업무</span><span class="cat-name">로봇 시스템 통합</span><span class="cat-responsibility">하드웨어-소프트웨어 통합 및 검증</span></div><div class="cat-right"><span class="match-badge match-related">유사 경험</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">전체 시스템 통합 경험 필수</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 13 · 담당업무</span><span class="cat-name">현장 튜닝/현장 적용</span><span class="cat-responsibility">실제 환경 적용 및 성능 튜닝</span></div><div class="cat-right"><span class="match-badge match-none">경험 부족</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">현장 운영 경험 기반 튜닝 역량</p></div></article>
+          <article class="cat-card"><button class="cat-toggle" onclick="toggleCat(this)" aria-expanded="false"><div class="cat-left"><span class="cat-eyebrow">우선순위 14 · 담당업무</span><span class="cat-name">SDK/API 설계/개발</span><span class="cat-responsibility">제어기 SDK 및 API 설계 및 개발</span></div><div class="cat-right"><span class="match-badge match-none">경험 부족</span><span class="cat-status">대기</span><span class="cat-chevron">&#9660;</span></div></button><div class="cat-body" hidden><p class="cat-reason">API 설계 및 문서화 역량</p></div></article>
+
+        </div><!-- /roadmap-list -->
+      </section>
+
+    </div><!-- /content-inner -->
+  </main>
+</div><!-- /layout -->
+
+<script>
+  function toggleCat(btn) {
+    const card = btn.closest('.cat-card');
+    const isOpen = card.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    const bodyId = btn.getAttribute('aria-controls');
+    if (bodyId) {
+      const body = document.getElementById(bodyId);
+      if (body) {
+        if (isOpen) { body.removeAttribute('hidden'); }
+        else { body.setAttribute('hidden', ''); }
+      } else {
+        // fallback for stubs without explicit body ids
+        const fallbackBody = btn.nextElementSibling;
+        if (fallbackBody && fallbackBody.classList.contains('cat-body')) {
+          if (isOpen) { fallbackBody.removeAttribute('hidden'); }
+          else { fallbackBody.setAttribute('hidden', ''); }
+        }
+      }
+    }
+  }
+
+  // Simple sidebar active-section tracking
+  const sections = ['summary', 'gap', 'sources', 'roadmap'];
+  const navItems = document.querySelectorAll('.side-nav-item');
+  function updateNav() {
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= 64 + 8) current = id;
+    });
+    navItems.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // Checkbox interaction - live progress
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const total = document.querySelectorAll('input[type="checkbox"]').length;
+      const done = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      const pct = Math.round((done / total) * 100);
+      document.querySelector('.pw-value').textContent = pct + '%';
+      document.querySelector('.ring-center').textContent = pct + '%';
+      // Update ring stroke
+      const circle = document.querySelector('circle[stroke="#2563eb"]');
+      if (circle) {
+        const circumference = 163.4;
+        circle.setAttribute('stroke-dashoffset', circumference - (circumference * pct / 100));
+      }
+      // Update parent question-item done state
+      const item = cb.closest('.question-item');
+      if (item) item.classList.toggle('is-done', cb.checked);
+    });
+  });
+</script>
+
+</body>
+</html>

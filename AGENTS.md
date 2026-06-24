@@ -12,6 +12,12 @@ Custom `AUTH_USER_MODEL = 'accounts.User'`. All backend API routes live under `/
 
 LLM server is a thin proxy: `/llm/roadmap` receives structured profile/job data, builds a Korean prompt, and calls OpenAI (via SSAFY GMS gateway) or falls back to mock responses.
 
+## Coding mode: Ponytail first
+
+Use Ponytail for every code-writing task in this repo. Before adding code, take the shortest correct path: reuse existing helpers and patterns, prefer stdlib/native platform features, avoid new dependencies, skip speculative abstractions, and keep the diff to the fewest files that satisfy the request. For bug fixes, trace the real shared flow and fix the root cause once instead of patching only the visible caller.
+
+If a deliberate simplification has a known ceiling, mark it with a short `ponytail:` comment that names the ceiling and the upgrade path.
+
 ## Dev commands
 
 ```bash

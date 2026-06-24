@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>유일로보틱스 면접 준비 - PathFinder AI</title>
+  <style>
+    /* CSS Variables & Core Themes */
+    :root {
+      --bg: #ffffff;
+      --surface: #f5f5f7;
+      --surface-warm: #fbfbfd;
+      --fg: #1d1d1f;
+      --fg-2: #424245;
+      --muted: #6e6e73;
+      --meta: #86868b;
+      --border: #d2d2d7;
+      --border-soft: #e8e8ed;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-active: #0066cc;
+      --accent-on: #ffffff;
+      
+      --success: #16a34a;
+      --success-bg: rgba(22, 163, 74, 0.1);
+      --warn: #eab308;
+      --warn-bg: rgba(234, 179, 8, 0.1);
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.1);
+      
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-pill: 980px;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+      --focus-ring: 0 0 0 4px rgba(0, 113, 227, 0.35);
+      
+      --transition-fast: 150ms cubic-bezier(0.28, 0, 0.22, 1);
+      --transition-base: 250ms cubic-bezier(0.28, 0, 0.22, 1);
+    }
+
+    body.dark {
+      --bg: #161617;
+      --surface: #222224;
+      --surface-warm: #1c1c1e;
+      --fg: #f5f5f7;
+      --fg-2: #e8e8ed;
+      --muted: #86868b;
+      --meta: #6e6e73;
+      --border: #424245;
+      --border-soft: #2d2d30;
+      --accent: #2997ff;
+      --accent-hover: #47a4ff;
+      --accent-active: #0071e3;
+      --accent-on: #ffffff;
+      
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.15);
+      --warn: #eab308;
+      --warn-bg: rgba(234, 179, 8, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.3);
+      --focus-ring: 0 0 0 4px rgba(41, 151, 255, 0.35);
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background var(--transition-base), color var(--transition-base);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    a:hover {
+      color: var(--accent-hover);
+    }
+
+    /* Layout */
+    .layout-container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border-soft);
+      padding: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+    }
+
+    .brand-logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .menu-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--fg-2);
+      font-size: 14px;
+      font-weight: 500;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+
+    .menu-item.active a, .menu-item a:hover {
+      background: var(--border-soft);
+      color: var(--fg);
+    }
+
+    .sidebar-bottom {
+      border-top: 1px solid var(--border-soft);
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .company-profile-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .profile-company-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--fg);
+    }
+
+    .profile-job-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .theme-toggle-btn {
+      width: 100%;
+      background: var(--border-soft);
+      border: none;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      color: var(--fg-2);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: background var(--transition-fast);
+    }
+    .theme-toggle-btn:hover {
+      background: var(--border);
+      color: var(--fg);
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 40px 48px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+      gap: 24px;
+    }
+
+    .hero-title-area .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .hero-title-area h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-meta-chips {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .meta-chip {
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fg-2);
+    }
+
+    .hero-progress-widget {
+      background: var(--surface-warm);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-width: 320px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-ring-svg {
+      width: 64px;
+      height: 64px;
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-bg {
+      fill: none;
+      stroke: var(--border-soft);
+      stroke-width: 6;
+    }
+
+    .progress-ring-circle {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 213.6; /* 2 * PI * 34 */
+      stroke-dashoffset: 213.6;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+
+    .widget-progress-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .progress-percent {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--fg);
+      line-height: 1;
+    }
+
+    .progress-copy {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Section Styling */
+    .section-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-head {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .section-head h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .section-description {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .section-note {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--meta);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* 1. Competency Gap Analysis Styles */
+    .competency-summary-box {
+      background: var(--surface-warm);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .competency-summary-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+
+    .competency-summary-desc {
+      font-size: 14px;
+      color: var(--fg-2);
+      line-height: 1.6;
+    }
+
+    .competency-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .competency-column {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      background: var(--surface-warm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .competency-column.strength { border-top: 3px solid var(--success); }
+    .competency-column.articulate { border-top: 3px solid var(--warn); }
+    .competency-column.insufficient { border-top: 3px solid var(--muted); }
+
+    .column-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .column-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .column-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      background: var(--border-soft);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .competency-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .competency-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .competency-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .importance-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .importance-badge.required {
+      color: var(--accent);
+      background: rgba(0, 113, 227, 0.08);
+    }
+
+    .importance-badge.preferred {
+      color: var(--muted);
+      background: var(--surface);
+    }
+
+    .competency-signal {
+      font-size: 12px;
+      color: var(--fg-2);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .competency-action {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .competency-column.strength .competency-action { color: var(--success); }
+    .competency-column.articulate .competency-action { color: var(--warn); }
+    .competency-column.insufficient .competency-action { color: var(--muted); }
+
+    /* 2. Reimagined Evidence Coverage Widget */
+    .coverage-dashboard {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .coverage-gauge-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border-right: 1px solid var(--border-soft);
+      padding-right: 32px;
+    }
+
+    .coverage-radial {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .coverage-radial-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .coverage-radial-svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .coverage-gauge-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg-2);
+    }
+
+    .coverage-gauge-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .coverage-matrix-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .coverage-matrix-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .coverage-source-legend {
+      display: flex;
+      gap: 16px;
+    }
+
+    .legend-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-job { background-color: var(--accent); }
+    .dot-profile { background-color: var(--success); }
+    .dot-db { background-color: var(--warn); }
+
+    .coverage-matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .coverage-matrix-item {
+      background: var(--surface-warm);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform var(--transition-fast);
+    }
+
+    .coverage-matrix-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .matrix-item-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fg-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .matrix-item-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* 3. Interactive Split Timeline */
+    .roadmap-split-container {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .roadmap-list-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .pane-filter-bar {
+      display: flex;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      gap: 2px;
+    }
+
+    .filter-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition-fast), color var(--transition-fast);
+      text-align: center;
+    }
+
+    .filter-btn.active {
+      background: var(--bg);
+      color: var(--fg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .category-cards-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 700px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Custom scrollbar for desktop */
+    .category-cards-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .category-cards-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .category-cards-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: var(--radius-pill);
+    }
+
+    .roadmap-item-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      position: relative;
+    }
+
+    .roadmap-item-card:hover {
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .roadmap-item-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+      background: var(--surface-warm);
+    }
+
+    .card-priority-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .card-priority-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--meta);
+      text-transform: uppercase;
+    }
+
+    .card-match-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .match-direct { color: var(--success); background: var(--success-bg); }
+    .match-related { color: var(--warn); background: var(--warn-bg); }
+    .match-none { color: var(--danger); background: var(--danger-bg); }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1.3;
+    }
+
+    .card-progress-bar-wrapper {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-progress-track {
+      flex: 1;
+      height: 4px;
+      background: var(--border-soft);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .card-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .roadmap-item-card.active .card-progress-fill {
+      background: var(--accent);
+    }
+
+    .card-progress-text {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* Detail Pane */
+    .roadmap-detail-pane {
+      background: var(--surface-warm);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-self: start;
+      position: sticky;
+      top: 24px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .detail-mobile-back-btn {
+      display: none; /* Desktop hidden */
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .detail-header {
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 20px;
+    }
+
+    .detail-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--meta);
+      margin-bottom: 4px;
+    }
+
+    .detail-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .detail-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .detail-badges {
+      display: flex;
+      gap: 8px;
+    }
+
+    .detail-badge-prep {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .prep-appeal { color: var(--success); background: var(--success-bg); border: 1px solid rgba(22, 163, 74, 0.2); }
+    .prep-organize { color: var(--warn); background: var(--warn-bg); border: 1px solid rgba(234, 179, 8, 0.2); }
+    .prep-study { color: var(--danger); background: var(--danger-bg); border: 1px solid rgba(220, 38, 38, 0.2); }
+
+    .detail-responsibility {
+      font-size: 14px;
+      color: var(--fg-2);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .detail-priority-reason {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      padding-left: 10px;
+      border-left: 2px solid var(--border);
+    }
+
+    /* Grid for contexts */
+    .detail-context-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .context-block {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .context-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--meta);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .context-block p {
+      font-size: 13px;
+      color: var(--fg-2);
+      line-height: 1.5;
+    }
+
+    .context-block .connection-item {
+      margin-bottom: 8px;
+    }
+    .context-block .connection-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .context-block .connection-item strong {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--surface);
+      color: var(--fg);
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+
+    .gap-alert-text {
+      color: var(--danger);
+      font-weight: 500;
+    }
+
+    /* Concept & Steps */
+    .detail-concepts-block, .detail-steps-block {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .concept-item {
+      border: 1px solid var(--border-soft);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+    }
+
+    .concept-keyword {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .concept-checkpoint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .steps-list {
+      list-style-position: inside;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .steps-list li {
+      font-size: 13px;
+      color: var(--fg-2);
+    }
+
+    /* Expected Questions */
+    .questions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .question-card {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+
+    .question-card.checked {
+      border-color: rgba(22, 163, 74, 0.4);
+      background: rgba(22, 163, 74, 0.02);
+    }
+
+    .question-main {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    /* Native custom checkbox replacement for high aesthetics */
+    .checkbox-container {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkbox-checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .checkbox-container:hover input ~ .checkbox-checkmark {
+      border-color: var(--muted);
+    }
+
+    .checkbox-container input:checked ~ .checkbox-checkmark {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+
+    .checkbox-checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .checkbox-container input:checked ~ .checkbox-checkmark:after {
+      display: block;
+    }
+
+    .checkbox-container .checkbox-checkmark:after {
+      left: 7px;
+      top: 4px;
+      width: 5px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .question-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .question-header-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .question-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .q-concept { color: var(--accent); background: rgba(0, 113, 227, 0.08); }
+    .q-experience { color: var(--success); background: var(--success-bg); }
+    .q-application { color: var(--warn); background: var(--warn-bg); }
+
+    .question-title {
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--fg);
+      line-height: 1.45;
+    }
+
+    /* Details styling for expandable answer guide */
+    .answer-guide-details {
+      margin-top: 12px;
+      border-top: 1px solid var(--border-soft);
+      padding-top: 12px;
+    }
+
+    .answer-guide-details summary {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      cursor: pointer;
+      user-select: none;
+      outline: none;
+      width: fit-content;
+    }
+
+    .answer-guide-details summary:hover {
+      color: var(--accent-hover);
+    }
+
+    .answer-guide-body {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--fg-2);
+      line-height: 1.6;
+      padding-left: 8px;
+      border-left: 2px solid var(--border-soft);
+    }
+
+    .follow-ups-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--meta);
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    .follow-ups-list {
+      margin-top: 4px;
+      padding-left: 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 980px) {
+      .layout-container {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none; /* Simple mockup sidebar removal on tablet */
+      }
+      .main-content {
+        padding: 24px 20px;
+      }
+      .hero-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .hero-progress-widget {
+        min-width: 100%;
+      }
+      .competency-grid {
+        grid-template-columns: 1fr;
+      }
+      .coverage-dashboard {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .coverage-gauge-area {
+        border-right: none;
+        border-bottom: 1px solid var(--border-soft);
+        padding-right: 0;
+        padding-bottom: 20px;
+      }
+      .coverage-matrix-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      /* Mobile Split Timeline: Tab-like Switcher */
+      .roadmap-split-container {
+        grid-template-columns: 1fr;
+        position: relative;
+      }
+      
+      /* Toggle logic based on parent state class */
+      .roadmap-split-container.mobile-show-details .roadmap-list-pane {
+        display: none;
+      }
+      
+      .roadmap-split-container.mobile-show-details .roadmap-detail-pane {
+        display: flex;
+        position: static;
+        max-height: none;
+      }
+      
+      .roadmap-split-container:not(.mobile-show-details) .roadmap-detail-pane {
+        display: none;
+      }
+
+      .detail-mobile-back-btn {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" aria-label="메인 사이드바">
+      <div>
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);">
+            <path d="M3 3h18v18H3z"/>
+            <path d="M21 9H3"/>
+            <path d="M21 15H3"/>
+            <path d="M12 3v18"/>
+          </svg>
+          PathFinder AI
+        </div>
+        <ul class="sidebar-menu">
+          <li class="menu-item"><a href="#summary">분석 요약</a></li>
+          <li class="menu-item"><a href="#gap">역량 분석</a></li>
+          <li class="menu-item"><a href="#coverage">근거 커버리지</a></li>
+          <li class="menu-item active"><a href="#roadmap">준비 항목</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="company-profile-card">
+          <div class="profile-company-name">유일로보틱스</div>
+          <div class="profile-job-title">로봇 제어 SW 개발자</div>
+        </div>
+        <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="다크 모드 전환">다크 모드</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Surface -->
+    <main class="main-content">
+      
+      <!-- Hero/Dashboard Summary Header -->
+      <section class="hero-header" id="summary">
+        <div class="hero-title-area">
+          <p class="eyebrow">분석 결과</p>
+          <h1>유일로보틱스 면접 준비</h1>
+          <div class="hero-meta-chips">
+            <span class="meta-chip">기술면접</span>
+            <span class="meta-chip">14개 직무 영역</span>
+            <span class="meta-chip" id="created-date">생성일: 2026년 6월 24일</span>
+          </div>
+        </div>
+
+        <div class="hero-progress-widget" aria-label="전체 진행률 대시보드">
+          <svg class="progress-ring-svg" aria-hidden="true">
+            <circle class="progress-ring-bg" cx="32" cy="32" r="28" />
+            <circle class="progress-ring-circle" cx="32" cy="32" r="28" />
+          </svg>
+          <div class="widget-progress-text">
+            <span class="progress-percent" id="global-progress-val">0%</span>
+            <span class="progress-copy" id="global-progress-desc">총 42개 질문 중 0개 완료</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. Competency Gap Board (역량 분석) -->
+      <section class="section-card" id="gap" aria-label="역량 분석">
+        <div class="section-head">
+          <div>
+            <h2>역량 분석</h2>
+            <p class="section-description">직무 핵심 역량별 경험 상태와 면접 대응 행동 강령</p>
+          </div>
+          <span class="section-note">경험 근거 기반 매핑</span>
+        </div>
+
+        <div class="competency-summary-box">
+          <div class="competency-summary-title">분석 요약</div>
+          <p class="competency-summary-desc">
+            실제 로봇 제어 SW 개발 업무에 직접 연결되는 제어 아키텍처 설계 및 임베디드 연동 경험을 보유하고 있습니다. 다만 EtherCAT/TCP/IP 실시간 제어 및 ROS2/C++, Linux 환경의 구체적 활용 경험은 보완이 요구됩니다.
+          </p>
+        </div>
+
+        <div class="competency-grid">
+          <!-- 어필 가능 컬럼 -->
+          <div class="competency-column strength">
+            <header class="column-header">
+              <span class="column-title">어필 가능</span>
+              <span class="column-count">2</span>
+            </header>
+            
+            <article class="competency-card">
+              <div class="competency-card-head">
+                <span class="competency-name">로봇 기구학/동역학 모션 플래닝</span>
+                <span class="importance-badge required">필수</span>
+              </div>
+              <p class="competency-signal">사과 수확 로봇에서 역기구학 위치제어, 자코비안 속도 제어 직접 구현</p>
+              <div class="competency-action">면접에서 메인 어필</div>
+            </article>
+
+            <article class="competency-card">
+              <div class="competency-card-head">
+                <span class="competency-name">임베디드 기반 센서/IO 연동</span>
+                <span class="importance-badge required">필수</span>
+              </div>
+              <p class="competency-signal">Raspberry Pi/Arduino/Dynamixel 연동 아키텍처 설계 및 구현</p>
+              <div class="competency-action">신뢰성 입증 근거로 제시</div>
+            </article>
+          </div>
+
+          <!-- 답변 정리 컬럼 -->
+          <div class="competency-column articulate">
+            <header class="column-header">
+              <span class="column-title">답변 정리</span>
+              <span class="column-count">2</span>
+            </header>
+
+            <article class="competency-card">
+              <div class="competency-card-head">
+                <span class="competency-name">산업용 네트워크 (EtherCAT/TCP-IP)</span>
+                <span class="importance-badge preferred">우대</span>
+              </div>
+              <p class="competency-signal">실무 요구사항과 연결되나 구체 구현 사례는 부재하므로 보완 필요</p>
+              <div class="competency-action">이론 매핑 및 유사 경험 연결</div>
+            </article>
+
+            <article class="competency-card">
+              <div class="competency-card-head">
+                <span class="competency-name">실시간 제어/시뮬레이션 검증</span>
+                <span class="importance-badge required">필수</span>
+              </div>
+              <p class="competency-signal">시뮬레이터/테스트 환경을 통한 알고리즘 검증 경험 명시 보완</p>
+              <div class="competency-action">검증 전략 위주 답변 정리</div>
+            </article>
+          </div>
+
+          <!-- 판단 보류 컬럼 -->
+          <div class="competency-column insufficient">
+            <header class="column-header">
+              <span class="column-title">판단 보류</span>
+              <span class="column-count">1</span>
+            </header>
+
+            <article class="competency-card">
+              <div class="competency-card-head">
+                <span class="competency-name">Git/Linux/Rust 기초</span>
+                <span class="importance-badge preferred">우대</span>
+              </div>
+              <p class="competency-signal">제공된 정보 내 Linux/Git/Rust 활용 구체 사례 부족</p>
+              <div class="competency-action">학습 계획으로 적극성 어필</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Reimagined Evidence Coverage Widget (근거 커버리지) -->
+      <section class="section-card" id="coverage" aria-label="근거 커버리지">
+        <div class="section-head">
+          <div>
+            <h2>근거 커버리지</h2>
+            <p class="section-description">준비 항목이 채용 공고, 프로필, 자소서 등 어떤 소스에서 추적 및 매핑되었는지 검증합니다.</p>
+          </div>
+          <span class="section-note">추적 검증 완료</span>
+        </div>
+
+        <div class="coverage-dashboard">
+          <div class="coverage-gauge-area">
+            <div class="coverage-radial" aria-label="커버리지 100%">
+              <svg class="coverage-radial-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="var(--border-soft)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="var(--success)" stroke-width="8" stroke-dasharray="276.4" stroke-dashoffset="0" stroke-linecap="round"/>
+              </svg>
+              <span class="coverage-radial-number">100%</span>
+            </div>
+            <span class="coverage-gauge-label">직무 요구조건 추적률</span>
+            <span class="coverage-gauge-sub">14개 전 분야 근거 매핑 완료</span>
+          </div>
+
+          <div class="coverage-matrix-container">
+            <header class="coverage-matrix-header">
+              <span>직무 분야별 소스 추적 대장 (14개 영역)</span>
+              <div class="coverage-source-legend">
+                <span class="legend-indicator"><span class="dot-indicator dot-job"></span>채용공고</span>
+                <span class="legend-indicator"><span class="dot-indicator dot-profile"></span>내 경험</span>
+                <span class="legend-indicator"><span class="dot-indicator dot-db"></span>직무 DB</span>
+              </div>
+            </header>
+
+            <div class="coverage-matrix-grid">
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">모션 제어 설계</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">EtherCAT</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">임베디드 IO 연동</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">TCP/IP 표준 통신</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">실시간 제어/시뮬레이션 검증</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">상태 모니터링 및 이상 감지</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">이상 감지</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">안전 제어</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">로봇 제어기</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">시뮬레이터</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">알고리즘/모션 시뮬레이션</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">로봇 시스템 통합</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">현장 튜닝/현장 적용</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-profile" title="프로필/자소서"></span>
+                </div>
+              </div>
+              <div class="coverage-matrix-item">
+                <span class="matrix-item-name">SDK/API 설계/개발</span>
+                <div class="matrix-item-dots">
+                  <span class="dot-indicator dot-job" title="채용공고"></span>
+                  <span class="dot-indicator dot-db" title="직무 DB"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Redesigned Split Pane Timeline (준비 항목) -->
+      <section class="section-card" id="roadmap" aria-label="준비 항목 상세 리스트">
+        <div class="section-head">
+          <div>
+            <h2>준비 항목</h2>
+            <p class="section-description">각 요구 직무 지식의 상태에 따른 예상 질문 및 답변 대응 전략</p>
+          </div>
+          <span class="section-note">인터랙티브 로드맵</span>
+        </div>
+
+        <div class="roadmap-split-container" id="split-container">
+          
+          <!-- Left Column: Category Cards List -->
+          <div class="roadmap-list-pane">
+            <nav class="pane-filter-bar" aria-label="준비 항목 필터">
+              <button onclick="setFilter('all')" class="filter-btn active" id="filter-all">전체 14</button>
+              <button onclick="setFilter('appeal')" class="filter-btn" id="filter-appeal">어필 2</button>
+              <button onclick="setFilter('organize')" class="filter-btn" id="filter-organize">정리 6</button>
+              <button onclick="setFilter('study')" class="filter-btn" id="filter-study">학습 6</button>
+            </nav>
+
+            <div class="category-cards-scroll" id="categories-list-container" role="tablist" aria-label="로드맵 영역 선택">
+              <!-- Dynamically populated categories -->
+            </div>
+          </div>
+
+          <!-- Right Column: Selected Category Details View -->
+          <div class="roadmap-detail-pane" id="detail-pane" role="tabpanel" aria-label="상세 정보">
+            <!-- Dynamically populated active details -->
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Data Store & Dynamic Controller Script -->
+  <script>
+    // State Store
+    const state = {
+      currentCategoryIndex: 0,
+      activeFilter: 'all',
+      completedQuestions: {}, // Key format: `${categoryIdx}-${questionIdx}` -> boolean
+      darkMode: false
+    };
+
+    // 14 Roadmap Categories Data
+    const dataset = [
+      {
+        priority: 1,
+        category: "모션 제어 설계",
+        responsibility: "양팔/협동 로봇 기구학/동역학 및 모션 플래닝 SW개발",
+        priority_reason: "직무 중요도 및 직접 경험(사과 수확 로봇) 어필 효과 최우선 순위",
+        experience_match: "direct",
+        preparation_type: "appeal",
+        job_reason: "직무의 모션 플래닝과 기구학 모델의 정확성 판단에 직접 영향",
+        evidence: "3D 카메라 인식 좌표 추출 -> 역기구학 위치제어 구현",
+        transferable_point: "현장 제어 시퀀스의 물리적 위치 대입 설계 역량 보유",
+        gap: "",
+        study_focus: [
+          { keyword: "역기구학 수식", checkpoint: "관절 각도-좌표 매핑 정확도 및 실시간 계산" },
+          { keyword: "자코비안 기반 속도제어", checkpoint: "목표점 근접 시 오버슈트 억제 및 속도 감소 메커니즘" },
+          { keyword: "3D 센서 데이터 처리", checkpoint: "실시간 노이즈 필터링 및 정밀 좌표 추정" }
+        ],
+        steps: [
+          "사과 수확 로봇의 제어 루프 및 통신 흐름 문서화",
+          "자코비안 속도 제어 및 역기구학 변환 수식 정리",
+          "Gazebo 시뮬레이터 상에서의 실시간 속도 제어 예제 검증"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "역기구학의 기본 가정과 한계점은 무엇인가?",
+            answer_guide: "특이점(Singularity) 발생 시 Jacobian 행렬의 역행렬 존재 유무 한계를 설명하고, 수치적 해법을 통해 관절각 한계 내에서 최적 근사치를 계산하는 방법을 설명해야 합니다.",
+            follow_ups: ["특이점을 우회하는 대체 모션 플래닝 기법은 무엇이 있습니까?"]
+          },
+          {
+            type: "experience",
+            question: "역기구학 제어를 직접 구현하면서 겪었던 가장 큰 난관과 극복 방안은 무엇이었습니까?",
+            answer_guide: "목표 위치 근처에서 하드웨어 진동과 오버슈트가 반복되는 문제가 발생하여, 모터 교체 대신 Jacobian 행렬 기반 속도 제어 수식을 직접 계산하여 관절 속도를 점진적으로 줄여 물리 오차를 80% 이상 억제한 사례를 설명합니다.",
+            follow_ups: ["제어 주기 단축을 위해 통신 아키텍처 수준에서 개선한 부분이 있습니까?"]
+          },
+          {
+            type: "application",
+            question: "목표 위치에 근접했을 때 속도를 감쇄시키는 제어 루프 튜닝은 구체적으로 어떻게 설계했습니까?",
+            answer_guide: "목표 거리 오차 벡터 크기에 비례하여 Jacobian 기반 속도 명령에 지수 감쇄 가중치를 적용하고, 루프 지연으로 인한 불안정성을 제어하기 위해 20Hz 임베디드 통신 주기를 동기화한 방식을 답합니다.",
+            follow_ups: ["협동 로봇이나 양팔 로봇의 안전 모션 제어로 어떻게 확장 적용할 수 있겠습니까?"]
+          }
+        ]
+      },
+      {
+        priority: 2,
+        category: "EtherCAT",
+        responsibility: "EtherCAT 통신 인터페이스 연동 SW 개발",
+        priority_reason: "직무 핵심 우대사항이나 직접 구현 경험이 명시되지 않아 이론적 보완 필요",
+        experience_match: "none",
+        preparation_type: "study",
+        job_reason: "실시간 제어를 보장하기 위한 산업용 실시간 이더넷 네트워크 프로토콜 요구",
+        evidence: "채용 공고 우대사항 및 직무 매뉴얼 내 EtherCAT 필수 요구 확인",
+        transferable_point: "임베디드와 통신 네트워크를 통합 설계해본 개발 경험의 전이 가능성",
+        gap: "프로필 내 EtherCAT 구체 프로토콜 구현 또는 슬레이브 칩 제어 경험 부재",
+        study_focus: [
+          { keyword: "EtherCAT 기본 동작 원리", checkpoint: "Ethernet on the fly 개념 및 패킷 처리 메커니즘" },
+          { keyword: "실시간 네트워크 스케줄링", checkpoint: "주기적인 통신 프레임 할당 및 동기화 기법(Distributed Clocks)" }
+        ],
+        steps: [
+          "EtherCAT 마스터-슬레이브 데이터 흐름 및 타임 슬롯 스케줄링 이론 이해",
+          "임베디드 통신 설계 경험을 바탕으로 기존 제어기에서 EtherCAT 통신 레이어의 설계 구조 매핑",
+          "SOEM(Simple Open EtherCAT Master) 오픈소스 라이브러리를 활용한 데이터 흐름 에뮬레이션"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "EtherCAT의 동작 방식과 일반 Ethernet 통신의 가장 큰 차이는 무엇입니까?",
+            answer_guide: "일반 통신은 노드마다 패킷 수신 후 처리하지만, EtherCAT은 마스터가 보낸 프레임이 슬레이브 노드를 통과하는 동안 실시간으로 데이터를 읽고 쓰는 'Processing on the fly' 방식을 사용하여 물리 지연을 극복함을 설명합니다.",
+            follow_ups: ["Distributed Clocks(DC) 동기화 메커니즘이 다축 로봇 동기 제어에 왜 필수적인지 덧붙이십시오."]
+          },
+          {
+            type: "experience",
+            question: "EtherCAT 직접 구현 경험이 부재한 상황에서, 본인의 임베디드 통신 설계 역량으로 어떻게 빠르게 기여할 것입니까?",
+            answer_guide: "Arduino-Raspberry Pi 간 정의한 데이터 포맷 및 링 버퍼 통신 지연 최적화 경험을 예로 들어, 상위 프레임 규격이 변경되더라도 하드웨어 타이밍 제약 내에서 모듈 간 데이터 동기화를 맞추는 능력이 동일하게 적용됨을 밝힙니다.",
+            follow_ups: ["현업 코드 분석 시 어떤 도구를 활용하여 패킷 유실을 디버깅하겠습니까?"]
+          },
+          {
+            type: "application",
+            question: "EtherCAT 연동 모듈을 기존 제어 SW 구조에 통합 시 직면할 수 있는 타이밍 설계 상의 트레이드오프는 무엇입니까?",
+            answer_guide: "주기적 실시간 데이터(PDO)의 전송 빈도 증가와 비실시간 메시지(SDO) 통신 간의 타임 슬롯 충돌을 방지하기 위한 스케줄링 마진 확보와 인터럽트 서비스 루틴의 실행 시간 최소화 방안을 짚습니다.",
+            follow_ups: ["실시간성 유지를 위해 운영체제(RTOS/Real-time Linux) 단에서 지원해주어야 할 기능은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 3,
+        category: "임베디드 IO 연동",
+        responsibility: "로봇 Parameter ID 및 보상 제어 SW 개발",
+        priority_reason: "Raspberry Pi, Arduino 센서 입출력 및 모터 통신 제어 직접 경험 연결",
+        experience_match: "related",
+        preparation_type: "organize",
+        job_reason: "물리적 모터 드라이브 상태 제어 및 하위 센서 원시 데이터 가공 연동 필요",
+        evidence: "Raspberry Pi, Arduino, Dynamixel Servo 간 통신 포맷 직접 설계 및 드라이버 연동 구현",
+        transferable_point: "센서 데이터 스트림 포맷 변환 및 실시간 패킷 지연 최소화 역량",
+        gap: "고속 산업용 아날로그 입출력 카드 및 특수 로드셀 센서의 전용 임베디드 모듈 연동 경험 부족",
+        study_focus: [
+          { keyword: "센서 데이터 파이프라인", checkpoint: "고속 ADC 입력 데이터의 실시간 필터링 및 버퍼링" },
+          { keyword: "IO 통신 프로토콜", checkpoint: "SPI, I2C, RS-485 규격 상의 노이즈 차단 및 에러 프레임 처리" }
+        ],
+        steps: [
+          "라즈베리파이 환경에서의 실시간 센서 입출력 및 데이터 직렬화 다이어그램 도식화",
+          "산업용 모터 드라이버(Dynamixel 등)의 Parameter 설정 맵 구조 복습",
+          "하드웨어 인터페이스 단의 지연 단축을 위한 DMA(Direct Memory Access) 활용 방식 연구"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "고속 정밀 제어를 위한 임베디드 IO 인터페이스 설계 시 데이터 패킷 포맷은 어떻게 최적화해야 합니까?",
+            answer_guide: "데이터 전송 오버헤드를 줄이기 위해 텍스트 형식이 아닌 구조체 팩킹을 적용한 바이너리 포맷을 사용하며, 패킷 헤더와 체크섬(CRC)을 포함하여 물리층 노이즈 발생 시 무결성을 확보해야 합니다.",
+            follow_ups: ["CRC 오류 발생 시 패킷 재전송 루프가 실시간 제어 주기에 미치는 영향을 설명해보십시오."]
+          },
+          {
+            type: "experience",
+            question: "라즈베리파이와 아두이노 간 다중 장치 통신을 동기화하면서 겪은 통신 지연을 어떻게 해결하였습니까?",
+            answer_guide: "마스터-슬레이브 구조에서 일대다 조회를 수행할 때 발생하는 폴링 지연을 극복하기 위해, 인터럽트 라인을 추가 설계하여 센서 감지 시 즉시 패킷을 마스터로 Push 하도록 구성, 추가 비용 없이 위치 오차를 개선한 성공 경험을 공유합니다.",
+            follow_ups: ["해당 구조에서 다수의 장치가 동시에 데이터 입출력을 발생시킬 때의 버퍼 충돌 방지 대책은 무엇이었습니까?"]
+          },
+          {
+            type: "application",
+            question: "보상 제어 로직을 실시간 센서 입출력 흐름과 지연 없이 결합하기 위해 소프트웨어 타이머와 스레드를 어떻게 구성하겠습니까?",
+            answer_guide: "스레드 우선순위를 최고 수준으로 할당한 실시간 스레드에서 센서 IO 드라이버를 주기적으로 깨워 센서 정보를 메모리에 직접 기록하고, PID 제어 스레드는 뮤텍스 대기 없이 해당 메모리 영역을 빠르게 읽어가도록 링 버퍼를 사용하겠습니다.",
+            follow_ups: ["이때 발생할 수 있는 데이터 경쟁(Data Race) 문제를 세마포어나 뮤텍스 없이 락프리(Lock-free) 구조로 해소할 방법은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 4,
+        category: "TCP/IP 표준 통신",
+        responsibility: "TCP/IP등 표준 산업용 통신 프로토콜 연동 SW 개발",
+        priority_reason: "산업용 표준 통신의 기본 인프라로 면접 시 소켓 프로그래밍 및 신뢰성 검증 필수",
+        experience_match: "none",
+        preparation_type: "study",
+        job_reason: "로봇 내부 제어 모듈과 외부 시뮬레이터 및 상위 관제 PC 간 데이터 신뢰 송수신 보장",
+        evidence: "자기소개서 내 이더넷 통신 흐름 연결 설계 필요성 기술 확인",
+        transferable_point: "동일 목적의 임베디드 직렬/직병렬 패킷 프로토콜 설계 경험의 개념 전이",
+        gap: "멀티스레드 소켓 프로그래밍 및 TCP 핸드셰이크 수준의 실무 모듈 개발 경력 부족",
+        study_focus: [
+          { keyword: "TCP 소켓 프로그래밍", checkpoint: "논블로킹 소켓, 에러 처리, 타임아웃 튜닝 및 Keep-alive" },
+          { keyword: "패킷 유실 및 복구", checkpoint: "TCP 재전송 기법이 가져오는 로봇 모션 제어 주기 단절 현상 파악" }
+        ],
+        steps: [
+          "C/C++ 표준 소켓 프로그래밍 API 기반 서버-클라이언트 아키텍처 구현 연습",
+          "TCP 흐름 제어(Flow Control) 및 혼잡 제어(Congestion Control) 매커니즘 정리",
+          "모션 데이터 송수신을 가상화한 포트 바인딩 및 패킷 파싱 프로토타입 설계"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "TCP 프로토콜이 보장하는 데이터 전송의 신뢰성 메커니즘이 로봇 실시간 제어 주기에 불리하게 작용하는 이유는 무엇입니까?",
+            answer_guide: "TCP는 데이터의 순차 전송과 100% 수신을 보장하기 위해 슬라이딩 윈도우 및 재전송(ACK 대기)을 수행하는데, 물리 노이즈로 패킷 유실 시 재전송 대기 지연(HOL Blocking)이 발생하여 제어 루프의 실시간 데드라인을 놓치기 때문입니다.",
+            follow_ups: ["이를 방지하기 위해 로봇 상하위 통신에서 TCP 대신 UDP 혹은 커스텀 경량 프로토콜을 도입할 때의 트레이드오프는 무엇입니까?"]
+          },
+          {
+            type: "experience",
+            question: "실제 통신 인터페이스 개발 과정에서 패킷 유실이나 순서 꼬임으로 인한 오작동을 해결한 적이 있습니까?",
+            answer_guide: "직접적인 소켓 통신 유실 경험 대신, 직렬 임베디드 통신 설계 시 패킷 유실을 방지하기 위해 프레임에 시퀀스 번호를 붙여 전송 순서를 맞추고, 바이트 스터핑 기법으로 시작/끝 데이터를 감지하여 동기 어긋남을 원천 해결한 아키텍처 경험을 어필합니다.",
+            follow_ups: ["임베디드 시퀀스 번호 중복(오버플로우) 시의 예외 처리는 어떻게 설계하셨습니까?"]
+          },
+          {
+            type: "application",
+            question: "외부 시스템과의 연동을 위한 TCP/IP 통신 레이어를 설계할 때 비정상적인 연결 끊김(Keep-alive 타임아웃) 발생 시 로봇 제어기는 어떻게 대응해야 합니까?",
+            answer_guide: "비정상 통신 단절 감지 시 즉시 안전 차단 스레드가 로봇 암 동작을 일시 정지(급정지 마진 적용)하고 제어 모드를 안전 대기 모드로 진입시키며, 소켓 재접속 루프를 백그라운드 태스크로 구동하여 전체 시스템 다운을 예방하는 안전 장치를 마련합니다.",
+            follow_ups: ["백그라운드 재연결 루프가 메인 제어 루프의 실행 우선순위를 저해하지 않도록 처리하는 기법은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 5,
+        category: "실시간 제어/시뮬레이션 검증",
+        responsibility: "외부 센서/IO 연동 모션 플래닝 SW 개발",
+        priority_reason: "시뮬레이션 및 테스트 환경 구축 경험이 면접 준비에 필수적이나 포트폴리오 상의 실질적 검증 구조 부족",
+        experience_match: "none",
+        preparation_type: "study",
+        job_reason: "현장 기기 투입 전 가상 환경에서 모션 제어 알고리즘 무결성 및 성능 사전 검증",
+        evidence: "ROS2 Foxy 및 Gazebo Classic 기반 자율주행 Docker 의존성 고정 환경 경험",
+        transferable_point: "의존성이 통제된 재현성 있는 가상 테스트 공간 구성 능력",
+        gap: "산업용 다축 머니퓰레이터의 다이나믹스 엔진 연동 및 정밀 실시간 루프 계측 경험 미흡",
+        study_focus: [
+          { keyword: "물리 시뮬레이터 차이", checkpoint: "ODE, Bullet, PhysX 등 물리 엔진의 연산 정밀도 및 속도 비교" },
+          { keyword: "재현성 있는 가상화", checkpoint: "컨테이너 환경에서 실시간 렌더링 배제한 가속 물리 연산 구성" }
+        ],
+        steps: [
+          "ROS2-Gazebo 간 로봇 상태 메시지 퍼블리시 및 구독 인터페이스 규격 확인",
+          "시뮬레이터 주기와 실제 제어 주기(예: 1ms) 간의 타임 스케일 차이 동기화 기법 파악",
+          "컨테이너(Docker) 기반 테스트 파이프라인에서 헤드리스 모드로 알고리즘을 벤치마킹하는 쉘 스크립트 작성"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "물리 엔진을 활용한 모션 시뮬레이션 결과와 실제 하드웨어 구동 결과 사이의 오차가 발생하는 주된 원인은 무엇입니까?",
+            answer_guide: "강체(Rigid Body) 가정으로 인한 실제 로봇 링크의 유연성 무시, 링크 간 조인트 백래시(Gap), 마찰력의 정밀한 모델링 한계, 그리고 가상 환경의 갱신 주기와 하드웨어 제어 타이밍 지연 차이(Sim-to-Real Gap)가 주원인임을 밝힙니다.",
+            follow_ups: ["이러한 Sim-to-Real 오차를 보정하기 위해 제어 로직 차원에서 적용 가능한 보상 기법은 무엇입니까?"]
+          },
+          {
+            type: "experience",
+            question: "Docker로 의존성을 고정하여 재현성 있는 시뮬레이션 환경을 구축하면서 얻은 이점은 무엇이었습니까?",
+            answer_guide: "로컬 OS 커널이나 드라이버 의존성 문제로 컴파일 에러가 나는 협업 난관을 해결하기 위해, 라이브러리와 Gazebo 빌드 설정을 Dockerfile로 코드화하여 팀원 전원이 동일한 시뮬레이션 물리 결과를 도출할 수 있는 협업 파이프라인을 구축했다고 답합니다.",
+            follow_ups: ["Docker 내에서 그래픽 가속(GPU)을 연동하기 위해 해결했던 과정이 있습니까?"]
+          },
+          {
+            type: "application",
+            question: "가상 시뮬레이션 환경을 테스트 자동화(CI) 파이프라인과 연동하여 커밋마다 알고리즘 성능을 정량 평가하는 환경은 어떻게 구성하겠습니까?",
+            answer_guide: "가상 GUI 렌더링을 차단하는 headless 옵션으로 시뮬레이터를 백그라운드 구동하고, ROS2 노드가 특정 경로에 도달하는 모션 궤적 데이터를 CSV로 자동 기록한 뒤, 목표 오차 평균값과 실행 지연 데드라인 통과율을 검증하는 자동 스크립트를 구현하겠습니다.",
+            follow_ups: ["테스트 러너가 비정상 무한 루프에 빠져 빌드 큐가 멈추는 리스크를 예방하기 위한 타임아웃 제어 설계는 어떻게 합니까?"]
+          }
+        ]
+      },
+      {
+        priority: 6,
+        category: "상태 모니터링 및 이상 감지",
+        responsibility: "로봇 상태 모니터링 및 이상 감지 SW 개발",
+        experience_match: "related",
+        preparation_type: "organize",
+        priority_reason: "실시간 센서 데이터 취합 및 로봇 상태 검사 로직 개발 경험 연동",
+        job_reason: "로봇 오작동을 예방하고 사고 발생 시 신속히 안전 차단하도록 감시 계통 상시 가동 필요",
+        evidence: "사과 수확 로봇의 다이나믹 모션 중 센서 상태 실시간 모니터링 데이터 흐름 설계",
+        transferable_point: "센서 데이터 스트림의 동적 임계값 비교 및 에러 전파 차단",
+        gap: "현장 산업 표준의 알람 코드 분류 체계 및 안전 PLC 인터페이스 결합 지식 보완",
+        study_focus: [
+          { keyword: "임계치 튜닝", checkpoint: "모션 가속도에 따른 모터 전류 최대 임계치의 동적 계산법" },
+          { keyword: "예외 전파 설계", checkpoint: "에러 등급에 따른 소프트 리셋, 하드웨어 셧다운 분리 대응 아키텍처" }
+        ],
+        steps: [
+          "실시간 수집 센서 데이터(온도, 전류, 토크)의 모니터링 파이프라인 블록도 설계",
+          "모션 비정상 범위(예: 관절 각 오차 초과)를 판별하는 수식적 가이드라인 정리",
+          "과부하 감지 시 제어 모터 전류 차단 인터럽트 서비스 루틴 설계 연습"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "단순히 절대적인 고정 임계값으로만 이상 전류를 감지할 때의 한계점과 이를 보완할 동적 임계값 설정 기법은 무엇입니까?",
+            answer_guide: "고정 임계값은 로봇이 무거운 부하를 급격히 가속할 때 발생하는 정상적인 일시 전류 스파이크를 오탐할 위험이 큽니다. 따라서 모션 플래닝에서 실시간 생성되는 목표 가속도 궤적에 따른 요구 토크 모델링을 기반으로 임계값을 실시간 계산하여 동적으로 변동시켜야 합니다.",
+            follow_ups: ["센서 데이터의 주파수 대역 분석을 통해 물리적 노이즈와 이상 징후를 분리하는 필터링 기법은 무엇입니까?"]
+          },
+          {
+            type: "experience",
+            question: "개발 프로젝트에서 센서 노이즈로 인한 경보 시스템 오작동 문제를 어떻게 트러블슈팅하셨습니까?",
+            answer_guide: "초기 센서 값 튐 현상으로 인해 안전 시스템이 불필요하게 긴급 정지되는 문제를 해결하기 위해, 입력 원시 데이터에 Rolling Average 필터와 가중 이동평균을 이중 적용하고, 연속 N회 이상 임계 초과 시에만 예외를 발생시키는 카운터 기반 윈도우 필터를 도입하여 해결한 경험을 제시합니다.",
+            follow_ups: ["필터를 통과하면서 추가로 발생하는 위상 지연이 긴급 정지 반응 속도에 지장을 주진 않았습니까?"]
+          },
+          {
+            type: "application",
+            question: "수십 개의 다축 로봇 모터 노드에서 발생하는 실시간 알람 데이터가 한꺼번에 유입될 때 제어 시스템의 응답 지연을 방지하기 위한 소프트웨어 아키텍처는 무엇입니까?",
+            answer_guide: "알람 등급을 Emergency, Warning, Info로 세분화하고, 시스템 최우선 순위 하드웨어 인터럽트로 Emergency 알람을 수신하여 즉시 전류를 차단하는 경로를 구성하며, Warning 이하는 백그라운드 Queue에 적재 후 이벤트 루프에서 비동기로 처리하도록 역할을 이중화합니다.",
+            follow_ups: ["알람 기록을 로컬 플래시 메모리에 고속 저장할 때 마이크로컨트롤러 쓰기 지연 병목은 어떻게 우회합니까?"]
+          }
+        ]
+      },
+      {
+        priority: 7,
+        category: "이상 감지",
+        responsibility: "모터/센서 고장 진단 및 머신러닝 이상 탐지",
+        experience_match: "related",
+        preparation_type: "organize",
+        priority_reason: "YOLOv5 이미지 학습 및 Raspberry Pi Edge AI 추론 구현 역량 활용",
+        job_reason: "미세한 오작동 징후를 사전 포착하여 대형 설비 고장을 예방하는 예지보전 기술 필수화",
+        evidence: "1만 장의 커스텀 데이터셋을 활용해 YOLOv5 모델 파인튜닝 및 Edge 환경 실시간 추론 최적화",
+        transferable_point: "데이터 가공 및 모델 경량화 추론 아키텍처 구현 능력",
+        gap: "시계열 진동 센서(가속도계) 또는 전류 신호 분석(MSCA)의 도메인 특화 모델 개발 경험 부족",
+        study_focus: [
+          { keyword: "시계열 데이터 특징 추출", checkpoint: "주파수 도메인 변환(FFT) 및 주요 주파수 성분 에너지 계산" },
+          { keyword: "경량 분류기 최적화", checkpoint: "임베디드 타겟 장치 내 메모리 맵 배치를 고려한 경량 분류 추론 기법" }
+        ],
+        steps: [
+          "진동 센서 1차 가공을 위한 FFT 수식 및 파이썬 NumPy 라이브러리 검증",
+          "엣지 디바이스 가속용 변환 툴체인(ONNX, TensorRT, OpenVINO) 처리 공정 파악",
+          "정상 상태와 고장 모드 간의 특징 구분을 시각화하는 예지보전 파이프라인 기획"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "임베디드 Edge AI 환경에서 머신러닝 기반 이상 탐지를 적용할 때, 학습 데이터 수집 및 컴퓨팅 자원 한계는 어떻게 해결해야 합니까?",
+            answer_guide: "일반적으로 고장 데이터는 매우 희소하므로 정상 데이터를 학습하여 차이를 감지하는 One-Class SVM 또는 오토인코더(Autoencoder) 구조의 비지도 학습이 적합하며, Edge 환경의 TFLite 또는 ONNX 최적화를 통해 양자화(Quantization)를 거쳐 연산 메모리 점유율을 줄여야 합니다.",
+            follow_ups: ["양자화(Quantization)로 인한 추론 정확도 손실을 검증하는 방식은 무엇입니까?"]
+          },
+          {
+            type: "experience",
+            question: "1만 장 가량의 커스텀 데이터셋 학습 모델을 라즈베리파이 같은 제한된 장치에 탑재하기 위해 어떠한 최적화 노력을 하였습니까?",
+            answer_guide: "제한된 CPU 속도 하에서 94%의 인식률을 달성하기 위해 모델 입력 해상도를 기기 픽셀 매칭 단위로 다운샘플링하고, PyTorch 모델을 ONNX 형식으로 변환 후 FP16 정밀도 다운 최적화를 진행하여, 프레임 레이트를 모션 루프 요구 범위까지 끌어올린 엔지니어링 사례를 공유합니다.",
+            follow_ups: ["모델 경량화 과정에서 의도치 않게 검출 속도가 지연되거나 패킷 누수가 없었는지 증명해보십시오."]
+          },
+          {
+            type: "application",
+            question: "로봇 기동 중에 회전 관절 감속기에서 고장 주파수 신호가 검출되었을 때 상위 제어 SW와 오퍼레이터 인터페이스(HMI)에 예외 상황을 신뢰성 있게 알리는 절차는 어떻게 됩니까?",
+            answer_guide: "고장 판정 알고리즘이 발생시킨 이벤트를 직렬화하여 Modbus-TCP 또는 OPC-UA 산업 표준 통신 패킷으로 캡슐화한 뒤 오퍼레이터 HMI로 즉시 송신하여 시각 경보를 띄우며, 동시에 제어 코어에는 웜 스톱(Warm Stop) 명령을 하달하여 로봇 관절의 2차 물리 파손을 방지합니다.",
+            follow_ups: ["산업용 표준 OPC-UA 프로토콜을 통신 부하 최소화 관점에서 어떻게 설계해야 합니까?"]
+          }
+        ]
+      },
+      {
+        priority: 8,
+        category: "안전 제어",
+        responsibility: "비상 정지 및 협동 로봇 안전 규격 SW 구현",
+        experience_match: "none",
+        preparation_type: "study",
+        priority_reason: "인간-로봇 협업 환경의 중요 안전 필수 요건으로 실무 면접 핵심 빈출 영역",
+        job_reason: "현장 작업자의 부상 방지 및 ISO 13849-1 등 안전 기능 무결성 표준 준수 의무",
+        evidence: "제어 흐름 설계 중 안전 제한의 필요성 고려 언급 수준에 그침",
+        transferable_point: "물리 시퀀스 단계별 제약 조건 논리 제어 구현 경험 활용",
+        gap: "국제 안전 표준 규격(PL, SIL)의 구체 조항 및 이중화 회로 제어 소프트웨어 설계 미숙",
+        study_focus: [
+          { keyword: "ISO 13849-1 표준", checkpoint: "Performance Level (PL a ~ e) 등급 정의와 요구 복잡성 확인" },
+          { keyword: "안전 정지 모드", checkpoint: "STO(Safe Torque Off), SS1(Safe Stop 1) 등 정지 제어 신호 흐름 구분" }
+        ],
+        steps: [
+          "협동로봇 안전 필수 표준인 ISO 10218 및 ISO/TS 15066 기본 제약 조건 공부",
+          "비상 스위치 입력 시 하드웨어 전원 차단과 소프트웨어 제동 간의 협조 제어 흐름 도식화",
+          "상용 안전 모션 컨트롤러의 인터페이스 포트 결합 명세서 검토"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "협동로봇 안전 표준에서 정의하는 정지 범주(Stop Category 0, 1, 2)의 물리적 차이와 소프트웨어적 구현의 차이는 무엇입니까?",
+            answer_guide: "Category 0은 즉시 동력 차단(비제어 정지, STO), Category 1은 제동력 인가 후 정지 시점에 전원 차단(SS1), Category 2는 동력 유지 상태로 제어 정지 후 감시(SS2)를 의미하며, 소프트웨어적으로는 모터 토크 드라이버 활성화 신호(PWM En) 및 브레이크 제어를 타이밍 릴레이로 정밀 통제해야 합니다.",
+            follow_ups: ["비상 제어 상황에서 Category 2 정지 상태 중 외부 힘에 의해 위치 이탈 시 안전 모니터는 어떻게 감지합니까?"]
+          },
+          {
+            type: "experience",
+            question: "협업이나 프로젝트 중 돌발 긴급 상황에 대비한 이중 예외 제어나 물리적 비상 정지 대응을 설계해본 적이 있습니까?",
+            answer_guide: "모터 구동 중 모터 홀센서 피드백 단선이나 이상 전압 감입 감지 시 드라이버 차원에서 펌웨어 인터럽트를 유발하여 모션 궤적 연산을 즉각 우회 중단시키고, 내부 홀딩 브레이크 신호를 트리거하여 로봇 링크가 중력으로 낙하하지 않도록 설계 보강했던 협력 사례를 기술합니다.",
+            follow_ups: ["브레이크 작동 지연 시간(밀리초 단위) 동안의 자유 낙하 오차를 최소화하기 위해 코드를 어떻게 튜닝했습니까?"]
+          },
+          {
+            type: "application",
+            question: "안전 제어 소프트웨어에서 감지용 센서의 단선이나 내부 컨트롤러 오작동 자체를 모니터링하기 위해 '자기 진단(Self-Diagnostic) 루틴'을 어떻게 구성해야 합니까?",
+            answer_guide: "컨트롤러는 매 주기 정상 동작을 외부에 알리는 Watchdog 신호(하트비트)를 전송하고, 하드웨어 타이머 카운터를 사용하여 주기 내 응답이 없으면 센서 단선으로 자가 진단하며, 제어 시퀀스의 모든 상태 변수를 보수적인 안전 방향으로 전환(Fail-Safe)하도록 구성합니다.",
+            follow_ups: ["자가 진단 검출 속도를 밀리초 단위 이하로 단축하기 위한 RTOS 타이머 활용 방안을 제안하십시오."]
+          }
+        ]
+      },
+      {
+        priority: 9,
+        category: "로봇 제어기",
+        responsibility: "피드백 제어기 설계 및 실시간 제어 알고리즘 구현",
+        experience_match: "related",
+        preparation_type: "organize",
+        priority_reason: "Jacobian 속도 제어 수식 구현 경험 및 제어기 튜닝 지식 직접 연계",
+        job_reason: "목표 궤적 추종 오차를 최소화하고 구동 모터의 응답 특성을 제어하여 정밀 모션 실현",
+        evidence: "목표점에 접근 시 관절 속도를 감쇄시키는 피드백 모션 제어 수식을 수식 수준에서 구현",
+        transferable_point: "제어 오차 분석 및 실시간 갱신 루프에서의 PID 파라미터 최적화",
+        gap: "산업용 다축 모터 제어 보드의 내부 레지스터 레벨 제어 및 모션 프로파일(S-curve) 생성 라이브러리 연동 부족",
+        study_focus: [
+          { keyword: "피드백 루프 모델링", checkpoint: "전류-속도-위치로 이어지는 캐스케이드(Cascade) 제어 구조 이해" },
+          { keyword: "모션 프로파일링", checkpoint: "모션 급발진 방지를 위한 가속도 저크(Jerk) 제한 및 프로파일 생성" }
+        ],
+        steps: [
+          "캐스케이드 PID 제어의 위치 루프, 속도 루프 간의 튜닝 우선순위 기준 정립",
+          "자코비안 속도 제어 코드에 모터 하드웨어 최대 가속 한계치를 적용하는 포화(Saturation) 방지 로직 보완",
+          "MATLAB/Simulink 또는 파이썬 제어 라이브러리를 활용한 1축 모터 피드백 제어 모의 시뮬레이션"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "피드백 제어기에서 적분 누적(Integral Windup) 현상이 발생하는 원인과 이를 방지하기 위한 소프트웨어적 대책은 무엇입니까?",
+            answer_guide: "시스템이 물리적 한계치(포화)에 도달해 오차가 0이 되지 않는데 적분 항목이 계속 누적되어, 목표 도달 후에도 모션 오버슈트가 길게 발생하는 현상입니다. 대책으로 제어 출력이 포화 상태일 때는 적분기 갱신을 일시 정지하는 Anti-windup 기법을 적용해야 합니다.",
+            follow_ups: ["비례제어(P)와 미분제어(D) 파라미터가 시스템 과도 응답에 각각 미치는 영향을 수학적으로 구분하여 답변해보십시오."]
+          },
+          {
+            type: "experience",
+            question: "모터를 정밀 제어하면서 목표 제어 주기(예: 1ms) 내에 연산을 마치지 못하는 시간 데드라인 위반 문제를 해결한 경험이 있습니까?",
+            answer_guide: "임베디드 제어 코어 상에서 삼각함수 연산 및 Jacobian 역행렬 연산의 반복 수행이 타이밍을 초과하는 문제를 마주하여, 계산 집약적인 삼각함수 연산을 룩업 테이블(LUT) 형태로 고정 상수로 대체하고 곱셈 횟수를 줄이는 코드 최적화로 데드라인을 확보한 성과를 강조합니다.",
+            follow_ups: ["해당 룩업 테이블 적용 시의 정밀도 해상도 저하 문제는 모션 궤적 오차에 어떤 영향을 주었습니까?"]
+          },
+          {
+            type: "application",
+            question: "외부 갑작스러운 충돌 외력이 발생하여 모터 토크가 한계치 이상 급상승할 때 피드백 제어 SW가 즉시 취해야 할 조치는 무엇입니까?",
+            answer_guide: "센서로부터 피드백되는 토크/전류 값을 감시하여 급격한 토크 상승율(저크 초과) 감지 시 외력 충돌로 즉각 판정하고, 목표 위치를 현재 물리적 위치로 강제 추종 변환하여 모터 출력을 순간 상쇄(순응 제어 모드)시킨 뒤 충돌 정지 시퀀스를 가동합니다.",
+            follow_ups: ["순응 제어 모드(Compliance Control)로의 동적 실시간 변환 시 제어 이득(Gain) 변동을 부드럽게 이행하는 보간 기법은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 10,
+        category: "시뮬레이터",
+        responsibility: "시뮬레이터 환경 구성 및 시제품 가상 동작 검증",
+        experience_match: "none",
+        preparation_type: "study",
+        priority_reason: "시뮬레이터 설계 및 물리 파라미터 셋업 실무 지식 검증 대비",
+        job_reason: "로봇의 중력 보상 파라미터 추출 및 가상 모델 셋업을 통한 사전 기능 진단",
+        evidence: "Docker 의존성 환경 하에서 ROS2와 Gazebo 시뮬레이터 연동 테스트 진행 기술 확인",
+        transferable_point: "OS 가상 컨테이너 최적화 및 로봇 URDF 파일 모델 구조 수정 경험",
+        gap: "로봇 물성치(질량, 관성 모멘트)를 URDF에 정밀 대입하고 동역학 캘리브레이션을 셋업한 실무 경력 보완",
+        study_focus: [
+          { keyword: "URDF 파일 형식", checkpoint: "로봇 링크(Link)와 관절(Joint) 속성 정의 및 동역학 파라미터 태그 구성" },
+          { keyword: "동역학 파라미터 추출", checkpoint: "3D CAD 모델로부터 관성 텐서(Inertia Tensor)를 시뮬레이터에 적용하는 경로" }
+        ],
+        steps: [
+          "다축 머니퓰레이터의 링크 별 URDF 파일 기술 규칙 분석 및 작성 예제 공부",
+          "CAD 설계 툴(SolidWorks 등)에서 질량 및 질량중심 좌표 정보를 시뮬레이터 물리 상수로 매핑하는 법 확인",
+          "시뮬레이터 상에 임의의 외부 힘(Gravity)을 인가하여 조인트 응답 파형 계측 시뮬레이션"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "로봇 시뮬레이터를 구성하기 위한 URDF(Unified Robot Description Format) 파일에서 정의해야 하는 세 가지 핵심 태그는 무엇이며 각각의 물리적 역할은 무엇입니까?",
+            answer_guide: "물리적 외형과 충돌 범위를 나타내는 visual/collision 속성을 정의하는 Link 태그, 링크 간 연결 관계와 관절 운동 속성을 정의하는 Joint 태그, 조인트의 기하학적 결합 기준을 잡는 Transmission 태그가 핵심이며, 관성 모멘트 정보(inertial)가 동역학 해석의 근간이 됨을 답합니다.",
+            follow_ups: ["URDF 파일 대신 SDF(Simulation Description Format) 형식을 사용할 때 제공되는 이점을 말해보십시오."]
+          },
+          {
+            type: "experience",
+            question: "시뮬레이션을 구동하기 위한 가상 환경 의존성을 Docker로 통합하는 과정에서, 설정 충돌이나 비호환 문제를 극복했던 구체적 에피소드가 있습니까?",
+            answer_guide: "ROS2 Foxy 배포판의 특정 패키지 컴파일 시 하위 패키지의 버전 불일치로 인해 빌드가 깨지는 오류를 해결하기 위해, Docker 멀티스테이지 빌드를 설계하여 빌드 디펜던시 레이어를 명확히 격리하고, 최종 경량 런타임 이미지 용량을 절반 이하로 최적화하여 재현성을 달성한 사례를 이야기합니다.",
+            follow_ups: ["최종 컨테이너 크기를 최적화하기 위해 사용한 Docker 최적화 명령어 구조는 무엇입니까?"]
+          },
+          {
+            type: "application",
+            question: "실제 로봇과 시뮬레이터 간의 동일성(Calibration)을 검증하기 위해, 소프트웨어적으로 센서 피드백 데이터를 활용하는 테스트 프로토콜은 어떻게 수립해야 합니까?",
+            answer_guide: "실제 로봇 암을 특정 사인파(Sinusoidal) 입력으로 구동하여 얻은 각 관절의 각도/속도 시계열 데이터를 저장하고, 시뮬레이터의 가상 로봇에 동일 입력 파형을 인가하여 얻은 가상 궤적 데이터와의 오차 자승합(MSE)을 계산해 시뮬레이터의 마찰력 상수를 역추정 보정하는 절차를 수립합니다.",
+            follow_ups: ["마찰력 역추정 알고리즘으로 주로 사용되는 최소자승법(Least Squares)의 수치적 안정성 확보 방안은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 11,
+        category: "알고리즘/모션 플래닝 시뮬레이션",
+        responsibility: "알고리즘 벤치마킹 및 모션 플래닝 성능 벤치마크",
+        experience_match: "none",
+        preparation_type: "study",
+        priority_reason: "학부 종합 설계 성능 지향적 결과 도출 및 AI 인식률 지표 경험 활용",
+        job_reason: "모션 플래닝 알고리즘 성능(계산 시간, 경로 최적성)을 객관적 지표로 측정하여 상용화 가능성 판단",
+        evidence: "YOLOv5 인식률 94% 달성 및 제어 로직 튜닝을 통해 물리 오차 80% 이상 개선",
+        transferable_point: "비교 그룹 설정을 통한 정량적 알고리즘 성능 지표 측정 및 벤치마크 루틴 설계 능력",
+        gap: "다축 매니퓰레이터 모션 경로 생성 알고리즘(RRT, CHOMP 등)의 연산 오버헤드 측정 경험 부족",
+        study_focus: [
+          { keyword: "성능 벤치마크 설계", checkpoint: "알고리즘 연산 속도(Time to find path)와 경로 길이(Path length)의 비교 지표 수립" },
+          { keyword: "모션 플래너 라이브러리", checkpoint: "ROS MoveIt!을 통한 다양한 샘플링 기반 플래너의 속도 벤치마킹 방법" }
+        ],
+        steps: [
+          "다양한 샘플링 기반 알고리즘(RRT, RRT*, PRM)의 시간 복잡도와 최적성 수렴 속도 이론 복습",
+          "사과 수확 프로젝트에서 수집한 성능 오차 80% 개선 수식을 정량 벤치마크 양식으로 변환",
+          "가상 경로 장애물 환경 하에서 궤적 생성 시간 계측 및 최적화 리팩토링 검증"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "로봇 모션 플래닝에서 RRT(Rapidly-exploring Random Tree) 알고리즘과 RRT* 알고리즘의 차이와 성능 벤치마크 관점에서의 핵심 지표 차이는 무엇입니까?",
+            answer_guide: "RRT는 무작위 탐색을 통해 빠르게 실용 경로를 찾아내지만 경로가 최적이 아니며, RRT*는 부모 노드를 재연결(Rewiring)하여 경로가 누적될수록 최적 경로로 수렴해 나갑니다. 따라서 RRT* 벤치마크에서는 '최적 경로 수렴 시간'과 '경로 비용 곡선'을 핵심 지표로 추가 모니터링해야 합니다.",
+            follow_ups: ["RRT 알고리즘의 최대 한계인 좁은 통로(Narrow Passage) 문제를 해결하는 우회 설계가 있다면 언급해주십시오."]
+          },
+          {
+            type: "experience",
+            question: "데이터 가공 및 훈련 시 정량적 지표(인식률 94%, 오차 80% 감축)를 설정하고 이를 달성하기 위해 알고리즘 성능을 점진 리팩토링한 구체적 과정을 기술하십시오.",
+            answer_guide: "초기 Raspberry Pi 탑재 시 리소스 초과로 지연이 150ms 이상 걸렸던 상태에서, YOLOv5 모델 파라미터 경량 변환과 연산 캐싱을 도입해 감지 지연을 45ms 이하로 단축시켰고, 결과적으로 제어 입력이 늦어져 생기던 진동 오차를 정량 계측하여 80% 줄여나간 벤치마킹 과정을 설명합니다.",
+            follow_ups: ["성능 벤치마크 도중 발생한 예외 데이터가 전체 통계 지표를 왜곡하지 않도록 한 데이터 이상치 처리 방법은 무엇입니까?"]
+          },
+          {
+            type: "application",
+            question: "새로 제안된 장애물 회피 알고리즘의 성능이 기존 상용 모션 플래너보다 우수함을 증명하기 위해 테스트 데이터 세트와 벤치마크 궤적을 어떻게 기획하겠습니까?",
+            answer_guide: "장애물이 없는 단순 궤적, 장애물이 조밀한 협소 경로, 그리고 동적으로 장애물이 이동하는 상황의 3가지 표준 시나리오를 구성하고, 동일 계산 플랫폼에서 각 시나리오 당 100회 이상 무작위 시행하여 연산 시간의 평균/표준편차와 충돌 회피 성공률을 통계 비교하는 테스트 스위트를 기획합니다.",
+            follow_ups: ["시뮬레이터의 실시간 팩터(Real-Time Factor)가 달라질 때 발생하는 연산 지연 왜곡 문제를 시스템 타임스탬프 기준으로 어떻게 동기화할 수 있습니까?"]
+          }
+        ]
+      },
+      {
+        priority: 12,
+        category: "로봇 시스템 통합",
+        responsibility: "상하위 제어기 통합 및 타 시스템 연동",
+        experience_match: "related",
+        preparation_type: "organize",
+        priority_reason: "인식-제어-하드웨어를 결합한 통합 로봇 플랫폼 설계 경험 연계",
+        job_reason: "다양한 제조사 모듈(모터, 센서, 상위 제어기) 간 인터페이스 규격을 일치시켜 단일 동작 시스템 구현",
+        evidence: "Raspberry Pi, Arduino, Dynamixel Shield 간 통신 규격 정의 및 실행 흐름 통합 아키텍처 설계",
+        transferable_point: "모듈 간 데이터 직렬화/역직렬화 규약 통제 및 신호 흐름 무결성 검증 능력",
+        gap: "다양한 서드파티 그리퍼 및 비전 카메라와의 다중 스레드 비동기 통합 설계 지식 보완",
+        study_focus: [
+          { keyword: "상하위 인터페이스 규약", checkpoint: "ROS2 토픽/서비스 구조를 활용한 비동기식 상태 머신 설계" },
+          { keyword: "디버깅 로그 추적", checkpoint: "다중 스레드 환경에서 타임스탬프 기반 통합 디버깅 로그 동기화 기법" }
+        ],
+        steps: [
+          "하드웨어 단 통신 포맷과 상위 로봇 미들웨어(ROS 등) 메시지 구조 간의 변환 계층 설계",
+          "시스템 전원 인가 시 각 모듈별 정상 가동 상태를 감지하는 순차 초기화 시퀀스 작성",
+          "다중 프로토콜이 혼재된 환경에서의 에러 전파 시각화 방법 공부"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "다수의 독립 모듈이 결합된 로봇 시스템 통합 시 상태 동기화를 위해 '유한 상태 머신(FSM)' 혹은 '비헤이비어 트리(Behavior Tree)' 중 어떤 구조가 유연하며 소프트웨어 유지보수에 유리합니까?",
+            answer_guide: "상태 변환이 단순하면 FSM이 직관적이나, 복잡한 비동기 작업 및 타임아웃 롤백이 빈번한 산업용 로봇에서는 계층형 설계 및 행동 재사용이 쉬운 비헤이비어 트리가 확장성과 모듈화 관점에서 훨씬 유리합니다.",
+            follow_ups: ["비헤이비어 트리 상에서 특정 행동 실행 도중 최우선 순위 비상 차단 명령이 발생했을 때의 선점(Preemption) 설계 메커니즘을 설명하십시오."]
+          },
+          {
+            type: "experience",
+            question: "서로 다른 통신 주기와 데이터 규격을 가진 장치(Raspberry Pi, Arduino, Dynamixel)를 통합하면서 발생한 메시지 충돌이나 패킷 손실 문제를 어떻게 디버깅했습니까?",
+            answer_guide: "서로 다른 보드레이트와 처리 성능 차이로 병목이 발생하여 버퍼 오버플로우가 나던 상황에서, 임베디드 측 패킷을 큐잉 처리하고 헤더의 검증 메커니즘을 엄격히 적용하여 무효 프레임을 걸러낸 다음, 데이터 파싱 처리를 분배하여 안정적으로 통합시킨 경험을 제시합니다.",
+            follow_ups: ["해당 디버깅 과정에서 논리 분석기(Logic Analyzer)나 통신 스니핑 툴을 어떻게 활용하셨습니까?"]
+          },
+          {
+            type: "application",
+            question: "로봇 시스템에 서드파티 센서 드라이버가 통합된 상태에서, 간헐적으로 센서 라이브러리 내부에서 세그멘테이션 폴트(Segfault)가 발생하여 메인 제어 프로세스가 다운되는 참사를 방지하려면 어떻게 시스템을 구성해야 합니까?",
+            answer_guide: "외부 센서 연동 라이브러리를 메인 제어 루프와 동일 스레드가 아닌 물리적으로 격리된 프로세스로 분리 실행(IPC 통신 연동)하고, 메인 프로세스는 공유 메모리나 로컬 통신을 통해 센서 값을 비동기로 읽어가며, 예기치 못한 센서 프로세스 종료 시 자동 재시작(Daemon) 시키는 안전 격리 설계를 도입합니다.",
+            follow_ups: ["프로세스 격리로 인해 추가되는 IPC(Inter-Process Communication) 통신 지연이 실시간성에 영향을 주지 않도록 설계하는 방안은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 13,
+        category: "현장 튜닝/현장 적용",
+        responsibility: "로봇 모션 파라미터 현장 튜닝 및 디버깅",
+        experience_match: "related",
+        preparation_type: "study",
+        priority_reason: "현장 적용 시나리오 대응 능력은 중요하나, 실제 공장 라인 투입 디버깅 기회가 부족했음을 보완",
+        job_reason: "가상 환경에서 잡히지 않은 현장의 물리적 오차, 노이즈, 링크 마찰을 현장 계측 파라미터 튜닝으로 보완 극복",
+        evidence: "사과 수확 로봇의 실외 시운전 및 오작동 대처 경험",
+        transferable_point: "예기치 못한 환경(조도 변화, 진동) 하에서의 캘리브레이션 및 파라미터 현장 튜닝 능력",
+        gap: "산업용 양산 로봇의 현장 게인(Gain) 튜닝 가이드북 및 공구 활용 디버깅 캘리브레이션 프로세스 경험 미숙",
+        study_focus: [
+          { keyword: "현장 디버깅 도구", checkpoint: "로그 스트리밍, 임베디드 코어의 메모리 계측 툴(JTAG, Oscilloscope) 활용" },
+          { keyword: "게인 튜닝 가이드라인", checkpoint: "서보 모터 드라이버의 위치/속도 루프 PI 게인의 체계적 튜닝 절차" }
+        ],
+        steps: [
+          "실제 필드 환경에서 발생하는 진동 문제를 해소하는 모터 노치 필터(Notch Filter) 원리 파악",
+          "필드 운전 중 발생하는 경보 발생 시 로깅 파일 자동 저장 및 원격 추적 워크플로우 구상",
+          "현장에서 모션 흔들림 시 서보 강성(Rigidity) 게인을 미세 조절하는 표준 가이드 문서 검토"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "로봇을 공장 현장에 실 배치한 직후 시운전 단계에서 링크가 특정 주파수 대역에서 웅웅거리는 미세 진동을 일으킨다면 서보 드라이버 및 제어 소프트웨어 단에서 어떻게 진단하고 튜닝해야 합니까?",
+            answer_guide: "관절 강성 대비 적분 게인이 과도하게 높거나, 기구부 공진(Resonance)으로 인해 피드백 진동이 루프에 유입될 때 발생합니다. 서보 드라이버의 주파수 분석 기능으로 공진점을 파악하여 특정 공진 주파수를 제거하는 노치 필터(Notch Filter)를 설정하고 속도 루프 이득을 낮추며 튜닝해야 함을 답합니다.",
+            follow_ups: ["노치 필터를 여러 개 다중 적용할 경우 제어 루프의 응답성 및 안정성에 미치는 역효과는 무엇입니까?"]
+          },
+          {
+            type: "experience",
+            question: "프로젝트 진행 시 실제 로봇 하드웨어를 통제되지 않은 야외나 외부 환경에서 시운전하면서 예상치 못하게 발생한 환경 오작동을 해결한 사례가 있습니까?",
+            answer_guide: "실내 조명과 다르게 태양광 노이즈와 지면 거칠기로 인해 센서 좌표가 튀는 문제를 겪으며, 3D 카메라 센서 노이즈 필터 계수 임계값을 현장 조도 분석 결과에 따라 동적 변동시키고, 지면 진동 충격을 완화하기 위해 모션 가속도를 임시 낮춰 필드 동작 무결성을 확보한 해결 스토리를 답변합니다.",
+            follow_ups: ["현장의 진동 물리 데이터 수집을 위해 추가적인 계측 도구를 하드웨어에 결합해 본 경험이 있습니까?"]
+          },
+          {
+            type: "application",
+            question: "고객사 공장 라인에서 실시간 제어 오류로 로봇 락이 걸린 긴급 상황에서, 현장의 한정된 장비만으로 원인 규명을 하기 위해 로그 소프트웨어를 어떻게 설계해 두어야 합니까?",
+            answer_guide: "제어기 핵심 상태 레지스터, 모터 에러 코드, 그리고 최근 1초 간의 제어 주기 타이밍 지연 로그를 링 버퍼 형식으로 RAM에 상시 보존하다가, 락 트리거 즉시 이를 영구 파일로 덤프(Crash Dump)하도록 로그 구조를 설계해 두어야 즉시 진단이 가능합니다.",
+            follow_ups: ["플래시 메모리에 수시로 로그 파일을 Write할 때의 파일 시스템 손상 예방을 위해 적용해야 할 설계적 대책은 무엇입니까?"]
+          }
+        ]
+      },
+      {
+        priority: 14,
+        category: "SDK/API 설계/개발",
+        responsibility: "로봇 제어 기능의 라이브러리 및 SDK 설계 개발",
+        experience_match: "none",
+        preparation_type: "organize",
+        priority_reason: "상위 플랫폼 혹은 타사 시스템과의 결합을 위한 확장성 소프트웨어 기본기 검증 대비",
+        job_reason: "로봇 제어 SW의 핵심 로직을 캡슐화하여 내부 연구팀 및 고객 개발사가 로봇을 쉽게 활용하도록 인터페이스 개방",
+        evidence: "로봇 수확 제어 흐름 설계 및 임베디드 드라이버 레벨 모듈 직접 코딩",
+        transferable_point: "소프트웨어 기능 캡슐화 및 사용자 편의를 고려한 명세 설계 역량",
+        gap: "상용 라이브러리 수준의 C++ DLL 또는 Linux Shared Object(.so) 배포 및 세부 문서화 프로젝트 경험 제한적",
+        study_focus: [
+          { keyword: "API 디자인 패턴", checkpoint: "Pimpl 이디엄이나 인터페이스 클래스를 활용한 내부 구현 노출 감추기 기법" },
+          { keyword: "버전 및 배포 관리", checkpoint: "시맨틱 버저닝(SemVer) 규칙을 준수하는 라이브러리 버전 업데이트 명세" }
+        ],
+        steps: [
+          "C++ 헤더 파일 설계 시 내부 의존성을 줄여 컴파일 시간을 단축하는 forward declaration 공부",
+          "작성된 제어 로직 모듈을 정적/동적 라이브러리(.a, .so) 파일로 컴파일 패키징하는 Makefile 작성",
+          "Doxygen 툴을 활용하여 소스코드 코멘트로부터 개발자 API 문서를 자동 생성해본 뒤 문서 완성도 체크"
+        ],
+        questions: [
+          {
+            type: "concept",
+            question: "개발자나 고객사에게 제공할 로봇 제어 C++ SDK를 설계할 때, 바이너리 호환성(ABI 호환성)을 유지하고 내부 구현 코드 노출을 방지하기 위해 널리 사용되는 C++ 디자인 패턴은 무엇입니까?",
+            answer_guide: "클래스의 프라이빗 데이터 멤버와 구현부를 별도의 구현 클래스 포인터로 숨기는 'Pimpl (Pointer to Implementation) 이디엄' 혹은 순수 가상 함수로 정의된 '인터페이스 클래스(추상 클래스)'를 상위에 제공하고 실제 구현은 동적 라이브러리 내부에 캡슐화해야 호환성이 유지됩니다.",
+            follow_ups: ["Pimpl 패턴 사용 시 구현 포인터 참조로 인해 생길 수 있는 미세한 런타임 성능 오버헤드를 로봇 제어 관점에서 분석해보십시오."]
+          },
+          {
+            type: "experience",
+            question: "다른 팀원이나 사용자가 쉽게 가져다 쓸 수 있도록 자신이 작성한 복잡한 코드를 모듈화 혹은 라이브러리화하여 공유해 본 경험이 있습니까?",
+            answer_guide: "사과 수확 프로젝트 도중, Jacobian 계산 수식 코드의 로직 수정이 잦아 메인 제어 스크립트와 분리할 필요성을 느껴, 이를 독립적인 파이썬 클래스 및 패키지로 모듈화하고, 각 함수의 입력 범위 제약과 에러 리턴 가이드를 마크다운 명세서로 문서화하여 팀원들에게 배포한 사례를 기술합니다.",
+            follow_ups: ["해당 모듈을 공유받은 사용자들이 겪었던 공통 질문이나 버그 피드백을 수용하여 API 설계를 개선했던 적이 있습니까?"]
+          },
+          {
+            type: "application",
+            question: "배포된 로봇 제어 SDK의 핵심 기능 API 시그니처가 기능 개선을 위해 대대적으로 변경되어야 할 때, 기존 배포된 응용 프로그램의 에러를 최소화하기 위한 소프트웨어 마이그레이션 및 버전 관리 전략은 무엇입니까?",
+            answer_guide: "시맨틱 버저닝 규칙에 따라 메이저 버전을 갱신하며, 기존 구형 API는 제거하지 않고 'Deprecated' 매크로 경고를 선언하여 사용자에게 변경을 인지시키며, 과도기 동안 신구 API를 공존 보장하고 변경 가이드 문서를 릴리스 노트와 동봉하는 보수적 배포 전략을 준수합니다.",
+            follow_ups: ["C++에서 deprecated 속성 컴파일러 매크로를 선언하는 구문은 무엇인지 말해보십시오."]
+          }
+        ]
+      }
+    ];
+
+    // Initial Loading function
+    window.onload = function() {
+      // Load completed questions from local storage if exists
+      const saved = localStorage.getItem('pathfinder_completed_questions_13');
+      if (saved) {
+        state.completedQuestions = JSON.parse(saved);
+      } else {
+        // Mock init 0 completed
+        state.completedQuestions = {};
+      }
+
+      renderCategoriesList();
+      renderDetail(0);
+      updateProgress();
+      updateCoverageBreakdown();
+    };
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      state.darkMode = !state.darkMode;
+      const btn = document.querySelector('.theme-toggle-btn');
+      btn.textContent = state.darkMode ? "라이트 모드" : "다크 모드";
+    }
+
+    // Set Active Filter
+    function setFilter(filterType) {
+      state.activeFilter = filterType;
+      
+      // Update Filter buttons UI
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`filter-${filterType}`).classList.add('active');
+
+      renderCategoriesList();
+    }
+
+    // Filter Helper logic
+    function shouldShowCategory(item) {
+      if (state.activeFilter === 'all') return true;
+      return item.preparation_type === state.activeFilter;
+    }
+
+    // Render Categories Sidebar
+    function renderCategoriesList() {
+      const container = document.getElementById('categories-list-container');
+      container.innerHTML = '';
+
+      dataset.forEach((item, index) => {
+        if (!shouldShowCategory(item)) return;
+
+        const card = document.createElement('button');
+        card.className = `roadmap-item-card ${index === state.currentCategoryIndex ? 'active' : ''}`;
+        card.setAttribute('role', 'tab');
+        card.setAttribute('aria-selected', index === state.currentCategoryIndex ? 'true' : 'false');
+        card.onclick = () => selectCategory(index);
+
+        const priorityText = String(item.priority).padStart(2, '0');
+        const matchLabel = getMatchLabel(item.experience_match);
+        const matchClass = `match-${item.experience_match}`;
+        const completion = getCategoryProgress(index);
+
+        card.innerHTML = `
+          <div class="card-priority-row">
+            <span class="card-priority-tag">P${priorityText} &middot; 담당업무</span>
+            <span class="card-match-badge ${matchClass}">${matchLabel}</span>
+          </div>
+          <div class="card-title">${item.category}</div>
+          <div class="card-progress-bar-wrapper">
+            <div class="card-progress-track">
+              <div class="card-progress-fill" style="width: ${completion.percent}%"></div>
+            </div>
+            <span class="card-progress-text">${completion.completed}/${completion.total}</span>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Show empty state if list is empty
+      if (container.children.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--muted); padding: 32px 16px; font-size: 14px;">해당 분류의 준비 항목이 존재하지 않습니다.</div>`;
+      }
+    }
+
+    // Select Category and show details
+    function selectCategory(index) {
+      state.currentCategoryIndex = index;
+      
+      // Update active card class in UI
+      const cards = document.querySelectorAll('.roadmap-item-card');
+      cards.forEach((card, idx) => {
+        // Map to filtered index check
+        // For simplicity, just rebuild list or set class
+      });
+      
+      // Re-render list & details
+      renderCategoriesList();
+      renderDetail(index);
+
+      // On Mobile view: Drill down by adding class to the split container
+      if (window.innerWidth <= 980) {
+        document.getElementById('split-container').classList.add('mobile-show-details');
+      }
+    }
+
+    // Back button for mobile view
+    function backToMobileList() {
+      document.getElementById('split-container').classList.remove('mobile-show-details');
+    }
+
+    // Translate experience match string to Korean
+    function getMatchLabel(match) {
+      const labels = {
+        direct: "직접 경험",
+        related: "유사 경험",
+        none: "경험 부족"
+      };
+      return labels[match] || "경험 부족";
+    }
+
+    // Get specific category progress
+    function getCategoryProgress(categoryIdx) {
+      const category = dataset[categoryIdx];
+      const total = category.questions.length;
+      let completed = 0;
+      for (let qIdx = 0; qIdx < total; qIdx++) {
+        if (state.completedQuestions[`${categoryIdx}-${qIdx}`]) {
+          completed++;
+        }
+      }
+      return {
+        completed,
+        total,
+        percent: total > 0 ? Math.round((completed / total) * 100) : 0
+      };
+    }
+
+    // Render detailed pane
+    function renderDetail(categoryIdx) {
+      const pane = document.getElementById('detail-pane');
+      const item = dataset[categoryIdx];
+      const priorityText = String(item.priority).padStart(2, '0');
+      const matchLabel = getMatchLabel(item.experience_match);
+      const matchClass = `match-${item.experience_match}`;
+      
+      let prepLabel = "학습 필요";
+      let prepClass = "prep-study";
+      if (item.preparation_type === 'appeal') {
+        prepLabel = "어필 가능";
+        prepClass = "prep-appeal";
+      } else if (item.preparation_type === 'organize') {
+        prepLabel = "답변 정리";
+        prepClass = "prep-organize";
+      }
+
+      // Render concepts
+      let conceptsHtml = '';
+      if (item.study_focus && item.study_focus.length > 0) {
+        conceptsHtml = `
+          <div class="detail-concepts-block">
+            <span class="context-label">핵심 개념</span>
+            <div class="concepts-grid">
+              ${item.study_focus.map(c => `
+                <div class="concept-item">
+                  <div class="concept-keyword">${c.keyword}</div>
+                  <div class="concept-checkpoint">${c.checkpoint}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Render steps
+      let stepsHtml = '';
+      if (item.steps && item.steps.length > 0) {
+        stepsHtml = `
+          <div class="detail-steps-block">
+            <span class="context-label">준비 순서</span>
+            <ol class="steps-list">
+              ${item.steps.map(s => `<li>${s}</li>`).join('')}
+            </ol>
+          </div>
+        `;
+      }
+
+      // Render questions
+      let questionsHtml = '';
+      if (item.questions && item.questions.length > 0) {
+        questionsHtml = `
+          <div class="questions-container">
+            <span class="context-label">예상 질문 & 답변 방향 (${item.questions.length}개)</span>
+            ${item.questions.map((q, qIdx) => {
+              const isChecked = !!state.completedQuestions[`${categoryIdx}-${qIdx}`];
+              return `
+                <article class="question-card ${isChecked ? 'checked' : ''}" id="q-card-${categoryIdx}-${qIdx}">
+                  <div class="question-main">
+                    <label class="checkbox-container">
+                      <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleQuestion(${categoryIdx}, ${qIdx})">
+                      <span class="checkbox-checkmark"></span>
+                    </label>
+                    <div class="question-content" onclick="event.stopPropagation();">
+                      <div class="question-header-row">
+                        <span class="question-tag ${getQuestionTypeClass(q.type)}">${getQuestionTypeLabel(q.type)}</span>
+                      </div>
+                      <div class="question-title">${q.question}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="answer-guide-details">
+                    <details>
+                      <summary>답변 방향 및 팁</summary>
+                      <div class="answer-guide-body">
+                        <p>${q.answer_guide}</p>
+                        ${q.follow_ups && q.follow_ups.length > 0 ? `
+                          <div class="follow-ups-title">예상 꼬리 질문</div>
+                          <ul class="follow-ups-list">
+                            ${q.follow_ups.map(f => `<li>${f}</li>`).join('')}
+                          </ul>
+                        ` : ''}
+                      </div>
+                    </details>
+                  </div>
+                </article>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      // Render main detailed pane HTML
+      pane.innerHTML = `
+        <button onclick="backToMobileList()" class="detail-mobile-back-btn">&larr; 준비 목록으로 돌아가기</button>
+        
+        <header class="detail-header">
+          <div class="detail-eyebrow">P${priorityText} &middot; 우선순위</div>
+          <div class="detail-title-row">
+            <h3 class="detail-title">${item.category}</h3>
+            <div class="detail-badges">
+              <span class="card-match-badge ${matchClass}">${matchLabel}</span>
+              <span class="detail-badge-prep ${prepClass}">${prepLabel}</span>
+            </div>
+          </div>
+          <p class="detail-responsibility">${item.responsibility}</p>
+          <div class="detail-priority-reason">${item.priority_reason}</div>
+        </header>
+
+        <div class="detail-context-grid">
+          <div class="context-block">
+            <span class="context-label">업무 연결</span>
+            <p>${item.job_reason}</p>
+          </div>
+          <div class="context-block">
+            <span class="context-label">내 연결점</span>
+            ${item.experience_match !== 'none' ? `
+              <div class="connection-item"><strong>근거</strong>${item.evidence}</div>
+              <div class="connection-item"><strong>전환</strong>${item.transferable_point}</div>
+            ` : `
+              <p class="gap-alert-text">직접 연결 경험 없음 &middot; 지식 학습과 유사 경험 연결이 필요합니다.</p>
+              ${item.gap ? `<div class="connection-item" style="margin-top: 8px;"><strong style="background:var(--danger-bg); color:var(--danger);">보완</strong>${item.gap}</div>` : ''}
+            `}
+          </div>
+        </div>
+
+        ${conceptsHtml}
+        ${stepsHtml}
+        ${questionsHtml}
+      `;
+    }
+
+    // Helper: Question tag styling
+    function getQuestionTypeClass(type) {
+      const classes = {
+        concept: "q-concept",
+        experience: "q-experience",
+        application: "q-application"
+      };
+      return classes[type] || "q-concept";
+    }
+
+    function getQuestionTypeLabel(type) {
+      const labels = {
+        concept: "개념",
+        experience: "경험",
+        application: "적용"
+      };
+      return labels[type] || "개념";
+    }
+
+    // Toggle single question check state
+    function toggleQuestion(categoryIdx, qIdx) {
+      const key = `${categoryIdx}-${qIdx}`;
+      state.completedQuestions[key] = !state.completedQuestions[key];
+
+      // Update question card background styling
+      const card = document.getElementById(`q-card-${categoryIdx}-${qIdx}`);
+      if (card) {
+        if (state.completedQuestions[key]) {
+          card.classList.add('checked');
+        } else {
+          card.classList.remove('checked');
+        }
+      }
+
+      // Save to local storage
+      localStorage.setItem('pathfinder_completed_questions_13', JSON.stringify(state.completedQuestions));
+
+      // Refresh parent counters
+      updateProgress();
+      renderCategoriesList();
+    }
+
+    // Calculate & update overall dashboard progress values
+    function updateProgress() {
+      // Calculate total questions in dataset
+      let totalQuestions = 0;
+      dataset.forEach(item => {
+        totalQuestions += item.questions.length;
+      });
+
+      // Calculate checked questions
+      let completedCount = 0;
+      Object.keys(state.completedQuestions).forEach(key => {
+        if (state.completedQuestions[key]) {
+          completedCount++;
+        }
+      });
+
+      const percent = totalQuestions > 0 ? Math.round((completedCount / totalQuestions) * 100) : 0;
+
+      // Update values in UI
+      document.getElementById('global-progress-val').textContent = `${percent}%`;
+      document.getElementById('global-progress-desc').textContent = `총 ${totalQuestions}개 질문 중 ${completedCount}개 완료`;
+
+      // Update Circular Progress Bar
+      const circle = document.querySelector('.progress-ring-circle');
+      if (circle) {
+        const radius = 28;
+        const circumference = 2 * Math.PI * radius; // 175.9
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = offset;
+      }
+    }
+
+    // Calculate individual category sources for evidence coverage
+    function updateCoverageBreakdown() {
+      // Mock source count representation logic for dynamic feedback (static visualization represented via dashboard)
+    }
+  </script>
+</body>
+</html>

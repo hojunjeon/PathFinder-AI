@@ -25,6 +25,9 @@
               <span class="nav-label">{{ section.label }}</span>
             </a>
           </nav>
+          <router-link class="cover-letter-link" to="/analyze/new">
+            자기소개서 입력 화면
+          </router-link>
         </section>
 
         <section class="side-block" data-od-id="result-interviews">
@@ -333,6 +336,28 @@ onBeforeUnmount(() => {
 }
 .nav-label {
   min-width: 0;
+}
+.cover-letter-link {
+  min-height: 44px;
+  margin-top: var(--space-3);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--fg-2);
+  background: var(--surface-warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+.cover-letter-link:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .chip-list {
   display: flex;

@@ -5,6 +5,7 @@
         <router-link to="/" class="brand-mark">PathFinder AI</router-link>
         <nav class="global-links" aria-label="주요 메뉴">
           <template v-if="authStore.isLoggedIn">
+            <router-link to="/">홈</router-link>
             <router-link to="/analyze/new">로드맵 생성</router-link>
             <router-link to="/history">히스토리</router-link>
             <router-link to="/community">면접 후기</router-link>

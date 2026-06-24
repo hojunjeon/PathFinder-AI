@@ -13,7 +13,13 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.route('**/api/analyze/', async route => {
     if (route.request().method() === 'POST') {
       const body = route.request().postDataJSON()
-      expect(body.job_id).toBe(11)
+      expect(body.company_id).toBe(1)
+      expect(body.job_posting).toEqual({
+        job_title: '백엔드 개발자',
+        responsibilities: '주문/배송 API 개발과 대규모 트래픽 처리',
+        requirements: 'Python, Database, REST API 경험',
+        preferred_qualifications: '분산 시스템 경험',
+      })
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
@@ -56,6 +62,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
+  await page.getByRole('link', { name: '자기소개서 입력 화면' }).click()
+  await expect(page).toHaveURL(/\/analyze\/new$/)
+  await expect(page.getByRole('heading', { name: '어떤 회사에 지원했나요?' })).toBeVisible()
+  await page.goto('/analyze/99')
   await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
   await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
   await page.getByLabel('EtherCAT').check()

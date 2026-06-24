@@ -17,6 +17,7 @@ test('logged-in users still land on the main page and use buttons for features',
   await page.goto('/')
 
   await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('link', { name: '홈', exact: true })).toBeVisible()
   await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
   await expect(page.getByRole('link', { name: '내 프로필 정리하기' })).toBeVisible()
   await expect(page.getByRole('link', { name: '이전 로드맵 보기' })).toBeVisible()

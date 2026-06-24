@@ -1,0 +1,174 @@
+{
+  "ok": true,
+  "accepted": true,
+  "rejectedReasons": [],
+  "deduped": false,
+  "audit": {
+    "kind": "revise_criterion",
+    "source": "cli",
+    "targetGoalIds": [
+      "G001-install-dietrichgebert-ponytail-glob"
+    ],
+    "evidence": "AnalyzeResultView currently computes deterministic hash scores; private marker tests already exist and must remain green.",
+    "rationale": "Replace regression placeholder with observable UI and privacy regression criterion.",
+    "invariant": {
+      "accepted": true,
+      "structuralInvariantAccepted": true,
+      "evidenceBackedNecessity": true,
+      "noEasierCompletion": true,
+      "rejectedReasons": [],
+      "reasons": []
+    },
+    "criterionId": "C003",
+    "before": {
+      "version": 1,
+      "createdAt": "2026-06-24T05:41:39.169Z",
+      "updatedAt": "2026-06-24T05:42:19.459Z",
+      "briefPath": ".omo/ulw-loop/brief.md",
+      "goalsPath": ".omo/ulw-loop/goals.json",
+      "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+      "codexGoalMode": "aggregate",
+      "goals": [
+        {
+          "id": "G001-install-dietrichgebert-ponytail-glob",
+          "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+          "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+          "status": "pending",
+          "successCriteria": [
+            {
+              "id": "C001",
+              "scenario": "CLI/data surface: run codex plugin marketplace add DietrichGebert/ponytail; then capture codex plugin/help output, plugin cache/config file listing, and hooks/plugin metadata paths into .omo/ulw-loop/evidence/ponytail-install.txt. PASS if command exits 0 or already-installed is explicit, Ponytail marketplace/plugin files are locatable, and any interactive hook-trust blocker is named exactly.",
+              "userModel": "happy",
+              "expectedEvidence": ".omo/ulw-loop/evidence/ponytail-install.txt with command transcript, file listing, README citation, and cleanup:none",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C002",
+              "scenario": "Backend/API surface: first run a targeted pytest that fails because build_llm_payload includes irrelevant approved KG facts and empty taxonomy context; then implement minimal retrieval/taxonomy logic; rerun targeted tests and a Django APIClient or curl-equivalent POST /api/analyze/ scenario that proves only relevant facts plus study/interview context are in the LLM payload.",
+              "userModel": "edge",
+              "expectedEvidence": ".omo/ulw-loop/evidence/graphrag-red-green.txt and .omo/ulw-loop/evidence/api-surface.txt with RED failure, GREEN pass, API payload assertions, cleanup receipt",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C003",
+              "scenario": "regression: adjacent surface still works",
+              "userModel": "regression",
+              "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+              "essential": false,
+              "capturedEvidence": null,
+              "status": "pending"
+            }
+          ],
+          "attempt": 0,
+          "createdAt": "2026-06-24T05:41:39.169Z",
+          "updatedAt": "2026-06-24T05:42:19.459Z"
+        }
+      ],
+      "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+    },
+    "after": {
+      "version": 1,
+      "createdAt": "2026-06-24T05:41:39.169Z",
+      "updatedAt": "2026-06-24T05:42:19.542Z",
+      "briefPath": ".omo/ulw-loop/brief.md",
+      "goalsPath": ".omo/ulw-loop/goals.json",
+      "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+      "codexGoalMode": "aggregate",
+      "goals": [
+        {
+          "id": "G001-install-dietrichgebert-ponytail-glob",
+          "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+          "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+          "status": "pending",
+          "successCriteria": [
+            {
+              "id": "C001",
+              "scenario": "CLI/data surface: run codex plugin marketplace add DietrichGebert/ponytail; then capture codex plugin/help output, plugin cache/config file listing, and hooks/plugin metadata paths into .omo/ulw-loop/evidence/ponytail-install.txt. PASS if command exits 0 or already-installed is explicit, Ponytail marketplace/plugin files are locatable, and any interactive hook-trust blocker is named exactly.",
+              "userModel": "happy",
+              "expectedEvidence": ".omo/ulw-loop/evidence/ponytail-install.txt with command transcript, file listing, README citation, and cleanup:none",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C002",
+              "scenario": "Backend/API surface: first run a targeted pytest that fails because build_llm_payload includes irrelevant approved KG facts and empty taxonomy context; then implement minimal retrieval/taxonomy logic; rerun targeted tests and a Django APIClient or curl-equivalent POST /api/analyze/ scenario that proves only relevant facts plus study/interview context are in the LLM payload.",
+              "userModel": "edge",
+              "expectedEvidence": ".omo/ulw-loop/evidence/graphrag-red-green.txt and .omo/ulw-loop/evidence/api-surface.txt with RED failure, GREEN pass, API payload assertions, cleanup receipt",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C003",
+              "scenario": "Regression/UI surface: run frontend build/test plus Playwright analyze-flow/result-page scenario that verifies preparation categories, question, evidence/source, study goal render, and no fake hash score is presented as user ability. Also rerun private marker regression ensuring cover letter/job posting markers do not enter public KG facts/chunks.",
+              "userModel": "regression",
+              "expectedEvidence": ".omo/ulw-loop/evidence/ui-regression.txt with frontend command transcript/screenshot path and .omo/ulw-loop/evidence/private-regression.txt with backend test output and cleanup receipt",
+              "essential": false,
+              "capturedEvidence": null,
+              "status": "pending"
+            }
+          ],
+          "attempt": 0,
+          "createdAt": "2026-06-24T05:41:39.169Z",
+          "updatedAt": "2026-06-24T05:42:19.542Z"
+        }
+      ],
+      "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+    }
+  },
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-24T05:41:39.169Z",
+    "updatedAt": "2026-06-24T05:42:19.542Z",
+    "briefPath": ".omo/ulw-loop/brief.md",
+    "goalsPath": ".omo/ulw-loop/goals.json",
+    "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-install-dietrichgebert-ponytail-glob",
+        "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+        "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+        "status": "pending",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "CLI/data surface: run codex plugin marketplace add DietrichGebert/ponytail; then capture codex plugin/help output, plugin cache/config file listing, and hooks/plugin metadata paths into .omo/ulw-loop/evidence/ponytail-install.txt. PASS if command exits 0 or already-installed is explicit, Ponytail marketplace/plugin files are locatable, and any interactive hook-trust blocker is named exactly.",
+            "userModel": "happy",
+            "expectedEvidence": ".omo/ulw-loop/evidence/ponytail-install.txt with command transcript, file listing, README citation, and cleanup:none",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C002",
+            "scenario": "Backend/API surface: first run a targeted pytest that fails because build_llm_payload includes irrelevant approved KG facts and empty taxonomy context; then implement minimal retrieval/taxonomy logic; rerun targeted tests and a Django APIClient or curl-equivalent POST /api/analyze/ scenario that proves only relevant facts plus study/interview context are in the LLM payload.",
+            "userModel": "edge",
+            "expectedEvidence": ".omo/ulw-loop/evidence/graphrag-red-green.txt and .omo/ulw-loop/evidence/api-surface.txt with RED failure, GREEN pass, API payload assertions, cleanup receipt",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C003",
+            "scenario": "Regression/UI surface: run frontend build/test plus Playwright analyze-flow/result-page scenario that verifies preparation categories, question, evidence/source, study goal render, and no fake hash score is presented as user ability. Also rerun private marker regression ensuring cover letter/job posting markers do not enter public KG facts/chunks.",
+            "userModel": "regression",
+            "expectedEvidence": ".omo/ulw-loop/evidence/ui-regression.txt with frontend command transcript/screenshot path and .omo/ulw-loop/evidence/private-regression.txt with backend test output and cleanup receipt",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T05:41:39.169Z",
+        "updatedAt": "2026-06-24T05:42:19.542Z"
+      }
+    ],
+    "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+  }
+}

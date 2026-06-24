@@ -1,0 +1,92 @@
+diff compact: 9 files
+backend/analysis/services.py +127 -4
+  index 90124a5..47196ba 100644
+  @@ -6,7 +6,7 @@ from django.conf import settings
+  @@ -34,13 +34,24 @@ def build_llm_payload(user, job_posting_url: str,
+  @@ -55,10 +66,18 @@ def build_llm_payload(user, job_posting_url: str,
+  @@ -150,3 +169,107 @@ def strip_html(html: str) -> str:
+  -from companies.models import Company, JobPosting
+  +from companies.models import Company, InterviewType, JobPosting, Skill
+  -    recommended_study_areas = []
+  -    interview_stages = []
+  +    retrieval_query = _build_retrieval_query(
+  +        user_profile,
+  +125 more diff lines
+backend/analysis/tests/test_analysis.py +95 -1
+  index a6aa6c3..d167dc6 100644
+  @@ -2,7 +2,17 @@ import pytest
+  @@ -116,6 +126,90 @@ def test_analysis_create_accepts_company_posting_without_legacy_job(auth_client)
+  -from companies.models import Company, CompanyKnowledgeClaim, CompanyKnowledgeFact, Job, JobPosting
+  +from companies.knowledge import approve_claim, create_pending_claims_from_source
+  +from companies.models import (
+  +    Company,
+  +    CompanyKnowledgeClaim,
+  +    CompanyKnowledgeFact,
+  +90 more diff lines
+backend/analysis/tests/test_services.py +121 -1
+  index 933fc8e..c380b2b 100644
+  @@ -5,7 +5,7 @@ from django.test import override_settings
+  @@ -217,6 +217,126 @@ def test_build_llm_payload_separates_graph_context_and_private_evidence():
+  -from companies.models import CompanySourceDocument, JobPosting
+  +from companies.models import CompanySourceDocument, InterviewType, JobPosting, Skill
+  +@pytest.mark.django_db
+  +def test_build_llm_payload_retrieves_relevant_company_graph_facts_only():
+  +    user = User.objects.create_user(email='relevant-context@test.com', password='pass1234!')
+  +    Profile.objects.create(user=user)
+  +116 more diff lines
+backend/analysis/views.py +2 -2
+  index e57f651..7559442 100644
+  @@ -7,7 +7,7 @@ from companies.knowledge import create_private_role_candidate_from_posting
+  @@ -101,7 +101,7 @@ class AnalysisCreateView(APIView):
+  -from .services import build_llm_payload, call_llm_server
+  +from .services import build_llm_payload, call_llm_server, normalize_llm_result
+  -            result = asyncio.run(call_llm_server(payload))
+  +            result = normalize_llm_result(asyncio.run(call_llm_server(payload)))
+backend/companies/knowledge.py +45 -1
+  index 531d3f3..32a1a2b 100644
+  @@ -1,4 +1,5 @@
+  @@ -124,7 +125,14 @@ def create_private_role_candidate_from_posting(
+  @@ -143,10 +151,27 @@ def build_company_graph_context(company: Company) -> dict:
+  @@ -162,3 +187,22 @@ def _split_text(text: str, max_chars: int) -> list[str]:
+  +import re
+  -def build_company_graph_context(company: Company) -> dict:
+  +DEFAULT_COMPANY_GRAPH_FACT_LIMIT = 8
+  +
+  +def build_company_graph_context(
+  +41 more diff lines
+frontend/src/components/result/RoadmapSubtopicCard.vue +22 -0
+  index 9fa9714..6d5262d 100644
+  @@ -25,6 +25,12 @@
+  @@ -162,6 +168,22 @@ defineEmits(['toggle'])
+  +      <div v-if="subtopic.source_ids?.length" class="detail-block compact">
+  +        <span class="detail-label">출처 ID</span>
+  +        <div class="source-list">
+  +          <span v-for="sourceId in subtopic.source_ids" :key="sourceId">{{ sourceId }}</span>
+  +        </div>
+  +      </div>
+  +16 more diff lines
+frontend/src/composables/useRoadmapProgress.js +1 -0
+  index 29ec405..73465de 100644
+  @@ -118,6 +118,7 @@ function normalizeCategoryItem(item, itemIdx) {
+  +      source_ids: Array.isArray(subtopic.source_ids) ? subtopic.source_ids.filter(Boolean).map(String) : [],
+frontend/src/views/AnalyzeResultView.vue +24 -41
+  index 67157f2..5f43394 100644
+  @@ -20,7 +20,7 @@
+  @@ -79,14 +79,14 @@
+  @@ -165,45 +165,28 @@ const heroKeywords = computed(() => {
+  -            <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">직무 매칭도</a>
+  +            <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">근거 커버리지</a>
+  -          <!-- Scores Section -->
+  +          <!-- Evidence Coverage Section -->
+  -              <h2>직무 역량 매칭도</h2>
+  -              <span class="section-note">면접 대비 우선순위</span>
+  +59 more diff lines
+frontend/tests/e2e/analyze-flow.spec.js +5 -0
+  index be44102..739b48b 100644
+  @@ -45,6 +45,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
+  @@ -220,6 +224,7 @@ async function mockAnalysisResult(page) {
+  +  await expect(page.getByRole('heading', { name: '근거 커버리지' })).toBeVisible()
+  +  await expect(page.getByText('직무 역량 매칭도')).toHaveCount(0)
+  +  await expect(page.getByText('fact:101')).toBeVisible()
+  +  await page.screenshot({ path: '../.omo/ulw-loop/evidence/result-page-desktop.png', fullPage: true })
+  +                source_ids: ['fact:101', 'source:7'],

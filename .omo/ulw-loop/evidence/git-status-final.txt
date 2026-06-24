@@ -1,0 +1,14 @@
+ M backend/analysis/services.py
+ M backend/analysis/tests/test_analysis.py
+ M backend/analysis/tests/test_services.py
+ M backend/analysis/views.py
+ M backend/companies/knowledge.py
+ M frontend/src/components/result/RoadmapSubtopicCard.vue
+ M frontend/src/composables/useRoadmapProgress.js
+ M frontend/src/views/AnalyzeResultView.vue
+ M frontend/tests/e2e/analyze-flow.spec.js
+?? .omo/plans/ponytail-graphrag-minimal.md
+?? .omo/ulw-loop/brief.md
+?? .omo/ulw-loop/evidence/
+?? .omo/ulw-loop/goals.json
+?? .omo/ulw-loop/ledger.jsonl

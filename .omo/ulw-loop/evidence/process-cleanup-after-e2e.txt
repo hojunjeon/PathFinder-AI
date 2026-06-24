@@ -1,0 +1,4 @@
+trihead run -- npx playwright test tests/e2e/analyze-flow.spec.js > ../.omo/ulw-loop/evidence/frontend-e2e-trihead.txt 2>&1
+  npx playwright test tests/e2e/analyze-flow.spec.js > ../.omo/ulw-loop/evidence/frontend-e2e-raw.txt 2>&1
+trihead run -- npx playwright test tests/e2e/analyze-flow.spec.js > ../.omo/ulw-loop/evidence/frontend-e2e-trihead.txt 2>&1
+  npx playwright test tests/e2e/analyze-flow.spec.js > ../.omo/ulw-loop/evidence/frontend-e2e-raw.txt 2>&1

@@ -1,0 +1,147 @@
+﻿{
+  "ok": true,
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-24T06:21:56.794Z",
+    "updatedAt": "2026-06-24T06:21:56.794Z",
+    "briefPath": ".omo/ulw-loop/embedding-sqlite/brief.md",
+    "goalsPath": ".omo/ulw-loop/embedding-sqlite/goals.json",
+    "ledgerPath": ".omo/ulw-loop/embedding-sqlite/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-c001-red-green-prove-current-sqlite",
+        "title": "C001 RED/GREEN: prove current SQLite chunk embedding path is missing,...",
+        "objective": "C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then store GMS text-embedding-3-small vectors on CompanySourceChunk with embedding_status transitions and no private data embedded.",
+        "status": "pending",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st....",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C001 RED/GREEN: prove current SQLite chunk embedding path is missing, then st....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:21:56.794Z"
+      },
+      {
+        "id": "G002-c002-retrieval-prove-sqlite-vector-s",
+        "title": "C002 Retrieval: prove SQLite vector search/ranking works locally with...",
+        "objective": "C002 Retrieval: prove SQLite vector search/ranking works locally without pgvector, falling back safely when embeddings are missing or GMS is unavailable.",
+        "status": "pending",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 2.",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve....",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C002 Retrieval: prove SQLite vector search/ranking works locally without pgve....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:21:56.794Z"
+      },
+      {
+        "id": "G003-c003-surface-qa-drive-a-real-cli-dja",
+        "title": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenari...",
+        "objective": "C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that creates a public source chunk, embeds it via a mocked GMS embeddings response, queries it, and captures DB state/output plus cleanup receipt.",
+        "status": "pending",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "happy path for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c...",
+            "userModel": "happy",
+            "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 3.",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: C003 Surface QA: drive a real CLI/Django shell/API-equivalent scenario that c....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T06:21:56.794Z",
+        "updatedAt": "2026-06-24T06:21:56.794Z"
+      }
+    ],
+    "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/embedding-sqlite/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/embedding-sqlite/ledger.jsonl as the audit trail."
+  },
+  "summary": {
+    "total": 3,
+    "pending": 3,
+    "in_progress": 0,
+    "complete": 0,
+    "failed": 0,
+    "blocked": 0,
+    "review_blocked": 0,
+    "needs_user_decision": 0,
+    "superseded": 0,
+    "criteria": {
+      "total": 9,
+      "pass": 0,
+      "pending": 9,
+      "fail": 0,
+      "blocked": 0
+    }
+  }
+}

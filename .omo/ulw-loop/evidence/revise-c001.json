@@ -1,0 +1,174 @@
+{
+  "ok": true,
+  "accepted": true,
+  "rejectedReasons": [],
+  "deduped": false,
+  "audit": {
+    "kind": "revise_criterion",
+    "source": "cli",
+    "targetGoalIds": [
+      "G001-install-dietrichgebert-ponytail-glob"
+    ],
+    "evidence": "Ponytail README requires codex plugin marketplace add, /plugins install, /hooks trust; CLI evidence file path selected.",
+    "rationale": "Replace placeholder with observable install criterion.",
+    "invariant": {
+      "accepted": true,
+      "structuralInvariantAccepted": true,
+      "evidenceBackedNecessity": true,
+      "noEasierCompletion": true,
+      "rejectedReasons": [],
+      "reasons": []
+    },
+    "criterionId": "C001",
+    "before": {
+      "version": 1,
+      "createdAt": "2026-06-24T05:41:39.169Z",
+      "updatedAt": "2026-06-24T05:41:39.169Z",
+      "briefPath": ".omo/ulw-loop/brief.md",
+      "goalsPath": ".omo/ulw-loop/goals.json",
+      "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+      "codexGoalMode": "aggregate",
+      "goals": [
+        {
+          "id": "G001-install-dietrichgebert-ponytail-glob",
+          "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+          "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+          "status": "pending",
+          "successCriteria": [
+            {
+              "id": "C001",
+              "scenario": "happy path for: Install DietrichGebert/ponytail globally for Codex and verify it with command...",
+              "userModel": "happy",
+              "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C002",
+              "scenario": "edge case (boundary/empty/malformed)",
+              "userModel": "edge",
+              "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C003",
+              "scenario": "regression: adjacent surface still works",
+              "userModel": "regression",
+              "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+              "essential": false,
+              "capturedEvidence": null,
+              "status": "pending"
+            }
+          ],
+          "attempt": 0,
+          "createdAt": "2026-06-24T05:41:39.169Z",
+          "updatedAt": "2026-06-24T05:41:39.169Z"
+        }
+      ],
+      "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+    },
+    "after": {
+      "version": 1,
+      "createdAt": "2026-06-24T05:41:39.169Z",
+      "updatedAt": "2026-06-24T05:42:19.374Z",
+      "briefPath": ".omo/ulw-loop/brief.md",
+      "goalsPath": ".omo/ulw-loop/goals.json",
+      "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+      "codexGoalMode": "aggregate",
+      "goals": [
+        {
+          "id": "G001-install-dietrichgebert-ponytail-glob",
+          "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+          "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+          "status": "pending",
+          "successCriteria": [
+            {
+              "id": "C001",
+              "scenario": "CLI/data surface: run codex plugin marketplace add DietrichGebert/ponytail; then capture codex plugin/help output, plugin cache/config file listing, and hooks/plugin metadata paths into .omo/ulw-loop/evidence/ponytail-install.txt. PASS if command exits 0 or already-installed is explicit, Ponytail marketplace/plugin files are locatable, and any interactive hook-trust blocker is named exactly.",
+              "userModel": "happy",
+              "expectedEvidence": ".omo/ulw-loop/evidence/ponytail-install.txt with command transcript, file listing, README citation, and cleanup:none",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C002",
+              "scenario": "edge case (boundary/empty/malformed)",
+              "userModel": "edge",
+              "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+              "essential": true,
+              "capturedEvidence": null,
+              "status": "pending"
+            },
+            {
+              "id": "C003",
+              "scenario": "regression: adjacent surface still works",
+              "userModel": "regression",
+              "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+              "essential": false,
+              "capturedEvidence": null,
+              "status": "pending"
+            }
+          ],
+          "attempt": 0,
+          "createdAt": "2026-06-24T05:41:39.169Z",
+          "updatedAt": "2026-06-24T05:42:19.374Z"
+        }
+      ],
+      "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+    }
+  },
+  "plan": {
+    "version": 1,
+    "createdAt": "2026-06-24T05:41:39.169Z",
+    "updatedAt": "2026-06-24T05:42:19.374Z",
+    "briefPath": ".omo/ulw-loop/brief.md",
+    "goalsPath": ".omo/ulw-loop/goals.json",
+    "ledgerPath": ".omo/ulw-loop/ledger.jsonl",
+    "codexGoalMode": "aggregate",
+    "goals": [
+      {
+        "id": "G001-install-dietrichgebert-ponytail-glob",
+        "title": "Install DietrichGebert/ponytail globally for Codex and verify it with...",
+        "objective": "Install DietrichGebert/ponytail globally for Codex and verify it with command/file/plugin evidence. Then improve PathFinder AI GraphRAG analysis flow in C:\\Users\\SSAFY\\Desktop\\t08_project using minimal clean code: relevant KG fact retrieval instead of all facts, taxonomy-backed study/interview context, backend result normalization/evidence traceability, removal or replacement of fake frontend scores, and preservation of private-data separation. Follow omo:ulw-loop, keep trihead as token-efficiency layer, prefer Git Bash MCP and CodeGraph, do RED->GREEN tests before production changes, run API/UI surface QA with cleanup receipts, and do not commit without explicit user approval.",
+        "status": "pending",
+        "successCriteria": [
+          {
+            "id": "C001",
+            "scenario": "CLI/data surface: run codex plugin marketplace add DietrichGebert/ponytail; then capture codex plugin/help output, plugin cache/config file listing, and hooks/plugin metadata paths into .omo/ulw-loop/evidence/ponytail-install.txt. PASS if command exits 0 or already-installed is explicit, Ponytail marketplace/plugin files are locatable, and any interactive hook-trust blocker is named exactly.",
+            "userModel": "happy",
+            "expectedEvidence": ".omo/ulw-loop/evidence/ponytail-install.txt with command transcript, file listing, README citation, and cleanup:none",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C002",
+            "scenario": "edge case (boundary/empty/malformed)",
+            "userModel": "edge",
+            "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+            "essential": true,
+            "capturedEvidence": null,
+            "status": "pending"
+          },
+          {
+            "id": "C003",
+            "scenario": "regression: adjacent surface still works",
+            "userModel": "regression",
+            "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Install DietrichGebert/ponytail globally for Codex and verify it with command....",
+            "essential": false,
+            "capturedEvidence": null,
+            "status": "pending"
+          }
+        ],
+        "attempt": 0,
+        "createdAt": "2026-06-24T05:41:39.169Z",
+        "updatedAt": "2026-06-24T05:42:19.374Z"
+      }
+    ],
+    "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ledger.jsonl as the audit trail."
+  }
+}

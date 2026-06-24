@@ -1,0 +1,1 @@
+﻿Git Bash MCP bootstrap attempt failed: Transport closed. Falling back to PowerShell for bootstrap reads.

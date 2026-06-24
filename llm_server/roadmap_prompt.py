@@ -257,7 +257,14 @@ def _cover_letter_text(raw_cover_letters) -> str:
 def _awards_text(raw_awards) -> str:
     if not isinstance(raw_awards, list):
         return str(raw_awards)
-    return "\n".join([f"- {award.get('title', '')} ({award.get('org', '')})" for award in raw_awards])
+    lines = []
+    for award in raw_awards:
+        title = award.get("title", "")
+        description = award.get("description", "")
+        legacy_org = award.get("org", "") or award.get("issuer", "")
+        detail = f": {description}" if description else f" ({legacy_org})" if legacy_org else ""
+        lines.append(f"- {title}{detail}")
+    return "\n".join(lines)
 
 
 def _company_graph_context_text(context) -> str:

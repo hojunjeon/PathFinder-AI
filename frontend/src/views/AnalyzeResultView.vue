@@ -20,7 +20,7 @@
               준비 항목
               <span class="count" v-if="roadmapItems.length">{{ roadmapItems.length }}</span>
             </a>
-            <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">직무 매칭도</a>
+            <a :class="['side-nav-item', { active: activeSection === 'scores' }]" href="#scores">근거 커버리지</a>
           </nav>
         </section>
 
@@ -79,14 +79,14 @@
           <!-- Competency Gap List -->
           <CompetencyGap :gap="analysis.competency_gap || {}" />
 
-          <!-- Scores Section -->
+          <!-- Evidence Coverage Section -->
           <section class="section-card" id="scores" data-od-id="result-scores">
             <div class="section-head">
-              <h2>직무 역량 매칭도</h2>
-              <span class="section-note">면접 대비 우선순위</span>
+              <h2>근거 커버리지</h2>
+              <span class="section-note">답변 준비 항목의 추적 가능성</span>
             </div>
             <div class="scores">
-              <div class="score-row" v-for="score in computedScores" :key="score.name">
+              <div class="score-row" v-for="score in evidenceCoverageRows" :key="score.name">
                 <span class="score-name">{{ score.name }}</span>
                 <div class="bar">
                   <div :class="['bar-fill', score.colorClass]" :style="{ width: score.value + '%' }"></div>
@@ -165,44 +165,27 @@ const heroKeywords = computed(() => {
   return required.slice(0, 3)
 })
 
-function getDeterministicScore(name, minVal, maxVal) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  const range = maxVal - minVal
-  return minVal + Math.abs(hash % range)
-}
-
-const computedScores = computed(() => {
-  const gap = analysis.value?.competency_gap || {}
-  const strengths = gap.strengths || []
-  const gaps = gap.gaps || []
-  const reqs = gap.required_competencies || []
-
-  const scores = []
-  
-  strengths.slice(0, 2).forEach(s => {
-    scores.push({ name: s, value: getDeterministicScore(s, 75, 95), colorClass: '' })
+const evidenceCoverageRows = computed(() => {
+  const rows = roadmapItems.value.map((category) => {
+    const total = category.subtopics.length
+    const covered = category.subtopics.filter(hasEvidenceTrace).length
+    const value = total ? Math.round((covered / total) * 100) : 0
+    return {
+      name: category.category,
+      value,
+      colorClass: value >= 70 ? '' : value >= 40 ? 'mid' : 'low',
+    }
   })
-  
-  reqs.slice(0, 2).forEach(r => {
-    scores.push({ name: r, value: getDeterministicScore(r, 45, 70), colorClass: 'mid' })
-  })
-
-  gaps.slice(0, 2).forEach(g => {
-    scores.push({ name: g, value: getDeterministicScore(g, 15, 40), colorClass: 'low' })
-  })
-
-  if (scores.length === 0) {
-    scores.push({ name: 'Java / Spring', value: 78, colorClass: '' })
-    scores.push({ name: '알고리즘', value: 65, colorClass: '' })
-    scores.push({ name: '시스템 설계', value: 42, colorClass: 'mid' })
-    scores.push({ name: 'Kotlin', value: 24, colorClass: 'low' })
-  }
-
-  return scores
+  if (rows.length) return rows
+  return [{ name: '준비 항목', value: 0, colorClass: 'low' }]
 })
+
+function hasEvidenceTrace(subtopic) {
+  return Boolean(
+    subtopic.evidence?.trim()
+    || subtopic.source_ids?.length
+  )
+}
 
 // Sidebar Active Navigation on Scroll
 function handleScroll() {

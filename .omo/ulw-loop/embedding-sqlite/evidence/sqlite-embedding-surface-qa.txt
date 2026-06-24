@@ -1,0 +1,8 @@
+22 objects imported automatically (use -v 2 for details).
+
+{"request_url": "http://127.0.0.1:8081/llm/embeddings", "request_headers": {"X-Internal-Token": "ulw-embedding-qa-token"}, "request_body": {"input": ["ULWEmbeddingQATech builds Django GraphRAG APIs."]}, "timeout": 60.0}
+{"request_url": "http://127.0.0.1:8081/llm/embeddings", "request_headers": {"X-Internal-Token": "ulw-embedding-qa-token"}, "request_body": {"input": ["Django GraphRAG API"]}, "timeout": 60.0}
+{"chunk_id": 10, "embedding_status": "embedded", "embedding_model": "text-embedding-3-small", "embedding_vector": [1.0, 0.0, 0.0], "search_top_chunk_id": 10, "search_score": 1.0, "private_marker_in_public_source": false, "private_marker_in_source_chunk": false, "embedded_private_chunk_candidates": false}
+{"cleanup": "deleted QA company cascade", "company_id": 524, "user_id": 16, "remaining_company_rows": 0, "remaining_user_rows": 0}
+
+surface_qa_exit=0

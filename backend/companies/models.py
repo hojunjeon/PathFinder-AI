@@ -115,6 +115,10 @@ class CompanySourceChunk(models.Model):
         choices=EmbeddingStatus.choices,
         default=EmbeddingStatus.NOT_REQUIRED,
     )
+    embedding_model = models.CharField(max_length=100, blank=True, default='')
+    embedding_vector = models.JSONField(default=list, blank=True)
+    embedding_error = models.TextField(blank=True, default='')
+    embedded_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

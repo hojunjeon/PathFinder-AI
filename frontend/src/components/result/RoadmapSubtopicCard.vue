@@ -25,6 +25,12 @@
         <span class="detail-label">근거</span>
         <p>{{ subtopic.evidence }}</p>
       </div>
+      <div v-if="subtopic.source_ids?.length" class="detail-block compact">
+        <span class="detail-label">출처 ID</span>
+        <div class="source-list">
+          <span v-for="sourceId in subtopic.source_ids" :key="sourceId">{{ sourceId }}</span>
+        </div>
+      </div>
       <div v-if="subtopic.study_goal" class="detail-block compact">
         <span class="detail-label">학습 기준</span>
         <p>{{ subtopic.study_goal }}</p>
@@ -160,6 +166,22 @@ defineEmits(['toggle'])
 .followups ul {
   margin: 0;
   padding-left: var(--space-5);
+}
+
+.source-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.source-list span {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.3;
 }
 
 @media (max-width: 720px) {

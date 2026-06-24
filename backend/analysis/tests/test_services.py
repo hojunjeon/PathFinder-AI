@@ -5,7 +5,7 @@ from django.test import override_settings
 
 from accounts.models import User, Profile
 from companies.models import Company, Job
-from companies.models import CompanySourceDocument, JobPosting
+from companies.models import CompanySourceDocument, InterviewType, JobPosting, Skill
 from companies.knowledge import approve_claim, create_pending_claims_from_source
 from analysis.services import (
     build_llm_payload,
@@ -215,6 +215,126 @@ def test_build_llm_payload_separates_graph_context_and_private_evidence():
     assert payload['private_evidence_context']['job_posting']['requirements'] == 'Python, Django, 검색 평가'
     assert payload['private_evidence_context']['cover_letter']['trust'] == 'cover_letter'
     assert '예상연봉' not in str(payload)
+
+
+@pytest.mark.django_db
+def test_build_llm_payload_retrieves_relevant_company_graph_facts_only():
+    user = User.objects.create_user(email='relevant-context@test.com', password='pass1234!')
+    Profile.objects.create(user=user)
+    company = Company.objects.create(company_name='검색품질테크', industry='AI', size='startup')
+    source = CompanySourceDocument.objects.create(
+        company=company,
+        source_type='homepage',
+        title='공식 기술 블로그',
+        raw_text='검색품질테크는 Django 기반 GraphRAG API와 채용 플랫폼을 운영합니다.',
+        content_hash='relevance-source',
+    )
+    relevant, irrelevant = create_pending_claims_from_source(source, [
+        {
+            'claim_type': 'tech_stack',
+            'subject': company.company_name,
+            'predicate': 'uses',
+            'object': 'Django GraphRAG API',
+        },
+        {
+            'claim_type': 'benefit',
+            'subject': company.company_name,
+            'predicate': 'offers',
+            'object': '사내 카페 리모델링',
+        },
+    ])
+    relevant_fact = approve_claim(relevant)
+    irrelevant_fact = approve_claim(irrelevant)
+    posting = JobPosting.objects.create(
+        user=user,
+        company=company,
+        company_name=company.company_name,
+        job_title='GraphRAG 백엔드 엔지니어',
+        responsibilities='Django 기반 검색 API 개발',
+        requirements='Python, Django, GraphRAG 평가',
+        raw_text='Django GraphRAG API 개발자 채용',
+        resolved=False,
+    )
+
+    payload = build_llm_payload(
+        user,
+        '',
+        '',
+        ['technical'],
+        company=company,
+        job_posting=posting,
+    )
+
+    fact_ids = [fact['fact_id'] for fact in payload['company_graph_context']['facts']]
+    assert relevant_fact.id in fact_ids
+    assert irrelevant_fact.id not in fact_ids
+
+
+@pytest.mark.django_db
+def test_build_llm_payload_populates_taxonomy_context_from_posting_and_interview_types():
+    user = User.objects.create_user(email='taxonomy-context@test.com', password='pass1234!')
+    Profile.objects.create(user=user)
+    company = Company.objects.create(company_name='택소노미테크', industry='AI', size='startup')
+    Skill.objects.create(name='Django', category=Skill.Category.FRAMEWORK, aliases=['장고'])
+    Skill.objects.create(name='GraphRAG', category=Skill.Category.DOMAIN, aliases=['그래프 검색'])
+    InterviewType.objects.create(
+        code='technical',
+        label='기술면접',
+        description='기술 선택의 근거와 구현 깊이를 확인한다.',
+    )
+    posting = JobPosting.objects.create(
+        user=user,
+        company=company,
+        company_name=company.company_name,
+        job_title='AI 백엔드 엔지니어',
+        responsibilities='GraphRAG 분석 품질 개선',
+        requirements='Python, Django, 그래프 검색',
+        raw_text='GraphRAG와 장고 기반 서비스 개발',
+        resolved=False,
+    )
+
+    payload = build_llm_payload(
+        user,
+        '',
+        '',
+        ['technical'],
+        company=company,
+        job_posting=posting,
+    )
+
+    study_areas = payload['job_info']['학습추천분야']
+    assert [area['name'] for area in study_areas] == ['Django', 'GraphRAG']
+    assert study_areas[0]['source'] == 'taxonomy.skill'
+    assert payload['job_info']['interview_stages'] == [{
+        'code': 'technical',
+        'label': '기술면접',
+        'description': '기술 선택의 근거와 구현 깊이를 확인한다.',
+    }]
+
+
+def test_normalize_llm_result_preserves_traceable_subtopic_fields():
+    from analysis.services import normalize_llm_result
+
+    result = normalize_llm_result({
+        'competency_gap': {'required_competencies': ['Django']},
+        'text_roadmap': 'Django 학습',
+        'timeline_data': [{
+            'title': '1주차',
+            'subtopics': [{
+                'title': 'Django ORM',
+                'question': 'N+1을 어떻게 찾나요?',
+                'answer_guide': '쿼리 수와 prefetch_related 사용을 설명한다.',
+                'evidence': 'fact:12',
+                'study_goal': 'ORM 최적화 기준을 말할 수 있다.',
+                'follow_up_questions': 'select_related와 차이는?',
+                'source_ids': ['fact:12', 13, ''],
+            }],
+        }],
+    })
+
+    subtopic = result['timeline_data'][0]['subtopics'][0]
+    assert subtopic['follow_up_questions'] == ['select_related와 차이는?']
+    assert subtopic['source_ids'] == ['fact:12', '13']
 
 
 @pytest.mark.django_db

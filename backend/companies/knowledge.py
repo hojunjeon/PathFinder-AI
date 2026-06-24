@@ -1,4 +1,5 @@
 import hashlib
+import re
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -124,7 +125,14 @@ def create_private_role_candidate_from_posting(
     )
 
 
-def build_company_graph_context(company: Company) -> dict:
+DEFAULT_COMPANY_GRAPH_FACT_LIMIT = 8
+
+
+def build_company_graph_context(
+    company: Company,
+    query_text: str = '',
+    limit: int = DEFAULT_COMPANY_GRAPH_FACT_LIMIT,
+) -> dict:
     facts = []
     queryset = (
         CompanyKnowledgeFact.objects
@@ -143,10 +151,27 @@ def build_company_graph_context(company: Company) -> dict:
             'object': fact.object,
             'trust_level': fact.trust_level,
         })
+    if query_text:
+        query_tokens = _tokenize(query_text)
+        scored_facts = []
+        for order, fact in enumerate(facts):
+            score = _fact_relevance_score(fact, query_tokens)
+            if score > 0:
+                scored_fact = {**fact, 'relevance_score': score}
+                scored_facts.append((score, order, scored_fact))
+        scored_facts.sort(key=lambda item: (-item[0], item[1]))
+        facts = [fact for _, _, fact in scored_facts[:limit]]
+    elif limit > 0:
+        facts = facts[:limit]
     return {
         'company_id': company.id,
         'company_name': company.company_name,
         'facts': facts,
+        'retrieval': {
+            'query_applied': bool(query_text),
+            'limit': limit,
+            'matched_count': len(facts),
+        },
     }
 
 
@@ -162,3 +187,22 @@ def _split_text(text: str, max_chars: int) -> list[str]:
 
 def _hash_text(text: str) -> str:
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def _fact_relevance_score(fact: dict, query_tokens: set[str]) -> int:
+    if not query_tokens:
+        return 0
+    fact_tokens = _tokenize(' '.join([
+        str(fact.get('fact_type', '')),
+        str(fact.get('predicate', '')),
+        str(fact.get('object', '')),
+    ]))
+    return len(fact_tokens & query_tokens)
+
+
+def _tokenize(text: str) -> set[str]:
+    return {
+        token.lower()
+        for token in re.findall(r'[0-9A-Za-z가-힣]+', text)
+        if len(token) >= 2
+    }

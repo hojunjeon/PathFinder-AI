@@ -14,6 +14,8 @@ app = FastAPI(title="PathFinder LLM Server", docs_url=None, redoc_url=None)
 
 GMS_KEY = os.getenv("GMS_KEY", "")
 GMS_URL = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions"
+EMBEDDINGS_GMS_URL = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/embeddings"
+EMBEDDING_MODEL = "text-embedding-3-small"
 IMAGE_GMS_URL = (
     "https://gms.ssafy.io/gmsapi/"
     "generativelanguage.googleapis.com/v1beta/models/"
@@ -45,6 +47,20 @@ class RoadmapResponse(BaseModel):
     competency_gap: dict = Field(default_factory=dict)
     text_roadmap: str
     timeline_data: list[dict]
+
+
+class EmbeddingsRequest(BaseModel):
+    input: list[str] = Field(min_length=1, max_length=64)
+
+
+class EmbeddingData(BaseModel):
+    index: int
+    embedding: list[float]
+
+
+class EmbeddingsResponse(BaseModel):
+    model: str
+    data: list[EmbeddingData]
 
 
 @app.middleware("http")
@@ -104,6 +120,27 @@ async def generate_roadmap(req: RoadmapRequest):
     return _parse_response(response_text)
 
 
+@app.post("/llm/embeddings", response_model=EmbeddingsResponse, dependencies=[Depends(require_internal_token)])
+async def create_embeddings(req: EmbeddingsRequest):
+    if not GMS_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="GMS_KEY is required for embeddings.",
+        )
+    try:
+        return await _call_embeddings(req.input)
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"GMS embeddings request failed with status {exc.response.status_code}.",
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="GMS embeddings request failed.",
+        ) from exc
+
+
 async def _call_gpt(prompt: str) -> str:
     if not GMS_KEY:
         return MOCK_ROADMAP_RESPONSE
@@ -123,6 +160,25 @@ async def _call_gpt(prompt: str) -> str:
         resp = await client.post(GMS_URL, headers=headers, json=payload)
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]
+
+
+async def _call_embeddings(inputs: list[str]) -> EmbeddingsResponse:
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GMS_KEY}",
+    }
+    payload = {
+        "model": EMBEDDING_MODEL,
+        "input": inputs,
+    }
+    async with httpx.AsyncClient(timeout=GMS_REQUEST_TIMEOUT_SECONDS) as client:
+        resp = await client.post(EMBEDDINGS_GMS_URL, headers=headers, json=payload)
+        resp.raise_for_status()
+        data = resp.json()
+        return EmbeddingsResponse(
+            model=data.get("model", EMBEDDING_MODEL),
+            data=data.get("data", []),
+        )
 
 
 def _parse_response(text: str) -> RoadmapResponse:

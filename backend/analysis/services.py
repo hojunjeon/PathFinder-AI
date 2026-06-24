@@ -6,7 +6,7 @@ from django.conf import settings
 from accounts.models import Profile
 from companies.knowledge import build_company_graph_context
 from companies.job_titles import display_job_title
-from companies.models import Company, JobPosting
+from companies.models import Company, InterviewType, JobPosting, Skill
 from urllib.parse import urlparse
 
 MAX_JOB_POSTING_TEXT_CHARS = 8000
@@ -34,13 +34,24 @@ def build_llm_payload(user, job_posting_url: str,
     job_description = job_posting.responsibilities if job_posting else ''
     required_skills = job_posting.requirements if job_posting else ''
     preferred_qualifications = job_posting.preferred_qualifications if job_posting else ''
-    recommended_study_areas = []
-    interview_stages = []
     if not job_posting_text:
         if job_posting and job_posting.raw_text:
             job_posting_text = job_posting.raw_text
         else:
             job_posting_text = fetch_job_posting_text(job_posting_url)
+    retrieval_query = _build_retrieval_query(
+        user_profile,
+        job_title,
+        job_description,
+        required_skills,
+        preferred_qualifications,
+        job_posting_text,
+        submitted_cover_letter,
+        selected_interview_types,
+        interview_type_etc_text,
+    )
+    recommended_study_areas = _build_recommended_study_areas(retrieval_query)
+    interview_stages = _build_interview_stages(selected_interview_types)
     return {
         'user_profile': user_profile,
         'job_posting_text': job_posting_text,
@@ -55,10 +66,18 @@ def build_llm_payload(user, job_posting_url: str,
             '기업규모': company.get_size_display() if company else '',
             '조직문화_키워드': company.culture_keywords if company else [],
         },
-        'company_graph_context': build_company_graph_context(company) if company else {
+        'company_graph_context': build_company_graph_context(
+            company,
+            query_text=retrieval_query,
+        ) if company else {
             'company_id': None,
             'company_name': '',
             'facts': [],
+            'retrieval': {
+                'query_applied': False,
+                'limit': 0,
+                'matched_count': 0,
+            },
         },
         'private_evidence_context': {
             'profile': {
@@ -150,3 +169,107 @@ def strip_html(html: str) -> str:
     html = re.sub(r'(?s)<[^>]+>', ' ', html)
     html = re.sub(r'\s+', ' ', html)
     return html.strip()
+
+
+def normalize_llm_result(result: dict) -> dict:
+    normalized = {
+        'competency_gap': result.get('competency_gap') or {},
+        'text_roadmap': str(result.get('text_roadmap') or ''),
+        'timeline_data': [],
+    }
+    timeline_data = result.get('timeline_data')
+    if not isinstance(timeline_data, list):
+        return normalized
+    for category in timeline_data:
+        if not isinstance(category, dict):
+            continue
+        normalized_category = {**category}
+        subtopics = category.get('subtopics')
+        normalized_category['subtopics'] = [
+            _normalize_subtopic(subtopic)
+            for subtopic in subtopics
+            if isinstance(subtopic, dict)
+        ] if isinstance(subtopics, list) else []
+        normalized['timeline_data'].append(normalized_category)
+    return normalized
+
+
+def _normalize_subtopic(subtopic: dict) -> dict:
+    normalized = {**subtopic}
+    for key in ('title', 'question', 'answer_guide', 'evidence', 'study_goal'):
+        normalized[key] = str(normalized.get(key) or '')
+    followups = normalized.get('follow_up_questions')
+    if isinstance(followups, str):
+        followups = [followups] if followups.strip() else []
+    elif isinstance(followups, list):
+        followups = [str(item) for item in followups if str(item).strip()]
+    else:
+        followups = []
+    normalized['follow_up_questions'] = followups
+    normalized['source_ids'] = _normalize_source_ids(normalized.get('source_ids'))
+    return normalized
+
+
+def _normalize_source_ids(source_ids) -> list[str]:
+    if not isinstance(source_ids, list):
+        return []
+    return [str(source_id) for source_id in source_ids if str(source_id).strip()]
+
+
+def _build_retrieval_query(
+    user_profile: dict,
+    job_title: str,
+    job_description: str,
+    required_skills: str,
+    preferred_qualifications: str,
+    job_posting_text: str,
+    submitted_cover_letter: str,
+    selected_interview_types: list,
+    interview_type_etc_text: str,
+) -> str:
+    profile_text = ' '.join(str(value) for value in user_profile.values())
+    return ' '.join([
+        profile_text,
+        job_title,
+        job_description,
+        required_skills,
+        preferred_qualifications,
+        job_posting_text,
+        submitted_cover_letter,
+        ' '.join(selected_interview_types),
+        interview_type_etc_text,
+    ]).strip()
+
+
+def _build_recommended_study_areas(query_text: str) -> list[dict]:
+    query_text_lower = query_text.lower()
+    study_areas = []
+    for skill in Skill.objects.order_by('name'):
+        terms = [skill.name, *skill.aliases]
+        if any(term and term.lower() in query_text_lower for term in terms):
+            study_areas.append({
+                'name': skill.name,
+                'category': skill.category,
+                'source': 'taxonomy.skill',
+            })
+    return study_areas
+
+
+def _build_interview_stages(selected_interview_types: list) -> list[dict]:
+    if not selected_interview_types:
+        return []
+    types_by_code = {
+        interview_type.code: interview_type
+        for interview_type in InterviewType.objects.filter(code__in=selected_interview_types)
+    }
+    stages = []
+    for code in selected_interview_types:
+        interview_type = types_by_code.get(code)
+        if not interview_type:
+            continue
+        stages.append({
+            'code': interview_type.code,
+            'label': interview_type.label,
+            'description': interview_type.description,
+        })
+    return stages

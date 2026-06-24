@@ -118,6 +118,7 @@ function normalizeCategoryItem(item, itemIdx) {
       evidence: subtopic.evidence || '',
       study_goal: subtopic.study_goal || subtopic.studyGoal || '',
       follow_up_questions: Array.isArray(subtopic.follow_up_questions) ? subtopic.follow_up_questions : [],
+      source_ids: Array.isArray(subtopic.source_ids) ? subtopic.source_ids.filter(Boolean).map(String) : [],
     })),
   }
 }

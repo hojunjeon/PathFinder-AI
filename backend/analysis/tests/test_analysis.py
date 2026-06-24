@@ -2,7 +2,17 @@ import pytest
 from unittest.mock import patch, AsyncMock
 from rest_framework.test import APIClient
 from accounts.models import User, Profile
-from companies.models import Company, CompanyKnowledgeClaim, CompanyKnowledgeFact, Job, JobPosting
+from companies.knowledge import approve_claim, create_pending_claims_from_source
+from companies.models import (
+    Company,
+    CompanyKnowledgeClaim,
+    CompanyKnowledgeFact,
+    CompanySourceDocument,
+    InterviewType,
+    Job,
+    JobPosting,
+    Skill,
+)
 from analysis.models import Analysis, CoverLetter
 
 
@@ -114,6 +124,90 @@ def test_analysis_create_accepts_company_posting_without_legacy_job(auth_client)
     payload = call_llm.call_args.args[0]
     payload_text = str(payload)
     assert all(key not in payload_text for key in OLD_JOB_PROMPT_KEYS)
+
+
+@pytest.mark.django_db
+def test_analysis_api_payload_uses_retrieval_taxonomy_and_normalized_sources(auth_client):
+    client, user = auth_client
+    company = Company.objects.create(
+        company_name='API그래프테크',
+        industry='AI',
+        size='startup',
+        roadmap_supported=True,
+    )
+    source = CompanySourceDocument.objects.create(
+        company=company,
+        source_type='homepage',
+        title='공식 채용 기술 블로그',
+        raw_text='API그래프테크는 Django GraphRAG API를 운영합니다.',
+        content_hash='api-surface-source',
+    )
+    relevant, irrelevant = create_pending_claims_from_source(source, [
+        {
+            'claim_type': 'tech_stack',
+            'subject': company.company_name,
+            'predicate': 'uses',
+            'object': 'Django GraphRAG API',
+        },
+        {
+            'claim_type': 'benefit',
+            'subject': company.company_name,
+            'predicate': 'offers',
+            'object': '사내 카페 리모델링',
+        },
+    ])
+    relevant_fact = approve_claim(relevant)
+    irrelevant_fact = approve_claim(irrelevant)
+    Skill.objects.create(name='Django', category=Skill.Category.FRAMEWORK, aliases=['장고'])
+    InterviewType.objects.create(
+        code='technical',
+        label='기술면접',
+        description='기술 구현 깊이를 확인한다.',
+    )
+    private_marker = 'PRIVATE_API_SURFACE_MARKER'
+    mock_result = {
+        'competency_gap': {'required_competencies': ['Django']},
+        'text_roadmap': 'Django GraphRAG API 준비',
+        'timeline_data': [{
+            'category': 'GraphRAG API',
+            'subtopics': [{
+                'title': 'Django ORM',
+                'question': 'N+1을 어떻게 찾나요?',
+                'answer_guide': '쿼리 수와 prefetch_related 기준을 설명한다.',
+                'evidence': 'fact',
+                'study_goal': 'ORM 최적화 기준을 말할 수 있다.',
+                'follow_up_questions': 'select_related와 차이는?',
+                'source_ids': [f'fact:{relevant_fact.id}', relevant_fact.source_document_id],
+            }],
+        }],
+    }
+
+    with patch('analysis.views.call_llm_server', new_callable=AsyncMock, return_value=mock_result) as call_llm:
+        resp = client.post('/api/analyze/', {
+            'company_id': company.id,
+            'job_posting': {
+                'job_title': 'GraphRAG 백엔드 엔지니어',
+                'responsibilities': f'Django 기반 검색 API 개발 {private_marker}',
+                'requirements': 'Python, Django, GraphRAG 평가',
+                'preferred_qualifications': '',
+            },
+            'submitted_cover_letter': private_marker,
+            'selected_interview_types': ['technical'],
+        }, format='json')
+
+    assert resp.status_code == 201
+    call_llm.assert_awaited_once()
+    payload = call_llm.call_args.args[0]
+    fact_ids = [fact['fact_id'] for fact in payload['company_graph_context']['facts']]
+    assert relevant_fact.id in fact_ids
+    assert irrelevant_fact.id not in fact_ids
+    assert payload['job_info']['학습추천분야'][0]['name'] == 'Django'
+    assert payload['job_info']['interview_stages'][0]['label'] == '기술면접'
+    subtopic = resp.data['timeline_data'][0]['subtopics'][0]
+    assert subtopic['follow_up_questions'] == ['select_related와 차이는?']
+    assert subtopic['source_ids'] == [f'fact:{relevant_fact.id}', str(relevant_fact.source_document_id)]
+    assert not CompanyKnowledgeFact.objects.filter(object__contains=private_marker).exists()
+    assert CoverLetter.objects.filter(user=user, content=private_marker).exists()
 
 
 @pytest.mark.django_db

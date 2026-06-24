@@ -7,7 +7,7 @@ from companies.knowledge import create_private_role_candidate_from_posting
 from companies.models import Company, CompanyKnowledgeClaim, JobPosting
 from .models import Analysis, CoverLetter
 from .serializers import AnalysisCreateSerializer, AnalysisResultSerializer
-from .services import build_llm_payload, call_llm_server
+from .services import build_llm_payload, call_llm_server, normalize_llm_result
 
 
 class AnalysisCreateView(APIView):
@@ -101,7 +101,7 @@ class AnalysisCreateView(APIView):
         )
 
         try:
-            result = asyncio.run(call_llm_server(payload))
+            result = normalize_llm_result(asyncio.run(call_llm_server(payload)))
             analysis.competency_gap = result.get('competency_gap', {})
             analysis.text_roadmap = result.get('text_roadmap', '')
             analysis.timeline_data = result.get('timeline_data', [])

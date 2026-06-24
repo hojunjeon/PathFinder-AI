@@ -45,6 +45,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('시스템 설계').first()).toBeVisible()
   await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '근거 커버리지' })).toBeVisible()
+  await expect(page.getByText('직무 역량 매칭도')).toHaveCount(0)
+  await expect(page.getByText('fact:101')).toBeVisible()
+  await page.screenshot({ path: '../.omo/ulw-loop/evidence/result-page-desktop.png', fullPage: true })
   await expect(page.getByLabel('역기구학')).toBeChecked()
   await expect(page.getByLabel('모션 플래닝')).toBeChecked()
   await expect(page.getByText('40%').first()).toBeVisible()
@@ -220,6 +224,7 @@ async function mockAnalysisResult(page) {
                 evidence: '자기소개서의 로봇 팔 제어 정확도 개선 경험',
                 study_goal: 'FK/IK 차이와 특이점 대응을 설명할 수 있어야 합니다.',
                 follow_up_questions: ['관절 제한은 어느 단계에서 반영했나요?'],
+                source_ids: ['fact:101', 'source:7'],
               },
               {
                 title: '모션 플래닝',

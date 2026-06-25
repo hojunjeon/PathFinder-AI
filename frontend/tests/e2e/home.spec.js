@@ -13,10 +13,24 @@ test('logged-in users still land on the main page and use buttons for features',
   await page.addInitScript(() => {
     localStorage.setItem('access', 'e2e-token')
   })
+  await page.route('**/api/profile/', async route => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        name: '홍길동',
+        email: 'user@example.com',
+      },
+    })
+  })
 
   await page.goto('/')
 
   await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('link', { name: '홈', exact: true })).toBeVisible()
+  const account = page.getByRole('link', { name: '현재 로그인 계정 프로필' })
+  await expect(account).toContainText('로그인 계정')
+  await expect(account).toContainText('홍길동')
+  await expect(account).toContainText('user@example.com')
   await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
   await expect(page.getByRole('link', { name: '내 프로필 정리하기' })).toBeVisible()
   await expect(page.getByRole('link', { name: '이전 로드맵 보기' })).toBeVisible()
@@ -29,6 +43,15 @@ test('login success redirects to the main page instead of roadmap creation', asy
       json: { access: 'e2e-access', refresh: 'e2e-refresh' },
     })
   })
+  await page.route('**/api/profile/', async route => {
+    await route.fulfill({
+      status: 200,
+      json: {
+        name: '김패스',
+        email: 'user@example.com',
+      },
+    })
+  })
 
   await page.goto('/login')
   await page.locator('#email').fill('user@example.com')
@@ -36,5 +59,8 @@ test('login success redirects to the main page instead of roadmap creation', asy
   await page.locator('#submit-btn').click()
 
   await expect(page).toHaveURL(/\/$/)
+  const account = page.getByRole('link', { name: '현재 로그인 계정 프로필' })
+  await expect(account).toContainText('김패스')
+  await expect(account).toContainText('user@example.com')
   await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
 })

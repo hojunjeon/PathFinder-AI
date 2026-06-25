@@ -105,6 +105,11 @@ def test_analysis_create_success(auth_client, company):
     with patch('analysis.views.call_llm_server', new_callable=AsyncMock, return_value=mock_result):
         resp = client.post('/api/analyze/', {
             **analysis_payload(company),
+            'submitted_cover_letter': 'Q. 지원동기\nA. API 개선 경험을 바탕으로 지원했습니다.',
+            'submitted_cover_letter_items': [{
+                'question': '지원동기',
+                'answer': 'API 개선 경험을 바탕으로 지원했습니다.',
+            }],
             'selected_interview_types': ['coding_test', 'etc'],
             'interview_type_etc_text': '임원 과제 리뷰',
         }, format='json')
@@ -121,6 +126,49 @@ def test_analysis_create_success(auth_client, company):
     assert analysis.job_posting is not None
     assert analysis.selected_interview_types == ['coding_test', 'etc']
     assert analysis.interview_type_etc_text == '임원 과제 리뷰'
+    assert analysis.submitted_cover_letter_items == [{
+        'question': '지원동기',
+        'answer': 'API 개선 경험을 바탕으로 지원했습니다.',
+    }]
+
+
+@pytest.mark.django_db
+def test_analysis_detail_includes_submitted_cover_letter_but_history_does_not(auth_client, company):
+    client, user = auth_client
+    analysis = Analysis.objects.create(
+        user=user,
+        job=None,
+        company=company,
+        submitted_cover_letter=(
+            'Q. 지원동기\r\n'
+            'A. 분석 당시 제출한 첫 문단입니다.\r\n\r\n'
+            '답변의 두 번째 문단입니다.\r\n\r\n'
+            'Q. 직무 역량\r\n'
+            'A. API와 DB 최적화 경험이 있습니다.'
+        ),
+        submitted_cover_letter_items=[
+            {
+                'question': '지원동기',
+                'answer': '분석 당시 제출한 첫 문단입니다.\n\n답변의 두 번째 문단입니다.',
+            },
+            {
+                'question': '직무 역량',
+                'answer': 'API와 DB 최적화 경험이 있습니다.',
+            },
+        ],
+        selected_interview_types=['technical'],
+        status=Analysis.Status.DONE,
+    )
+
+    detail_resp = client.get(f'/api/analyze/{analysis.id}/')
+    history_resp = client.get('/api/analyze/history/')
+
+    assert detail_resp.status_code == 200
+    assert detail_resp.data['submitted_cover_letter'] == analysis.submitted_cover_letter
+    assert detail_resp.data['submitted_cover_letter_items'] == analysis.submitted_cover_letter_items
+    assert history_resp.status_code == 200
+    assert 'submitted_cover_letter' not in history_resp.data[0]
+    assert 'submitted_cover_letter_items' not in history_resp.data[0]
 
 
 @pytest.mark.django_db

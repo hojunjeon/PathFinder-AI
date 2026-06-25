@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from companies.knowledge import create_private_role_candidate_from_posting
 from companies.models import Company, CompanyKnowledgeClaim, JobPosting
 from .models import Analysis, CoverLetter
-from .serializers import AnalysisCreateSerializer, AnalysisResultSerializer
+from .serializers import AnalysisCreateSerializer, AnalysisDetailSerializer, AnalysisResultSerializer
 from .services import build_llm_payload, call_llm_server, normalize_llm_result
 
 
@@ -64,6 +64,7 @@ class AnalysisCreateView(APIView):
 
         cover_letter = None
         submitted_cover_letter = data.get('submitted_cover_letter', '')
+        submitted_cover_letter_items = data.get('submitted_cover_letter_items', [])
         if submitted_cover_letter:
             cover_letter = CoverLetter.objects.create(
                 user=request.user,
@@ -81,6 +82,7 @@ class AnalysisCreateView(APIView):
             job_posting_url=data.get('job_posting_url', ''),
             job_posting_text=data.get('job_posting_text', ''),
             submitted_cover_letter=submitted_cover_letter,
+            submitted_cover_letter_items=submitted_cover_letter_items,
             selected_interview_types=data['selected_interview_types'],
             interview_type_etc_text=data.get('interview_type_etc_text', ''),
             status=Analysis.Status.PENDING,
@@ -124,7 +126,7 @@ class AnalysisDetailView(APIView):
             analysis = Analysis.objects.get(pk=analysis_id, user=request.user)
         except Analysis.DoesNotExist:
             return Response({'error': '분석 결과를 찾을 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response(AnalysisResultSerializer(analysis).data)
+        return Response(AnalysisDetailSerializer(analysis).data)
 
 
 class AnalysisHistoryView(APIView):

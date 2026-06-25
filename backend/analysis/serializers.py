@@ -15,6 +15,11 @@ class JobPostingInputSerializer(serializers.Serializer):
     preferred_qualifications = serializers.CharField(allow_blank=True, required=False, default='')
 
 
+class CoverLetterItemSerializer(serializers.Serializer):
+    question = serializers.CharField(max_length=1000, trim_whitespace=True)
+    answer = serializers.CharField(max_length=MAX_COVER_LETTER_CHARS, trim_whitespace=True)
+
+
 class AnalysisCreateSerializer(serializers.Serializer):
     company_id = serializers.IntegerField(required=False)
     job_posting_id = serializers.IntegerField(required=False)
@@ -31,6 +36,11 @@ class AnalysisCreateSerializer(serializers.Serializer):
         required=False,
         default='',
         max_length=MAX_COVER_LETTER_CHARS,
+    )
+    submitted_cover_letter_items = CoverLetterItemSerializer(
+        many=True,
+        required=False,
+        default=list,
     )
     selected_interview_types = serializers.ListField(
         child=serializers.ChoiceField(choices=[
@@ -85,4 +95,13 @@ class AnalysisResultSerializer(serializers.ModelSerializer):
             'id', 'company_name', 'job_title', 'job_posting_url',
             'selected_interview_types', 'interview_type_etc_text', 'competency_gap',
             'text_roadmap', 'timeline_data', 'status', 'created_at',
+        ]
+
+
+class AnalysisDetailSerializer(AnalysisResultSerializer):
+    class Meta(AnalysisResultSerializer.Meta):
+        fields = [
+            *AnalysisResultSerializer.Meta.fields,
+            'submitted_cover_letter',
+            'submitted_cover_letter_items',
         ]

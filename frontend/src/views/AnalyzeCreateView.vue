@@ -91,6 +91,7 @@ const jobUrl = ref('')
 const selectedJob = ref(null)
 const selectedCompany = ref(null)
 const coverLetter = ref('')
+const coverLetterItems = ref([])
 const submitting = ref(false)
 const coverLetterPending = ref(false)
 const manualPostingText = ref('')
@@ -111,12 +112,13 @@ function onJobSelected({ url, company, job, job_posting_id, job_posting, job_pos
   currentStep.value = 2
 }
 
-async function onCoverLetterDone({ text }) {
+async function onCoverLetterDone({ text, items }) {
   if (coverLetterPending.value || submitting.value) {
     return
   }
   coverLetterPending.value = true
   coverLetter.value = text || ''
+  coverLetterItems.value = Array.isArray(items) ? items : []
   try {
     await onSubmit()
   } catch (e) {
@@ -136,6 +138,7 @@ async function onSubmit() {
       job_posting_url: jobUrl.value,
       job_posting_text: manualPostingText.value,
       submitted_cover_letter: coverLetter.value,
+      submitted_cover_letter_items: coverLetterItems.value,
       selected_interview_types: selectedInterviewTypes.value,
       interview_type_etc_text: interviewTypeEtcText.value,
     })

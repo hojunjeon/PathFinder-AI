@@ -2,7 +2,7 @@
 
 ## Source of truth
 - Status: Active
-- Last refreshed: 2026-06-24
+- Last refreshed: 2026-06-25
 - Primary product surfaces: 분석 생성, 역량 분석 결과, 면접 준비 항목
 - Evidence reviewed: `frontend/src/views/AnalyzeResultView.vue`, `frontend/src/components/result/*`, `frontend/src/composables/useRoadmapProgress.js`, `llm_server/roadmap_prompt.py`, `docs/09_분석결과_페이지_가독성_개선.md`, `docs/13_면접_예상질문_AI_결과_설계.md`
 
@@ -120,3 +120,35 @@
 ## Open questions
 - [ ] 실제 사용자 평가를 통해 상태 분류 명칭과 설명의 이해도를 검증한다.
 - [ ] 질문별 답변 초안과 AI 피드백 기능을 후속 범위에서 결정한다.
+
+## 분석 결과 자기소개서 확인 계약
+- 목적: 사용자가 분석 결과를 읽다가 분석에 사용된 자기소개서 원문을 현재 맥락에서 다시 확인한다.
+- UI 원칙:
+  - 새 분석 생성 화면으로 이동시키지 않는다.
+  - 결과 페이지의 사이드바에서 `제출 자기소개서 확인` 버튼을 제공한다.
+  - 내용은 읽기 전용 모달로 표시하고 수정·저장 기능은 제공하지 않는다.
+  - 모달은 데스크톱과 모바일 모두 화면 중앙에 표시한다.
+  - 모달에는 제목, 닫기 버튼, 항목별 자기소개서 블록만 표시한다.
+  - 각 블록은 항목을 굵게, 답변을 일반 본문으로 표시하고 사용자가 입력한 문장과 줄바꿈을 유지한다.
+  - 긴 자기소개서는 모달 내부에서 독립적으로 스크롤한다.
+  - 모달 제목은 고정하고 자기소개서 블록 영역에 항상 세로 스크롤이 가능하도록 높이와 overflow 경계를 명시한다.
+- 접근성:
+  - 네이티브 `dialog`의 포커스 트랩과 Escape 닫기를 사용한다.
+  - 제목과 설명을 `aria-labelledby`, `aria-describedby`로 연결한다.
+  - 닫은 뒤 실행 버튼으로 포커스를 돌려준다.
+- 데이터 계약:
+  - `submitted_cover_letter`는 사용자 본인의 분석 상세 API에만 포함한다.
+  - 새 분석은 `submitted_cover_letter_items`에 입력 당시의 항목과 답변 구조를 함께 보존한다.
+  - 기존 분석에 구조화 데이터가 없을 때만 `submitted_cover_letter` 원문을 그대로 표시한다.
+  - 분석 히스토리 목록에는 원문을 포함하지 않아 개인정보 노출 범위와 응답 크기를 제한한다.
+## Global navigation account identity contract
+- Goal: 인증된 사용자가 모든 주요 화면에서 현재 로그인 중인 계정을 즉시 확인할 수 있어야 한다.
+- Evidence reviewed: `frontend/src/App.vue`, `frontend/src/style.css`, `frontend/src/stores/auth.js`, `frontend/src/views/ProfileView.vue`, `backend/accounts/serializers.py`.
+- Placement: 주요 메뉴와 테마·로그아웃 제어 사이에 아바타, 이름, 이메일을 묶은 계정 표시를 둔다.
+- Information priority:
+  - 프로필 이름이 있으면 이름을 주 식별자로 표시한다.
+  - 이메일은 보조 식별자로 표시한다.
+  - 이름이 비어 있으면 이메일을 주 식별자로 사용한다.
+- Interaction: 계정 표시는 프로필 화면으로 이동하는 링크이며 접근 가능한 이름은 `현재 로그인 계정 프로필`이다.
+- Responsive behavior: 모바일에서는 계정 표시를 메뉴의 독립된 한 줄로 배치하고 긴 이름과 이메일은 말줄임 처리한다.
+- Data contract: `/api/profile/`은 수정 불가능한 `email`과 수정 가능한 `name`을 함께 제공한다.

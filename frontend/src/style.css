@@ -146,6 +146,54 @@ body {
   color: #ffffff;
 }
 
+.global-links .account-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-left: var(--space-4);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.account-avatar {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-on);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.account-copy {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.account-copy strong,
+.account-email {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-copy strong {
+  color: #ffffff;
+  font-size: 11px;
+}
+
+.account-caption,
+.account-email {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 9px;
+  font-weight: 400;
+}
+
 /* Custom buttons on Nav */
 .nav-btn {
   background: none;
@@ -289,6 +337,19 @@ input:focus, select:focus, textarea:focus {
     overflow: visible;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  .global-links .account-indicator {
+    order: -1;
+    flex: 1 1 100%;
+    padding: var(--space-2) 0 var(--space-3);
+    border-left: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .account-copy strong,
+  .account-email {
+    max-width: min(70vw, 320px);
   }
 
   .global-links::-webkit-scrollbar {

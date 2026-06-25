@@ -23,6 +23,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
       expect(body.job_posting_url).toBe('')
       expect(body.job_posting_text).toContain('담당업무:')
       expect(body.submitted_cover_letter).toContain('Q. 지원동기')
+      expect(body.submitted_cover_letter_items).toEqual([{
+        question: '지원동기',
+        answer: '제출했던 자기소개서 답변',
+      }])
       expect(body.selected_interview_types).toEqual(['technical', 'personality', 'etc'])
       expect(body.interview_type_etc_text).toBe('임원 과제 리뷰')
       await route.fulfill({ status: 201, json: { id: 99 } })
@@ -40,7 +44,10 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('#next-cover-letter-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
-  await expect(page.locator('.sidebar')).toHaveCount(0)
+  const sidebar = page.locator('.result-sidebar')
+  await expect(sidebar).toBeVisible()
+  await expect(sidebar.getByText('쿠팡')).toBeVisible()
+  await expect(sidebar.getByRole('link', { name: /역량 분석/ })).toBeVisible()
   await expect(page.locator('.progress-card')).toHaveCount(0)
   await expect(page.locator('#scores')).toHaveCount(0)
   await expect(page.locator('#prep-keywords')).toHaveCount(0)
@@ -99,6 +106,32 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('체크박스 & 진행률')).toBeVisible()
   await page.getByRole('button', { name: '분석 결과 설명서 닫기' }).click()
   await expect(page.getByRole('dialog', { name: '분석 결과 설명서' })).toHaveCount(0)
+
+  await sidebar.getByRole('link', { name: /준비 항목/ }).click()
+  await expect.poll(() => new URL(page.url()).hash).toBe('#sprint-title')
+  await expect(sidebar.getByRole('link', { name: /준비 항목/ })).toHaveClass(/active/)
+
+  await sidebar.getByRole('button', { name: '제출 자기소개서 확인' }).click()
+  const coverLetterDialog = page.getByRole('dialog', { name: '제출 자기소개서' })
+  await expect(coverLetterDialog).toBeVisible()
+  await expect(coverLetterDialog.getByRole('heading', { name: '지원동기' })).toBeVisible()
+  await expect(coverLetterDialog.locator('.cover-letter-item').first()).toContainText('제출했던 자기소개서 답변')
+  await expect(coverLetterDialog.locator('.cover-letter-item').first()).toContainText('답변의 두 번째 문단입니다.')
+  await expect(coverLetterDialog.getByRole('heading', { name: '직무 역량' })).toBeVisible()
+  await expect(coverLetterDialog.locator('.cover-letter-item').nth(1)).toContainText('API와 DB 최적화 경험이 있습니다.')
+  const coverLetterContent = coverLetterDialog.locator('.cover-letter-content')
+  const scrollState = await coverLetterContent.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }))
+  expect(scrollState.scrollHeight).toBeGreaterThan(scrollState.clientHeight)
+  await coverLetterContent.evaluate((element) => element.scrollTo(0, element.scrollHeight))
+  await expect.poll(() => coverLetterContent.evaluate((element) => element.scrollTop)).toBeGreaterThan(0)
+  await expect(coverLetterDialog.locator('.cover-letter-item').last()).toContainText('자기소개서 마지막 답변입니다.')
+  await expect(page).toHaveURL(/\/analyze\/99#sprint-title$/)
+  await coverLetterDialog.getByRole('button', { name: '자기소개서 닫기' }).click()
+  await expect(coverLetterDialog).toBeHidden()
+  await expect(sidebar.getByRole('button', { name: '제출 자기소개서 확인' })).toBeFocused()
 
   await page.getByLabel('API 성능 개선을 어필 가능 관점에서 어떻게 설명할 수 있나요?').check()
   await page.reload()
@@ -259,6 +292,27 @@ async function mockAnalysisResult(page) {
         job_title: '백엔드 개발자',
         selected_interview_types: ['technical'],
         interview_type_etc_text: '임원 과제 리뷰',
+        submitted_cover_letter: [
+          'Q. 지원동기',
+          'A. 제출했던 자기소개서 답변',
+          '답변의 두 번째 문단입니다.',
+          '',
+          'Q. 직무 역량',
+          'A. API와 DB 최적화 경험이 있습니다.',
+          '',
+          'Q. 성장 과정',
+          'A. 자기소개서 마지막 답변입니다.',
+        ].join('\n'),
+        submitted_cover_letter_items: [{
+          question: '지원동기',
+          answer: '제출했던 자기소개서 답변\n답변의 두 번째 문단입니다.',
+        }, {
+          question: '직무 역량',
+          answer: 'API와 DB 최적화 경험이 있습니다.',
+        }, {
+          question: '성장 과정',
+          answer: '자기소개서 마지막 답변입니다.',
+        }],
         competency_gap: {
           summary: 'API 개선 경험은 강점이고 시스템 설계 지식은 우선 보완이 필요합니다.',
           competency_map: [{

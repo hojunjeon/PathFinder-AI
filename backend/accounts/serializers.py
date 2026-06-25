@@ -43,11 +43,13 @@ class LoginSerializer(serializers.Serializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
+
     class Meta:
         model = Profile
-        fields = ['name', 'major', 'education', 'careers',
+        fields = ['name', 'email', 'major', 'education', 'careers',
                   'projects', 'awards', 'certificates', 'updated_at']
-        read_only_fields = ['updated_at']
+        read_only_fields = ['email', 'updated_at']
 
     def validate(self, attrs):
         for field in ['careers', 'projects', 'awards', 'certificates']:

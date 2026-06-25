@@ -1640,6 +1640,45 @@ function loadFallbackDone(key) {
   padding-left: 42px;
 }
 
+@media (max-width: 640px) {
+  .main-grid,
+  .sprint-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .radar-panel,
+  .cards-panel {
+    padding: 20px;
+  }
+
+  .section-heading,
+  .sprint-section-title {
+    align-items: flex-start;
+  }
+
+  .section-sub {
+    white-space: normal;
+  }
+
+  .card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .badge-row {
+    justify-content: flex-start;
+  }
+
+  .card-scores {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .score-bar-track {
+    width: 100%;
+  }
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }

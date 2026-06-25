@@ -93,6 +93,9 @@
 import { onMounted, ref } from 'vue'
 import api from '../api'
 import ProfileEntryForm from '../components/profile/ProfileEntryForm.vue'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
 
 const profileSections = [
   {
@@ -209,6 +212,7 @@ onMounted(async () => {
   try {
     const { data } = await api.get('/api/profile/')
     form.value = normalizeProfile(data)
+    authStore.updateCurrentUser(data)
   } catch {
     error.value = '프로필을 불러오지 못했습니다. 입력 후 다시 저장해 주세요.'
   }
@@ -223,6 +227,7 @@ async function save() {
     const payload = normalizeProfile(form.value)
     const { data } = await api.put('/api/profile/', payload)
     form.value = normalizeProfile({ ...payload, ...data })
+    authStore.updateCurrentUser(data)
     saved.value = true
   } catch (requestError) {
     error.value = requestError.response?.data?.message

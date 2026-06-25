@@ -1266,8 +1266,8 @@ function loadFallbackDone(key) {
 
 .sprint-day-icon {
   display: grid;
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   place-items: center;
   flex: 0 0 auto;
   border-radius: 999px;
@@ -1276,6 +1276,12 @@ function loadFallbackDone(key) {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 800;
+}
+.sprint-day-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .d-strength .sprint-day-icon { background: var(--success); }

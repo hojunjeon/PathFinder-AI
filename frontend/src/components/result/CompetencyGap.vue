@@ -18,9 +18,7 @@
 
     <section v-if="items.length" class="stats-row fade-up delay-1" aria-label="역량 상태 요약">
       <article v-for="stat in stats" :key="stat.label" :class="['stat-card', stat.tone]">
-        <span :class="['stat-icon', stat.tone]" aria-hidden="true">
-          <img :src="saltIconSrc(stat.mark)" alt="" />
-        </span>
+        <img :src="saltIconSrc(stat.mark)" :class="['stat-icon-img', stat.tone]" alt="" />
         <div>
           <div class="stat-value">{{ stat.value }}</div>
           <div class="stat-label">{{ stat.label }}</div>
@@ -888,34 +886,13 @@ function loadFallbackDone(key) {
 .stat-card.rose { border-left-color: var(--danger); }
 .stat-card.indigo { border-left-color: var(--accent); }
 
-.stat-icon {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
+.stat-icon-img {
+  display: block;
+  width: 96px;
+  height: 96px;
   flex: 0 0 auto;
-  border-radius: 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 800;
-}
-.stat-icon img {
-  display: block;
-  width: 28px;
-  height: 28px;
   object-fit: contain;
 }
-.sprint-day-icon img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.stat-icon.green { background: color-mix(in oklab, var(--success), white 86%); color: var(--success); }
-.stat-icon.amber { background: color-mix(in oklab, var(--warn), white 84%); color: color-mix(in oklab, var(--warn), black 20%); }
-.stat-icon.rose { background: color-mix(in oklab, var(--danger), white 88%); color: var(--danger); }
-.stat-icon.indigo { background: color-mix(in oklab, var(--accent), white 88%); color: var(--accent); }
 
 .stat-value {
   font-family: var(--font-display);

@@ -890,11 +890,11 @@ function loadFallbackDone(key) {
 
 .stat-icon {
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 10px;
+  border-radius: 12px;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 800;

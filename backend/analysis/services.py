@@ -19,6 +19,12 @@ def build_llm_payload(user, job_posting_url: str,
                       job_posting: JobPosting | None = None) -> dict:
     try:
         profile = user.profile
+        resume = {
+            '경력사항': profile.careers,
+            '프로젝트': profile.projects,
+            '자격증': profile.certificates,
+            '수상내역': profile.awards,
+        }
         user_profile = {
             '전공': profile.major,
             '학력': profile.education,
@@ -26,6 +32,7 @@ def build_llm_payload(user, job_posting_url: str,
             '프로젝트': profile.projects,
             '자격증': profile.certificates,
             '수상내역': profile.awards,
+            '이력서': resume,
         }
     except Profile.DoesNotExist:
         user_profile = {}

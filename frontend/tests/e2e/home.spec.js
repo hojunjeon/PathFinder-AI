@@ -64,3 +64,37 @@ test('login success redirects to the main page instead of roadmap creation', asy
   await expect(account).toContainText('user@example.com')
   await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
 })
+
+test('signup collects only account data and required agreements', async ({ page }) => {
+  let signupPayload = null
+  await page.route('**/api/auth/signup/', async route => {
+    signupPayload = route.request().postDataJSON()
+    await route.fulfill({
+      status: 201,
+      json: { access: 'e2e-access', refresh: 'e2e-refresh' },
+    })
+  })
+
+  await page.goto('/login')
+  await page.locator('#tab-signup').click()
+
+  await expect(page.getByText('이력은 가입 후 프로필에서 작성할 수 있어요.')).toBeVisible()
+  await page.locator('#name').fill('홍길동')
+  await page.locator('#email').fill('USER@example.com')
+  await page.locator('#password').fill('password123!')
+  await page.locator('#password-confirm').fill('password123!')
+  await page.getByLabel('필수 항목 모두 동의').check()
+  await page.locator('#submit-btn').click()
+
+  await expect(page).toHaveURL(/\/$/)
+  expect(signupPayload).toEqual({
+    email: 'USER@example.com',
+    name: '홍길동',
+    password: 'password123!',
+    password_confirm: 'password123!',
+    terms_agreed: true,
+    privacy_agreed: true,
+  })
+  expect(signupPayload).not.toHaveProperty('major')
+  expect(signupPayload).not.toHaveProperty('careers')
+})

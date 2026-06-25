@@ -15,13 +15,8 @@ export const useAuthStore = defineStore('auth', () => {
     currentUserLabel.value.trim().charAt(0).toUpperCase() || '?'
   ))
 
-  async function signup({ name, email, password, passwordConfirm }) {
-    const { data } = await api.post('/api/auth/signup/', {
-      name,
-      email,
-      password,
-      password_confirm: passwordConfirm,
-    })
+  async function signup(payload) {
+    const { data } = await api.post('/api/auth/signup/', payload)
     localStorage.setItem('access', data.access)
     localStorage.setItem('refresh', data.refresh)
     isLoggedIn.value = true

@@ -39,6 +39,11 @@
       </ol>
     </section>
 
+    <section v-if="subtopic.appeal_perspective" class="appeal-section">
+      <span class="block-label">답변 관점</span>
+      <p>{{ subtopic.appeal_perspective }}</p>
+    </section>
+
     <section class="question-section">
       <div class="question-section-head">
         <strong>예상 질문</strong>
@@ -190,7 +195,7 @@ h4 {
   font-size: var(--text-xs);
 }
 .gap-text { color: var(--danger) !important; }
-.focus-section, .steps-section, .question-section {
+.focus-section, .steps-section, .appeal-section, .question-section {
   margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: 1px solid var(--border-soft);
@@ -226,6 +231,15 @@ h4 {
   color: var(--fg-2);
   font-size: var(--text-sm);
   line-height: 1.5;
+}
+.appeal-section p {
+  padding: var(--space-3);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: color-mix(in oklab, var(--accent), transparent 95%);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
 }
 .question-section-head {
   display: flex;

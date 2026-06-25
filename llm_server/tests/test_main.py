@@ -53,8 +53,12 @@ def test_roadmap_returns_mock_without_gms_key(monkeypatch):
     assert resp.status_code == 200
     data = resp.json()
     assert "(Mock)" in data["competency_gap"]["strengths"][0]["keyword"]
-    assert data["competency_gap"]["gaps"][0]["gap_type"] == "knowledge"
+    assert any(item["gap_type"] == "knowledge" for item in data["competency_gap"]["gaps"])
     assert data["competency_gap"]["competency_map"][0]["status"] == "strength"
+    assert data["competency_gap"]["competency_map"][1]["status"] == "organize"
+    assert data["competency_gap"]["competency_map"][2]["status"] == "weakness"
+    assert data["competency_gap"]["organize"][0]["keyword"].endswith("모션 플래닝 경험 전환")
+    assert data["competency_gap"]["weaknesses"][0]["gap_type"] == "knowledge"
     assert data["timeline_data"][0]["subtopics"][0]["preparation_type"] == "appeal"
     assert len(data["timeline_data"]) == 3
 
@@ -90,7 +94,7 @@ def test_roadmap_parses_competency_gap(monkeypatch):
     }
     assert data["competency_gap"]["required_competencies"][0]["keyword"] == "Python"
     assert data["competency_gap"]["competency_map"][0]["status"] == "strength"
-    assert data["competency_gap"]["competency_map"][1]["status"] == "study"
+    assert data["competency_gap"]["competency_map"][1]["status"] == "weakness"
     assert data["text_roadmap"] == "1주차 준비"
     assert data["timeline_data"][0]["week"] == 1
 
@@ -255,27 +259,79 @@ def test_build_prompt_includes_company_and_job_context():
     assert "직무명: 백엔드 엔지니어" in prompt
     assert "직무설명: 대규모 트래픽을 처리하는 플랫폼 서버 개발" in prompt
     assert "우대사항: ['분산 시스템 경험']" in prompt
-    assert "개인화된 면접 준비 항목" in prompt
-    assert "개인 맞춤 예상 면접 질문" in prompt
-    assert "역량 분석 목적" in prompt
-    assert "어떤 실제 경험을 강점으로 활용" in prompt
+    assert "면접 유형이나 전형 형식은 고려하지 말고" in prompt
+    assert "채용공고와 지원자 경험" in prompt
+    assert "담당업무 → 필요한 직무 지식 → 내 경험의 연결 근거" in prompt
     assert "점수, 적합도 퍼센트, 합격 가능성을 생성하지 마세요" in prompt
-    assert "어필해야 함" in prompt
-    assert "담당업무 → 직무 지식 → 준비 방법 → 질문" in prompt
     assert '"competency_map"' in prompt
     assert '"preparation_type"' in prompt
-    assert '"matched_experience"' in prompt
-    assert "competency_map을 4~8개" in prompt
-    assert "담당업무 개수에는 상한을 두지 않습니다" in prompt
-    assert "각 subtopic마다 최소 3개" in prompt
+    assert '"experience_connection"' in prompt
+    assert '"core_concepts"' in prompt
+    assert '"appeal_perspective"' in prompt
+    assert "핵심 역량 4~8개" in prompt
+    assert "항목을 합치거나 누락하지 말고" in prompt
+    assert "concept, experience, application" in prompt
     assert '"responsibility"' in prompt
     assert '"responsibility_index"' in prompt
     assert '"priority_reason"' in prompt
-    assert '"experience_connection"' in prompt
     assert '"preparation_steps"' in prompt
-    assert '"gap_type"' in prompt
     assert '"category"' in prompt
-    assert '"subtopics"' in prompt
+    assert '"sub_knowledges"' in prompt
+
+
+def test_parse_two_step_schema_maps_to_api_contract():
+    competency = main._parse_competency_response("""
+    {
+      "competency_analysis": {
+        "summary": "API 경험은 강점이며 캐시 전략은 정리가 필요합니다.",
+        "competency_map": [
+          {"keyword": "API 개선", "status": "strength"},
+          {"keyword": "캐시 전략", "status": "organize"},
+          {"keyword": "분산 락", "status": "weakness"}
+        ],
+        "strength_details": [{"keyword": "API 개선", "experience": "주문 API 프로젝트"}],
+        "organize_details": [{
+          "keyword": "캐시 전략",
+          "experience": "Redis 적용",
+          "missing_narrative": "무효화 기준 설명 부족",
+          "action": "일관성 기준 정리"
+        }],
+        "weakness_details": [{
+          "keyword": "분산 락",
+          "gap_type": "knowledge",
+          "reason": "관련 근거 없음"
+        }]
+      }
+    }
+    """)
+    result = main._parse_roadmap_response("""
+    {
+      "text_roadmap": "강점 어필 후 약점을 학습합니다.",
+      "preparation_roadmap": [{
+        "category": "주문 처리",
+        "responsibility": "주문 API 개발",
+        "priority": 1,
+        "experience_match": "direct",
+        "sub_knowledges": [{
+          "knowledge_keyword": "캐시 무효화",
+          "preparation_type": "organize",
+          "task_connection": "주문 상태 정합성 유지에 사용됩니다.",
+          "experience_match": "Redis 캐시 적용",
+          "core_concepts": [{"keyword": "Cache Aside", "checkpoint": "갱신 흐름 설명"}],
+          "appeal_perspective": "성능과 정합성의 균형 판단을 강조합니다.",
+          "questions": [{"type": "application", "question": "무효화 기준은 무엇인가요?"}]
+        }]
+      }]
+    }
+    """, competency)
+
+    assert result.competency_gap["organize"][0]["keyword"] == "캐시 전략"
+    assert result.competency_gap["weaknesses"][0]["keyword"] == "분산 락"
+    subtopic = result.timeline_data[0]["subtopics"][0]
+    assert subtopic["title"] == "캐시 무효화"
+    assert subtopic["job_reason"].startswith("주문 상태")
+    assert subtopic["study_focus"][0]["keyword"] == "Cache Aside"
+    assert subtopic["appeal_perspective"].startswith("성능과 정합성")
 
 
 def test_roadmap_rejects_oversized_body(monkeypatch):

@@ -5,8 +5,8 @@ import api from '../api'
 export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(!!localStorage.getItem('access'))
 
-  async function signup(email, password) {
-    const { data } = await api.post('/api/auth/signup/', { email, password })
+  async function signup(payload) {
+    const { data } = await api.post('/api/auth/signup/', payload)
     localStorage.setItem('access', data.access)
     localStorage.setItem('refresh', data.refresh)
     isLoggedIn.value = true

@@ -11,14 +11,14 @@ MOCK_ROADMAP_RESPONSE = """{
       },
       {
         "keyword": "(Mock) 모션 플래닝",
-        "status": "articulate",
+        "status": "organize",
         "importance": "required",
         "signal": "유사 경로 탐색 경험",
         "action": "산업용 로봇 적용 차이 정리"
       },
       {
         "keyword": "(Mock) EtherCAT",
-        "status": "study",
+        "status": "weakness",
         "importance": "preferred",
         "signal": "직접 경험 없음",
         "action": "실시간 통신 원리 학습"
@@ -31,6 +31,26 @@ MOCK_ROADMAP_RESPONSE = """{
         "evidence": "역기구학 구현과 위치 오차 개선 경험이 있습니다.",
         "job_relevance": "산업용 로봇 제어 알고리즘 업무와 직접 연결됩니다.",
         "interview_focus": "구현 방식과 검증 수치를 강조하세요."
+      }
+    ],
+    "organize_details": [
+      {
+        "keyword": "(Mock) 모션 플래닝 경험 전환",
+        "experience": "모바일 로봇 A* 경로 탐색과 장애물 회피",
+        "evidence": "A* 탐색과 재탐색 조건을 구현한 경험이 있습니다.",
+        "missing_narrative": "매니퓰레이터 구성공간과 알고리즘 선택 기준 설명이 부족합니다.",
+        "action": "공통 탐색 원리와 차이점을 직무 언어로 정리하세요.",
+        "priority": "high"
+      }
+    ],
+    "weakness_details": [
+      {
+        "keyword": "(Mock) EtherCAT 실시간 통신",
+        "gap_type": "knowledge",
+        "reason": "직무 핵심 기술이지만 관련 지식과 경험 근거가 없습니다.",
+        "evidence": "채용공고는 EtherCAT 기반 서보 모터 실시간 제어를 요구합니다.",
+        "action": "분산 클럭, PDO/SDO, 제어 주기부터 학습하세요.",
+        "priority": "high"
       }
     ],
     "gaps": [
@@ -85,6 +105,7 @@ MOCK_ROADMAP_RESPONSE = """{
             "역기구학 해법과 선택 이유를 정리",
             "오차 개선 전후 수치와 검증 방법을 답변에 연결"
           ],
+          "appeal_perspective": "오차를 줄였다는 결과보다 문제를 진단하고 해법을 검증한 과정을 산업용 로봇 제어 업무의 정확도 개선 역량으로 연결하세요.",
           "questions": [
             {
               "type": "concept",

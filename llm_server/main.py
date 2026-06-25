@@ -8,7 +8,12 @@ import os
 import re
 import secrets
 from roadmap_mock import MOCK_ROADMAP_RESPONSE
-from roadmap_prompt import build_prompt as _build_prompt, extract_responsibilities
+from roadmap_prompt import (
+    build_diagnosis_prompt,
+    build_prompt as _build_prompt,
+    build_roadmap_prompt,
+    extract_responsibilities,
+)
 
 load_dotenv()
 
@@ -89,9 +94,12 @@ async def health():
 
 @app.post("/llm/roadmap", response_model=RoadmapResponse, dependencies=[Depends(require_internal_token)])
 async def generate_roadmap(req: RoadmapRequest):
-    prompt = _build_prompt(req)
+    diagnosis_prompt = build_diagnosis_prompt(req)
     try:
-        response_text = await _call_gpt(prompt)
+        diagnosis_text = await _call_gpt(diagnosis_prompt)
+        competency_analysis = _parse_competency_response(diagnosis_text)
+        roadmap_prompt = build_roadmap_prompt(req, competency_analysis)
+        roadmap_text = await _call_gpt(roadmap_prompt)
     except httpx.HTTPStatusError as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -102,7 +110,7 @@ async def generate_roadmap(req: RoadmapRequest):
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="GMS gateway request failed.",
         ) from exc
-    result = _parse_response(response_text)
+    result = _parse_roadmap_response(roadmap_text, competency_analysis)
     responsibilities = extract_responsibilities(req.job_posting_text)
     if responsibilities:
         canonical_timeline = _canonicalize_timeline_responsibilities(
@@ -120,7 +128,7 @@ async def generate_roadmap(req: RoadmapRequest):
     if GMS_KEY and _needs_timeline_repair(result.timeline_data, responsibilities):
         repair_targets = _timeline_repair_targets(result.timeline_data, responsibilities)
         repair_prompt = _build_timeline_repair_prompt(
-            prompt,
+            roadmap_prompt,
             repair_targets,
             responsibilities,
         )
@@ -176,20 +184,45 @@ async def _call_gpt(prompt: str) -> str:
         return resp.json()["choices"][0]["message"]["content"]
 
 
-def _parse_response(text: str) -> RoadmapResponse:
-    import json, re
+def _parse_competency_response(text: str) -> dict:
     match = re.search(r'\{.*\}', text, re.DOTALL)
     if not match:
-        return RoadmapResponse(text_roadmap=text, timeline_data=[])
+        return _normalize_competency_gap({})
     try:
         data = json.loads(match.group())
+        raw_analysis = data.get("competency_analysis", data.get("competency_gap", {}))
+        return _normalize_competency_gap(raw_analysis)
+    except json.JSONDecodeError:
+        return _normalize_competency_gap({})
+
+
+def _parse_roadmap_response(text: str, competency_analysis: dict) -> RoadmapResponse:
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if not match:
         return RoadmapResponse(
-            competency_gap=_normalize_competency_gap(data.get("competency_gap", {})),
+            competency_gap=competency_analysis,
+            text_roadmap=text,
+            timeline_data=[],
+        )
+    try:
+        data = json.loads(match.group())
+        raw_timeline = data.get("preparation_roadmap", data.get("timeline_data", []))
+        return RoadmapResponse(
+            competency_gap=competency_analysis,
             text_roadmap=data.get("text_roadmap", text),
-            timeline_data=_normalize_timeline_data(data.get("timeline_data", [])),
+            timeline_data=_normalize_timeline_data(raw_timeline),
         )
     except json.JSONDecodeError:
-        return RoadmapResponse(text_roadmap=text, timeline_data=[])
+        return RoadmapResponse(
+            competency_gap=competency_analysis,
+            text_roadmap=text,
+            timeline_data=[],
+        )
+
+
+def _parse_response(text: str) -> RoadmapResponse:
+    """단일 응답을 사용하는 기존 테스트와 복구 경로를 지원합니다."""
+    return _parse_roadmap_response(text, _parse_competency_response(text))
 
 
 def _normalize_competency_gap(raw_gap) -> dict:
@@ -198,20 +231,59 @@ def _normalize_competency_gap(raw_gap) -> dict:
             "summary": "",
             "competency_map": [],
             "strengths": [],
+            "organize": [],
+            "weaknesses": [],
             "gaps": [],
             "required_competencies": [],
+            "input_warnings": [],
         }
 
     strengths = [
         item for item in (
-            _normalize_strength(item) for item in _as_list(raw_gap.get("strengths"))
+            _normalize_strength(item)
+            for item in _as_list(
+                raw_gap.get("strength_details", raw_gap.get("strengths"))
+            )
         ) if item["keyword"]
     ][:5]
-    gaps = [
+    organize = [
         item for item in (
-            _normalize_gap(item) for item in _as_list(raw_gap.get("gaps"))
+            _normalize_organize(item)
+            for item in _as_list(raw_gap.get("organize_details", raw_gap.get("organize")))
         ) if item["keyword"]
     ][:5]
+    weaknesses = [
+        item for item in (
+            _normalize_gap(item)
+            for item in _as_list(raw_gap.get("weakness_details", raw_gap.get("weaknesses")))
+        ) if item["keyword"]
+    ][:5]
+    legacy_gaps = [_normalize_gap(item) for item in _as_list(raw_gap.get("gaps"))]
+    if not organize:
+        organize = [
+            _normalize_organize(item)
+            for item in legacy_gaps
+            if item["keyword"] and item["gap_type"] == "articulation"
+        ][:5]
+    if not weaknesses:
+        weaknesses = [
+            item for item in legacy_gaps
+            if item["keyword"] and item["gap_type"] != "articulation"
+        ][:5]
+    gaps = [
+        *[
+            {
+                "keyword": item["keyword"],
+                "gap_type": "articulation",
+                "reason": item["missing_narrative"],
+                "evidence": item["evidence"],
+                "action": item["action"],
+                "priority": item["priority"],
+            }
+            for item in organize
+        ],
+        *weaknesses,
+    ][:8]
     required_competencies = [
         item for item in (
             _normalize_required_competency(item)
@@ -232,8 +304,11 @@ def _normalize_competency_gap(raw_gap) -> dict:
         "summary": str(raw_gap.get("summary", "") or "").strip(),
         "competency_map": competency_map,
         "strengths": strengths,
+        "organize": organize,
+        "weaknesses": weaknesses,
         "gaps": gaps,
         "required_competencies": required_competencies,
+        "input_warnings": _string_list(raw_gap.get("input_warnings")),
     }
 
 
@@ -246,11 +321,12 @@ def _normalize_timeline_data(raw_timeline) -> list[dict]:
         experience_match = _first_text(raw_category, "experience_match")
         if experience_match not in {"direct", "related", "none"}:
             experience_match = "none"
+        raw_subtopics = raw_category.get("sub_knowledges", raw_category.get("subtopics"))
         subtopics = [
             normalized
             for normalized in (
                 _normalize_timeline_subtopic(item)
-                for item in _as_list(raw_category.get("subtopics"))
+                for item in _as_list(raw_subtopics)
             )
             if normalized["title"]
         ]
@@ -294,10 +370,15 @@ def _normalize_timeline_subtopic(raw_subtopic) -> dict:
         questions = [_normalize_timeline_question(raw_subtopic)]
     return {
         **raw_subtopic,
-        "title": _first_text(raw_subtopic, "title", "concept"),
+        "title": _first_text(raw_subtopic, "knowledge_keyword", "title", "concept"),
         "preparation_type": preparation_type,
-        "job_reason": _first_text(raw_subtopic, "job_reason", "why"),
-        "matched_experience": _first_text(raw_subtopic, "matched_experience", "evidence"),
+        "job_reason": _first_text(raw_subtopic, "task_connection", "job_reason", "why"),
+        "matched_experience": _first_text(
+            raw_subtopic,
+            "experience_match",
+            "matched_experience",
+            "evidence",
+        ),
         "experience_source": _first_text(raw_subtopic, "experience_source") or "없음",
         "experience_connection": {
             "evidence": _first_text(raw_connection, "evidence")
@@ -305,10 +386,17 @@ def _normalize_timeline_subtopic(raw_subtopic) -> dict:
             "transferable_point": _first_text(raw_connection, "transferable_point"),
             "gap": _first_text(raw_connection, "gap"),
         },
-        "study_focus": _normalize_study_focus(raw_subtopic.get("study_focus")),
+        "study_focus": _normalize_study_focus(
+            raw_subtopic.get("core_concepts", raw_subtopic.get("study_focus"))
+        ),
         "preparation_steps": _string_list(raw_subtopic.get("preparation_steps"))
         or _string_list(raw_subtopic.get("approach"))
         or ([_first_text(raw_subtopic, "approach", "study_goal")] if _first_text(raw_subtopic, "approach", "study_goal") else []),
+        "appeal_perspective": _first_text(
+            raw_subtopic,
+            "appeal_perspective",
+            "answer_perspective",
+        ),
         "questions": questions,
     }
 
@@ -642,7 +730,11 @@ def _normalize_competency_map_item(item) -> dict:
     if not isinstance(item, dict):
         item = {}
     status_value = _first_text(item, "status")
-    if status_value not in {"strength", "articulate", "study", "insufficient_data"}:
+    status_value = {
+        "articulate": "organize",
+        "study": "weakness",
+    }.get(status_value, status_value)
+    if status_value not in {"strength", "organize", "weakness", "insufficient_data"}:
         status_value = "insufficient_data"
     importance = _first_text(item, "importance") or "required"
     if importance not in {"required", "preferred"}:
@@ -683,13 +775,13 @@ def _derive_competency_map(strengths: list, gaps: list, required_competencies: l
 
     for item in gaps:
         status_value = {
-            "articulation": "articulate",
+            "articulation": "organize",
             "insufficient_data": "insufficient_data",
-        }.get(item["gap_type"], "study")
+        }.get(item["gap_type"], "weakness")
         action = {
-            "articulate": "답변 구조 정리",
+            "organize": "답변 구조 정리",
             "insufficient_data": "관련 정보 보완",
-            "study": "우선 학습",
+            "weakness": "우선 학습",
         }[status_value]
         append_item(item["keyword"], status_value, item["reason"], action)
 
@@ -722,6 +814,36 @@ def _normalize_strength(item) -> dict:
         "evidence": _first_text(item, "evidence", "reason"),
         "job_relevance": _first_text(item, "job_relevance", "relevance"),
         "interview_focus": _first_text(item, "interview_focus", "answer_focus"),
+    }
+
+
+def _normalize_organize(item) -> dict:
+    if isinstance(item, str):
+        return {
+            "keyword": item.strip(),
+            "experience": "",
+            "evidence": "",
+            "missing_narrative": "",
+            "action": "",
+            "priority": "medium",
+        }
+    if not isinstance(item, dict):
+        item = {}
+    priority = _first_text(item, "priority") or "medium"
+    if priority not in {"high", "medium", "low"}:
+        priority = "medium"
+    return {
+        "keyword": _first_text(item, "keyword", "name", "title", "concept"),
+        "experience": _first_text(item, "experience", "related_experience"),
+        "evidence": _first_text(item, "evidence"),
+        "missing_narrative": _first_text(
+            item,
+            "missing_narrative",
+            "reason",
+            "gap",
+        ),
+        "action": _first_text(item, "action", "preparation_action"),
+        "priority": priority,
     }
 
 

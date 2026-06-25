@@ -35,11 +35,14 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('#submit-analyze-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
-  await expect(page.getByRole('heading', { name: '역량 분석' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '직무 역량 진단' })).toBeVisible()
   const competencySection = page.locator('#gap')
-  await expect(competencySection.getByText('어필 가능', { exact: true })).toBeVisible()
-  await expect(competencySection.getByText('답변 정리', { exact: true })).toBeVisible()
-  await expect(competencySection.getByText('학습 필요', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('강점', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('정리할 역량', { exact: true }).first()).toBeVisible()
+  await expect(competencySection.getByText('약점', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('강점 근거', { exact: true })).toBeVisible()
+  await expect(competencySection.getByText('해본 경험을 직무 언어로 바꾸세요')).toBeVisible()
+  await expect(competencySection.getByText('공고가 요구하지만 근거가 부족한 영역입니다')).toBeVisible()
   await expect(page.getByText('API 성능 개선').first()).toBeVisible()
   await expect(page.getByText('시스템 설계').first()).toBeVisible()
   await expect(page.getByRole('heading', { name: '직무 역량 매칭도' })).toHaveCount(0)
@@ -51,6 +54,7 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await expect(page.getByText('내 연결점').first()).toBeVisible()
   await expect(page.getByText('핵심 개념').first()).toBeVisible()
   await expect(page.getByText('준비 순서').first()).toBeVisible()
+  await expect(page.getByText('답변 관점').first()).toBeVisible()
   await expect(page.getByText('로봇 팔 제어 정확도 개선 경험', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('FK와 IK 차이')).toBeVisible()
   await expect(page.getByText(/직접 연결 경험 없음/).first()).toBeVisible()
@@ -159,13 +163,13 @@ async function mockAnalysisResult(page) {
             action: '병목 분석 과정을 어필',
           }, {
             keyword: '기술 선택 근거',
-            status: 'articulate',
+            status: 'organize',
             importance: 'required',
             signal: '구현 경험은 있으나 선택 이유 부족',
             action: '트레이드오프 답변 정리',
           }, {
             keyword: '시스템 설계',
-            status: 'study',
+            status: 'weakness',
             importance: 'preferred',
             signal: '대규모 설계 경험 근거 없음',
             action: '분산 구조 우선 학습',
@@ -176,6 +180,22 @@ async function mockAnalysisResult(page) {
             evidence: '응답 시간을 비교한 기록이 있습니다.',
             job_relevance: '대규모 트래픽 처리 업무와 직접 연결됩니다.',
             interview_focus: '병목 분석 과정과 본인 역할을 강조합니다.',
+          }],
+          organize: [{
+            keyword: '기술 선택 근거',
+            experience: '캐시와 DB를 적용한 주문 API 개선',
+            evidence: '구현 결과는 있으나 대안 비교가 작성되지 않았습니다.',
+            missing_narrative: '왜 해당 구조를 선택했는지 설명이 부족합니다.',
+            action: '대안, 선택 기준, 결과 순서로 정리합니다.',
+            priority: 'high',
+          }],
+          weaknesses: [{
+            keyword: '시스템 설계',
+            gap_type: 'knowledge',
+            reason: '대규모 시스템 설계 경험 근거가 부족합니다.',
+            evidence: '채용공고는 분산 시스템 경험을 우대합니다.',
+            action: '트레이드오프를 포함한 설계 답변을 준비합니다.',
+            priority: 'high',
           }],
           gaps: [{
             keyword: '시스템 설계',
@@ -222,6 +242,7 @@ async function mockAnalysisResult(page) {
                   { keyword: 'Jacobian', checkpoint: '수치해석에서의 역할' },
                 ],
                 preparation_steps: ['프로젝트 흐름 정리', '해법 선택 이유 정리', '오차 검증 수치 연결'],
+                appeal_perspective: '정확도 개선 결과보다 문제 진단과 검증 과정을 직무 기여로 연결하세요.',
                 questions: [{
                   type: 'concept',
                   question: '순기구학과 역기구학의 차이는 무엇인가요?',

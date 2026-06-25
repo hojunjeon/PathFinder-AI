@@ -77,6 +77,12 @@ def test_build_llm_payload_uses_parsed_job_posting_text(monkeypatch):
     assert payload['job_info']['직무설명'] == '대규모 트래픽을 처리하는 백엔드 시스템 개발'
     assert payload['job_info']['우대사항'] == ['분산 시스템 경험']
     assert payload['job_info']['학습추천분야'] == ['트랜잭션', '캐시 전략']
+    assert payload['user_profile']['이력서'] == {
+        '경력사항': [],
+        '프로젝트': [],
+        '자격증': [],
+        '수상내역': [],
+    }
 
 
 @pytest.mark.django_db

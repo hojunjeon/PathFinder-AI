@@ -156,6 +156,7 @@ function normalizeSubtopic(subtopic, subtopicIdx) {
     preparation_steps: normalizeStringList(
       subtopic.preparation_steps || subtopic.preparationSteps || subtopic.approach
     ),
+    appeal_perspective: subtopic.appeal_perspective || subtopic.appealPerspective || '',
     approach: subtopic.approach || subtopic.study_goal || subtopic.studyGoal || '',
     questions: questions.filter(item => item.question),
   }
@@ -250,6 +251,7 @@ function normalizeLegacyItem(item, itemIdx) {
       experience_connection: { evidence: '', transferable_point: '', gap: '' },
       study_focus: [],
       preparation_steps: [],
+      appeal_perspective: '',
       approach: '',
       questions: [{
         type: 'concept',

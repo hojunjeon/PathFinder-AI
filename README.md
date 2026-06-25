@@ -26,14 +26,14 @@
 
 ## 👥 A. 팀원 정보 및 업무 분담
 
-| 이름 | 역할 | 담당 영역 |
+| 이름 | 담당 영역 |
 |------|------|-----------|
-| 🎯 **전호준** | 메인(백엔드) | 전체 아키텍처 설계, Django·DRF 백엔드 핵심 로직, JWT 인증, FastAPI LLM 서버 구축, 프롬프트 엔지니어링, GraphRAG 지식 그래프 설계, Playwright E2E 설계 |
-| 🤝 **황인서** | 서브(프론트엔드) | Vue 3 Composition API UI/UX 구현, Chart.js 인터랙티브 대시보드, 커뮤니티 페이지, 로그인·프로필 화면, Vanilla CSS 스타일링 |
+| 🎯 **전호준** | 전체 아키텍처 설계, Django·DRF 백엔드 핵심 로직, JWT 인증, FastAPI LLM 서버 구축, 프롬프트 엔지니어링, GraphRAG 지식 그래프 설계, Playwright E2E 설계 |
+| 🤝 **황인서** | Vue 3 Composition API UI/UX 구현, Chart.js 인터랙티브 대시보드, 커뮤니티 페이지, 로그인·프로필 화면, Vanilla CSS 스타일링 |
 
 ### 세부 업무 분담표
 
-| 기능 영역 | 전호준 (메인) | 황인서 (서브) |
+| 기능 영역 | 전호준 | 황인서 |
 |----------|--------------|--------------| 
 | 시스템 아키텍처 설계 | ✅ 전담 | |
 | Django REST API (accounts/analysis/community/companies) | ✅ 전담 | |

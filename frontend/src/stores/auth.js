@@ -6,13 +6,12 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(!!localStorage.getItem('access'))
   const currentUser = ref(null)
   const isLoadingCurrentUser = ref(false)
-  const currentUserLabel = computed(() => (
-    currentUser.value?.name?.trim()
-    || currentUser.value?.email
-    || '로그인 계정'
-  ))
+  const currentUserLabel = computed(() => {
+    const name = String(currentUser.value?.name || '').trim()
+    return name || String(currentUser.value?.email || '') || '로그인 계정'
+  })
   const currentUserInitial = computed(() => (
-    currentUserLabel.value.trim().charAt(0).toUpperCase() || '?'
+    String(currentUserLabel.value).trim().charAt(0).toUpperCase() || '?'
   ))
 
   async function signup(payload) {
@@ -20,7 +19,10 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('access', data.access)
     localStorage.setItem('refresh', data.refresh)
     isLoggedIn.value = true
-    currentUser.value = { name, email }
+    currentUser.value = {
+      name: String(payload.name || ''),
+      email: String(payload.email || ''),
+    }
   }
 
   async function login(email, password) {

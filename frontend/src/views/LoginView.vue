@@ -191,13 +191,14 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
-const mode = ref('login')
+const mode = ref(route.query.mode === 'signup' ? 'signup' : 'login')
 const name = ref('')
 const email = ref('')
 const password = ref('')

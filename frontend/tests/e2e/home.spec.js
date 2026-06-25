@@ -1,12 +1,26 @@
 import { expect, test } from '@playwright/test'
 
-test('first visit opens the main page with login CTA', async ({ page }) => {
+test('first visit opens the Pathi reference home with connected CTAs', async ({ page }) => {
   await page.goto('/')
 
   await expect(page).toHaveURL(/\/$/)
-  await expect(page.getByRole('heading', { name: '지원 공고를 면접 준비 로드맵으로 바꿔드립니다.' })).toBeVisible()
-  await expect(page.getByRole('link', { name: '로그인하고 시작하기' })).toBeVisible()
-  await expect(page.getByText('처음이라면 이 순서대로 진행하세요.')).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Pathi와 함께라면/ })).toBeVisible()
+  await expect(page.getByAltText(/Pathi가 채용공고/)).toBeVisible()
+  await expect(page.getByRole('heading', { name: '이용 방법' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '분석 결과 미리보기' })).toBeVisible()
+
+  const nav = page.getByRole('navigation', { name: '주요 메뉴' })
+  await expect(nav.getByRole('link', { name: '서비스 소개', exact: true })).toHaveAttribute('href', '/#features')
+  await expect(nav.getByRole('link', { name: '기능', exact: true })).toHaveAttribute('href', '/#features')
+  await expect(nav.getByRole('link', { name: '이용 방법', exact: true })).toHaveAttribute('href', '/#how')
+  await expect(nav.getByRole('link', { name: '커뮤니티', exact: true })).toHaveAttribute('href', '/community')
+  await expect(nav.getByRole('link', { name: '대시보드', exact: true })).toHaveAttribute('href', '/dashboard')
+  await expect(nav.getByRole('link', { name: '로그인', exact: true })).toHaveAttribute('href', '/login')
+  await expect(nav.getByRole('link', { name: '회원가입', exact: true })).toHaveAttribute('href', '/login?mode=signup')
+
+  await expect(page.getByRole('link', { name: /분석 시작하기/ }).first()).toHaveAttribute('href', '/analyze/new')
+  await expect(page.getByRole('link', { name: '서비스 소개 보기' })).toHaveAttribute('href', '/#features')
+  await expect(page.getByRole('link', { name: /질문·답변 전체 보기/ })).toHaveAttribute('href', '/analyze/new')
 })
 
 test('logged-in users still land on the main page and use buttons for features', async ({ page }) => {
@@ -31,9 +45,8 @@ test('logged-in users still land on the main page and use buttons for features',
   await expect(account).toContainText('로그인 계정')
   await expect(account).toContainText('홍길동')
   await expect(account).toContainText('user@example.com')
-  await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
-  await expect(page.getByRole('link', { name: '내 프로필 정리하기' })).toBeVisible()
-  await expect(page.getByRole('link', { name: '이전 로드맵 보기' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /분석 시작하기/ }).first()).toHaveAttribute('href', '/analyze/new')
+  await expect(page.getByRole('link', { name: '무료로 분석 시작하기' })).toHaveAttribute('href', '/analyze/new')
 })
 
 test('login success redirects to the main page instead of roadmap creation', async ({ page }) => {
@@ -62,10 +75,12 @@ test('login success redirects to the main page instead of roadmap creation', asy
   const account = page.getByRole('link', { name: '현재 로그인 계정 프로필' })
   await expect(account).toContainText('김패스')
   await expect(account).toContainText('user@example.com')
-  await expect(page.getByRole('link', { name: '로드맵 생성하기' }).first()).toBeVisible()
+  await expect(page.getByRole('link', { name: /분석 시작하기/ }).first()).toHaveAttribute('href', '/analyze/new')
 })
 
 test('signup collects only account data and required agreements', async ({ page }) => {
+  const pageErrors = []
+  page.on('pageerror', error => pageErrors.push(error.message))
   let signupPayload = null
   await page.route('**/api/auth/signup/', async route => {
     signupPayload = route.request().postDataJSON()
@@ -97,4 +112,5 @@ test('signup collects only account data and required agreements', async ({ page 
   })
   expect(signupPayload).not.toHaveProperty('major')
   expect(signupPayload).not.toHaveProperty('careers')
+  expect(pageErrors).toEqual([])
 })

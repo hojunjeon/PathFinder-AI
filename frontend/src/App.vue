@@ -2,8 +2,11 @@
   <div class="app-shell" :class="{ dark: themeStore.isDark }">
     <header class="global-nav">
       <div class="global-nav-inner">
-        <router-link to="/" class="brand-mark">PathFinder AI</router-link>
-        <nav class="global-links" aria-label="주요 메뉴">
+        <router-link to="/" class="brand-mark">
+          <span class="brand-icon" aria-hidden="true">P</span>
+          <span>PathFinder AI</span>
+        </router-link>
+        <nav class="global-links" :class="{ 'public-nav': !authStore.isLoggedIn }" aria-label="주요 메뉴">
           <template v-if="authStore.isLoggedIn">
             <router-link to="/">홈</router-link>
             <router-link to="/analyze/new">로드맵 생성</router-link>
@@ -36,11 +39,29 @@
             <button class="nav-btn logout-btn" @click="handleLogout">로그아웃</button>
           </template>
           <template v-else>
-            <button class="nav-btn theme-toggle" @click="themeStore.toggle">
-              {{ themeStore.isDark ? 'Light' : 'Dark' }}
-            </button>
+            <router-link :to="{ path: '/', hash: '#features' }">서비스 소개</router-link>
+            <router-link :to="{ path: '/', hash: '#features' }">기능</router-link>
+            <router-link :to="{ path: '/', hash: '#how' }">이용 방법</router-link>
+            <router-link to="/community">커뮤니티</router-link>
+            <router-link to="/dashboard">대시보드</router-link>
+            <router-link to="/login" class="nav-btn nav-link-btn">로그인</router-link>
+            <router-link to="/login?mode=signup" class="nav-btn nav-link-btn primary">회원가입</router-link>
           </template>
         </nav>
+        <details v-if="!authStore.isLoggedIn" class="mobile-nav">
+          <summary aria-label="모바일 메뉴 열기">
+            <span aria-hidden="true"></span>
+          </summary>
+          <div class="mobile-menu">
+            <router-link :to="{ path: '/', hash: '#features' }">서비스 소개</router-link>
+            <router-link :to="{ path: '/', hash: '#features' }">기능</router-link>
+            <router-link :to="{ path: '/', hash: '#how' }">이용 방법</router-link>
+            <router-link to="/community">커뮤니티</router-link>
+            <router-link to="/dashboard">대시보드</router-link>
+            <router-link to="/login">로그인</router-link>
+            <router-link to="/login?mode=signup">회원가입</router-link>
+          </div>
+        </details>
       </div>
     </header>
     <router-view />

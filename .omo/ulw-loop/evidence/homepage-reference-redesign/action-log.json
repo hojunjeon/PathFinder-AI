@@ -1,0 +1,42 @@
+{
+  "port": "5296",
+  "reference": "file:///C:/Users/SSAFY/Desktop/t08_project/docs/mockups/homepage_3/mockups/home_pathi_reference.html",
+  "actual": "http://127.0.0.1:5296/",
+  "actions": [
+    {
+      "button": "서비스 소개",
+      "url": "http://127.0.0.1:5296/#features"
+    },
+    {
+      "button": "기능",
+      "url": "http://127.0.0.1:5296/#features"
+    },
+    {
+      "button": "이용 방법",
+      "url": "http://127.0.0.1:5296/#how"
+    },
+    {
+      "button": "회원가입",
+      "url": "http://127.0.0.1:5296/login?mode=signup",
+      "signupVisible": true
+    },
+    {
+      "button": "분석 시작하기",
+      "url": "http://127.0.0.1:5296/analyze/new"
+    },
+    {
+      "button": "모바일 이용 방법",
+      "url": "http://127.0.0.1:5296/#how"
+    }
+  ],
+  "navHrefs": {
+    "서비스 소개": "/#features",
+    "기능": "/#features",
+    "이용 방법": "/#how",
+    "커뮤니티": "/community",
+    "대시보드": "/dashboard",
+    "로그인": "/login",
+    "회원가입": "/login?mode=signup"
+  },
+  "pageErrors": []
+}

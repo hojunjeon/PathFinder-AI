@@ -1,0 +1,21 @@
+{
+  "reference": "reference-desktop.png",
+  "actual": "actual-desktop.png",
+  "referenceSize": {
+    "width": 1440,
+    "height": 2834
+  },
+  "actualSize": {
+    "width": 1440,
+    "height": 2786
+  },
+  "comparedSize": {
+    "width": 1440,
+    "height": 2786
+  },
+  "changedPixelsThreshold10": 373284,
+  "changedRatioThreshold10": 0.09304558506819813,
+  "rmsDelta": 73.88847551601211,
+  "maxDelta": 255,
+  "diffImage": "diff-desktop.png"
+}

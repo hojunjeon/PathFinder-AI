@@ -1,0 +1,147 @@
+{
+  "codeReview": {
+    "by": "lazycodex-code-reviewer",
+    "recommendation": "APPROVE",
+    "codeQualityStatus": "CLEAR",
+    "reportPath": ".omo/evidence/homepage-reference-redesign-final-gate-review.md",
+    "evidence": "Local final review found no blocking code-quality issue after auth label coercion fix and final diff check.",
+    "blockers": []
+  },
+  "manualQa": {
+    "by": "lazycodex-qa-executor",
+    "status": "passed",
+    "evidence": "Desktop and mobile screenshots plus action-log verified the visible homepage and button wiring through the browser surface.",
+    "artifactRefs": [
+      {
+        "id": "actual-desktop",
+        "kind": "screenshot",
+        "description": "Final desktop homepage screenshot",
+        "path": ".omo/ulw-loop/evidence/homepage-reference-redesign/actual-desktop.png"
+      },
+      {
+        "id": "actual-mobile",
+        "kind": "screenshot",
+        "description": "Final mobile homepage screenshot",
+        "path": ".omo/ulw-loop/evidence/homepage-reference-redesign/actual-mobile.png"
+      },
+      {
+        "id": "action-log",
+        "kind": "data-diff",
+        "description": "Button routing and page error action log",
+        "path": ".omo/ulw-loop/evidence/homepage-reference-redesign/action-log.json"
+      },
+      {
+        "id": "final-report",
+        "kind": "log",
+        "description": "Final local gate review report",
+        "path": ".omo/evidence/homepage-reference-redesign-final-gate-review.md"
+      }
+    ],
+    "surfaceEvidence": [
+      {
+        "id": "desktop-render",
+        "criterionRef": "C001",
+        "surface": "browser",
+        "invocation": "Playwright screenshot at 1440px from Vite strict port 5296",
+        "verdict": "passed",
+        "artifactRefs": [
+          "actual-desktop"
+        ]
+      },
+      {
+        "id": "mobile-render",
+        "criterionRef": "C001",
+        "surface": "browser",
+        "invocation": "Playwright screenshot at 390px from Vite strict port 5296",
+        "verdict": "passed",
+        "artifactRefs": [
+          "actual-mobile"
+        ]
+      },
+      {
+        "id": "button-routing",
+        "criterionRef": "C002",
+        "surface": "data",
+        "invocation": "Playwright clicked public nav, signup, authenticated analysis CTA, and mobile menu links",
+        "verdict": "passed",
+        "artifactRefs": [
+          "action-log"
+        ]
+      },
+      {
+        "id": "regression-checks",
+        "criterionRef": "C003",
+        "surface": "cli",
+        "invocation": "npm run build; npx playwright test tests/e2e/home.spec.js; npm test",
+        "verdict": "passed",
+        "artifactRefs": [
+          "final-report"
+        ]
+      }
+    ],
+    "adversarialCases": [
+      {
+        "id": "signup-query-mode",
+        "criterionRef": "C002",
+        "scenario": "회원가입 nav opens /login?mode=signup instead of default login tab",
+        "expectedBehavior": "Signup tab is selected and visible with no page errors.",
+        "verdict": "passed",
+        "artifactRefs": [
+          "action-log"
+        ]
+      },
+      {
+        "id": "mobile-menu-routing",
+        "criterionRef": "C002",
+        "scenario": "390px viewport hides desktop nav and uses hamburger menu",
+        "expectedBehavior": "Mobile 이용 방법 link routes to #how.",
+        "verdict": "passed",
+        "artifactRefs": [
+          "actual-mobile",
+          "action-log"
+        ]
+      },
+      {
+        "id": "signup-runtime-regression",
+        "criterionRef": "C003",
+        "scenario": "Signup response lacks profile payload and only returns tokens",
+        "expectedBehavior": "Homepage renders current account label without currentUserLabel.value.trim runtime error.",
+        "verdict": "passed",
+        "artifactRefs": [
+          "final-report"
+        ]
+      }
+    ]
+  },
+  "gateReview": {
+    "by": "lazycodex-gate-reviewer",
+    "recommendation": "APPROVE",
+    "reportPath": ".omo/evidence/homepage-reference-redesign-final-gate-review.md",
+    "evidence": "All three ULW criteria have refreshed pass evidence and no open blocker remains.",
+    "blockers": []
+  },
+  "iteration": {
+    "fullRerun": true,
+    "status": "passed",
+    "rerunCommands": [
+      "npm run build",
+      "npx playwright test tests/e2e/home.spec.js",
+      "npm test"
+    ],
+    "evidence": "After fixing the signup runtime page error, visual capture, action-log QA, build, homepage E2E, and design verification were rerun."
+  },
+  "criteriaCoverage": {
+    "totalCriteria": 3,
+    "passCount": 3,
+    "originalIntent": "Redesign the home page to match docs/mockups/homepage_3/mockups/home_pathi_reference.html and connect every button.",
+    "desiredOutcome": "Reference-style Pathi homepage with responsive desktop/mobile layout and all visible CTAs wired to sections or app routes.",
+    "userOutcomeReview": "The current implementation satisfies the requested visual structure and button functionality with browser evidence and regression tests.",
+    "adversarialClassesCovered": [
+      "desktop responsive layout",
+      "mobile responsive layout",
+      "button routing",
+      "signup query mode",
+      "signup runtime regression"
+    ]
+  }
+}

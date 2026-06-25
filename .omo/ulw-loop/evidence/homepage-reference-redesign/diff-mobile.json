@@ -1,0 +1,21 @@
+{
+  "reference": "reference-mobile.png",
+  "actual": "actual-mobile.png",
+  "referenceSize": {
+    "width": 390,
+    "height": 5720
+  },
+  "actualSize": {
+    "width": 390,
+    "height": 5526
+  },
+  "comparedSize": {
+    "width": 390,
+    "height": 5526
+  },
+  "changedPixelsThreshold10": 429616,
+  "changedRatioThreshold10": 0.1993448221461251,
+  "rmsDelta": 92.80339261001177,
+  "maxDelta": 255,
+  "diffImage": "diff-mobile.png"
+}

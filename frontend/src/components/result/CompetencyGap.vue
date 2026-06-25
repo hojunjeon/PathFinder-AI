@@ -18,7 +18,9 @@
 
     <section v-if="items.length" class="stats-row fade-up delay-1" aria-label="역량 상태 요약">
       <article v-for="stat in stats" :key="stat.label" :class="['stat-card', stat.tone]">
-        <span :class="['stat-icon', stat.tone]" aria-hidden="true">{{ stat.mark }}</span>
+        <span :class="['stat-icon', stat.tone]" aria-hidden="true">
+          <img :src="saltIconSrc(stat.mark)" alt="" />
+        </span>
         <div>
           <div class="stat-value">{{ stat.value }}</div>
           <div class="stat-label">{{ stat.label }}</div>
@@ -166,7 +168,9 @@
           :class="['sprint-day', `sprint-${group.status}`]"
         >
           <header :class="['sprint-day-header', group.themeClass]">
-            <span class="sprint-day-icon" aria-hidden="true">{{ group.mark }}</span>
+            <span class="sprint-day-icon" aria-hidden="true">
+              <img :src="saltIconSrc(group.mark)" alt="" />
+            </span>
             <div>
               <h3 class="sprint-day-title">{{ group.label }}</h3>
               <p class="sprint-day-subtitle">{{ group.subtitle }}</p>
@@ -278,6 +282,12 @@ const fallbackDone = ref({})
 const openQaKeys = ref({})
 const radarRings = [0.2, 0.4, 0.6, 0.8, 1]
 const scoreRingLabels = [0.2, 0.4, 0.6, 0.8]
+const saltIcons = {
+  S: new URL('../../../../docs/images/S.png', import.meta.url).href,
+  A: new URL('../../../../docs/images/A.png', import.meta.url).href,
+  L: new URL('../../../../docs/images/L.png', import.meta.url).href,
+  T: new URL('../../../../docs/images/T.png', import.meta.url).href,
+}
 
 const subtitle = computed(() => {
   const company = props.analysis.company_name || '지원 기업'
@@ -622,6 +632,10 @@ function statusLabel(status) {
   }[status] || '판단 보류'
 }
 
+function saltIconSrc(mark) {
+  return saltIcons[mark] || saltIcons.T
+}
+
 function ringPoints(scale) {
   const total = Math.max(items.value.length, 3)
   return Array.from({ length: total }, (_, index) => {
@@ -885,6 +899,13 @@ function loadFallbackDone(key) {
   font-size: 12px;
   font-weight: 800;
 }
+.stat-icon img,
+.sprint-day-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
 .stat-icon.green { background: color-mix(in oklab, var(--success), white 86%); color: var(--success); }
 .stat-icon.amber { background: color-mix(in oklab, var(--warn), white 84%); color: color-mix(in oklab, var(--warn), black 20%); }
@@ -903,6 +924,8 @@ function loadFallbackDone(key) {
   font-size: 12px;
   font-weight: 700;
   margin-top: 2px;
+  line-height: 1.35;
+  word-break: keep-all;
 }
 
 .main-grid {

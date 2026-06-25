@@ -57,15 +57,19 @@
 
     <div class="actions">
       <button class="btn-secondary" type="button" @click="$emit('back')">이전</button>
-      <button id="next-cover-letter-btn" class="btn-primary" type="button" :disabled="saving || loading" @click="submit">
-        {{ saving || loading ? '로드맵 생성 중...' : 'AI 로드맵 생성' }}
+      <button id="next-cover-letter-btn" class="btn-primary generate-btn" type="button" :disabled="isGenerating" @click="submit">
+        <span v-if="isGenerating" class="loading-spinner" aria-hidden="true"></span>
+        <span>{{ isGenerating ? '로드맵 생성 중...' : 'AI 로드맵 생성' }}</span>
       </button>
     </div>
+    <p v-if="isGenerating" class="generation-status" role="status" aria-live="polite">
+      로드맵을 생성하고 있습니다
+    </p>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 const props = defineProps({
   selectedJob: Object,
@@ -77,6 +81,7 @@ const emit = defineEmits(['next', 'back'])
 const items = reactive([{ question: '', answer: '' }])
 const saving = ref(false)
 const errorMsg = ref('')
+const isGenerating = computed(() => saving.value || props.loading)
 
 function addItem() {
   items.push({ question: '', answer: '' })
@@ -226,6 +231,16 @@ async function submit() {
   display: flex;
   justify-content: space-between;
   gap: var(--space-3);
+}
+.generate-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-width: 156px; }
+.loading-spinner { width: 16px; height: 16px; border: 2px solid color-mix(in oklab, var(--muted), transparent 44%); border-top-color: var(--accent); border-radius: 50%; animation: loading-spin 0.8s linear infinite; }
+.generation-status { margin: var(--space-4) 0 0; color: var(--muted); font-size: var(--text-sm); font-weight: 600; }
+
+@keyframes loading-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner { animation: none; }
 }
 
 @media (max-width: 760px) {

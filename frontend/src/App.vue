@@ -3,7 +3,7 @@
     <header class="global-nav">
       <div class="global-nav-inner">
         <router-link to="/" class="brand-mark">
-          <span class="brand-icon" aria-hidden="true">P</span>
+          <img :src="logoIcon" class="brand-icon" alt="PathFinder AI 로고" />
           <span>PathFinder AI</span>
         </router-link>
         <nav class="global-links" :class="{ 'public-nav': !authStore.isLoggedIn }" aria-label="주요 메뉴">
@@ -69,6 +69,7 @@
 </template>
 
 <script setup>
+import logoIcon from './assets/icon.png'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
 import { onMounted } from 'vue'

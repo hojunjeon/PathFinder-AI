@@ -3,7 +3,6 @@
     <div class="dashboard-title-row">
       <div>
         <h1>🏆 한국 채용시장 경쟁률 분석</h1>
-        <p class="subtitle">jobs_careers 데이터셋 기반 인터랙티브 대시보드 (F307~F315)</p>
       </div>
     </div>
 

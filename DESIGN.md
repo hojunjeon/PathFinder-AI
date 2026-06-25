@@ -51,8 +51,8 @@
 - Typography: 핵심 역량과 지식 키워드는 굵게, 근거와 전략은 작은 본문
 - Spacing/layout rhythm: 상태별 그룹과 지식 계층이 구분되는 카드형 레이아웃
 - Shape/radius/elevation: 기존 토큰과 결과 페이지 카드 스타일 유지
-- Motion: 기존 hover/focus 전환만 사용
-- Imagery/iconography: 별도 이미지 없이 배지, 막대, 키워드로 상태 표현
+- Motion: 기존 hover/focus 전환을 기본으로 사용하고, 로드맵 생성 대기 상태는 작은 회전 스피너만 허용하며 `prefers-reduced-motion`에서는 정지한다.
+- Imagery/iconography: 분석 결과의 S/A/L/T 상태 아이콘은 `docs/images/S.png`, `docs/images/A.png`, `docs/images/L.png`, `docs/images/T.png`를 사용하고, 나머지 상태 표현은 배지, 막대, 키워드 중심으로 유지
 
 ## Components
 - Existing components to reuse: `CompetencyGap`, `RoadmapTimeline`, `RoadmapCategoryCard`, `RoadmapSubtopicCard`
@@ -79,7 +79,7 @@
 - Touch/hover differences: 핵심 정보는 hover 없이 항상 표시
 
 ## Interaction states
-- Loading: 기존 분석 결과 로딩 표시 유지
+- Loading: 분석 결과 로딩 표시를 유지하고, 자기소개서 제출 후 로드맵 생성 중에는 버튼 내부 스피너와 `role="status"` 문구로 진행 중임을 표시한다.
 - Empty: 확인된 역량 또는 준비 항목이 없다는 안내
 - Error: 기존 API 오류 처리 유지
 - Success: 질문 체크 상태와 진행률 표시

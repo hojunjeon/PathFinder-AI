@@ -12,6 +12,7 @@ MAX_PROFILE_SECTION_CHARS = 12000
 
 
 class SignupSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(write_only=True, max_length=50)
     password = serializers.CharField(write_only=True, min_length=8, trim_whitespace=False)
     password_confirm = serializers.CharField(write_only=True, trim_whitespace=False)
     terms_agreed = serializers.BooleanField(write_only=True)

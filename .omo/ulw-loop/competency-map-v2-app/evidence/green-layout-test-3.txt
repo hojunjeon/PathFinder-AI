@@ -1,0 +1,10 @@
+
+> frontend@0.0.0 test:e2e
+> playwright test tests/e2e/analyze-flow.spec.js --grep analyze flow saves manual posting
+
+
+Running 1 test using 1 worker
+
+  ok 1 tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result (2.1s)
+
+  1 passed (4.1s)

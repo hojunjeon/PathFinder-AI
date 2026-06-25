@@ -1,0 +1,68 @@
+﻿import { chromium } from '../../../frontend/node_modules/playwright/index.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const outDir = '.omo/evidence/competency-map-v2-qa';
+const baseURL = 'http://127.0.0.1:5173';
+const payload = {
+  id: 99,
+  company_name: '쿠팡',
+  job_title: '백엔드 개발자',
+  selected_interview_types: ['technical'],
+  interview_type_etc_text: '임원 과제 리뷰',
+  competency_gap: {
+    summary: 'API 개선 경험은 강점이고 시스템 설계 지식은 우선 보완이 필요합니다.',
+    competency_map: [
+      { keyword: 'API 성능 개선', status: 'strength', importance: 'required', signal: '성능 개선 프로젝트 경험 있음', action: '병목 분석 과정을 어필' },
+      { keyword: '기술 선택 근거', status: 'articulate', importance: 'required', signal: '구현 경험은 있으나 선택 이유 부족', action: '트레이드오프 답변 정리' },
+      { keyword: '시스템 설계', status: 'study', importance: 'preferred', signal: '대규모 설계 경험 근거 없음', action: '분산 구조 우선 학습' },
+    ],
+    strengths: [{ keyword: '주문 API 성능 개선', experience: '주문 조회 API 개선 프로젝트', evidence: '응답 시간을 비교한 기록이 있습니다.', job_relevance: '대규모 트래픽 처리 업무와 직접 연결됩니다.', interview_focus: '병목 분석 과정과 본인 역할을 강조합니다.' }],
+    gaps: [{ keyword: '시스템 설계', gap_type: 'knowledge', reason: '대규모 시스템 설계 경험 근거가 부족합니다.', evidence: '채용공고는 분산 시스템 경험을 우대합니다.', action: '트레이드오프를 포함한 설계 답변을 준비합니다.', priority: 'high' }],
+    required_competencies: [{ keyword: 'Python', importance: 'required', evidence: '채용공고 필수 요건입니다.' }],
+  },
+  text_roadmap: '로보틱스 > 역기구학',
+  timeline_data: [
+    { category: '로보틱스', responsibility: '산업용 로봇 제어 알고리즘 개발', priority: 1, priority_reason: '핵심 업무이며 로봇 팔 제어 경험을 직접 어필할 수 있습니다.', experience_match: 'direct', experience_keywords: ['로봇 팔 제어 정확도 개선 경험'], competency_keywords: ['역기구학', '제어 검증'], sources: ['채용공고', '프로젝트 1', '프로젝트 2'], subtopics: [
+      { title: '역기구학', done: true, preparation_type: 'appeal', job_reason: '로봇 제어 업무의 핵심 지식입니다.', matched_experience: '로봇 팔 제어 정확도 개선 경험', experience_source: '프로필·자기소개서', experience_connection: { evidence: '로봇 팔 제어 정확도 개선 경험', transferable_point: '산업용 로봇의 목표 자세 계산과 검증으로 연결할 수 있습니다.', gap: '특이점 처리 기준을 보완해야 합니다.' }, study_focus: [{ keyword: 'FK와 IK 차이', checkpoint: '입력과 출력 비교' }, { keyword: '특이점', checkpoint: '탐지와 회피 방식' }], preparation_steps: ['프로젝트 흐름 정리', '해법 선택 이유 정리'], questions: [{ type: 'concept', question: '순기구학과 역기구학의 차이는 무엇인가요?', done: true, answer_guide: '입력과 출력, 사용 목적을 비교하세요.', follow_up_questions: [] }] },
+      { title: '모션 플래닝', done: true, preparation_type: 'organize', job_reason: '경로 생성과 실시간 재계획 능력을 확인하는 개념입니다.', matched_experience: '경로 탐색 방식의 성능 비교 경험', experience_source: '자기소개서', study_focus: ['A*와 RRT 차이', '비용 함수'], approach: '검토한 대안, 선택 기준, 결과를 직무 요구와 연결하세요.', question: 'A가 아니라 B 방식을 채택한 이유는 무엇인가요?', answer_guide: '계산 비용과 장애물 재탐색 빈도를 기준으로 답변하세요.', evidence: '성능 비교 기록', study_goal: 'A*, RRT, DWA의 장단점을 비교할 수 있어야 합니다.', follow_up_questions: ['실시간성이 깨질 때 fallback은 무엇인가요?'] },
+    ] },
+    { category: '통신', summary: '제어 주기와 안정성 관점에서 프로토콜 선택 기준을 정리합니다.', subtopics: [{ title: 'EtherCAT', done: false, preparation_type: 'study', job_reason: '실시간 통신 이해가 필요합니다.', study_goal: '지터와 동기화 개념을 설명합니다.', question: 'EtherCAT을 사용하는 이유를 설명할 수 있나요?', answer_guide: '실시간성과 동기화 특성을 중심으로 답변하세요.' }] },
+  ],
+};
+
+const browser = await chromium.launch({ headless: true });
+const results = [];
+for (const width of [1280, 768, 375]) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript(() => localStorage.setItem('access', 'e2e-token'));
+  await page.route('**/api/analyze/99/', async route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(payload) }));
+  await page.goto(`${baseURL}/analyze/99`, { waitUntil: 'networkidle' });
+  const png = path.join(outDir, `S1S2-analyze-99-${width}.png`);
+  await page.screenshot({ path: png, fullPage: true });
+  const data = await page.evaluate(() => {
+    const text = document.body.innerText;
+    const toggle = [...document.querySelectorAll('button, [role="button"], input, label')].some(el => /전략|strategy|STAR/.test(el.textContent || el.getAttribute('aria-label') || el.value || ''));
+    return {
+      url: location.href,
+      title: document.title,
+      hasCompetencyMap: text.includes('역량 지도'),
+      hasActionPlanner: text.includes('상태별 액션 플래너') || text.includes('액션 플래너'),
+      hasStrategyToggle: toggle || text.includes('STAR 답변') || text.includes('전략'),
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+      bodyScrollWidth: document.body.scrollWidth,
+      hasHorizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth || document.body.scrollWidth > document.documentElement.clientWidth,
+      screenshot: null,
+    };
+  });
+  data.screenshot = png;
+  results.push(data);
+  await page.close();
+}
+await browser.close();
+fs.writeFileSync(path.join(outDir, 'S1S2-browser-results.json'), JSON.stringify(results, null, 2));
+const pass = results.every(r => r.hasCompetencyMap && r.hasActionPlanner && r.hasStrategyToggle && !r.hasHorizontalOverflow);
+console.log(JSON.stringify({ pass, results }, null, 2));
+process.exit(pass ? 0 : 1);
+

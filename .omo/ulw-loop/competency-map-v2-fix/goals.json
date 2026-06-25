@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-25T00:20:05.535Z",
+  "updatedAt": "2026-06-25T00:40:11.597Z",
+  "briefPath": ".omo/ulw-loop/competency-map-v2-fix/brief.md",
+  "goalsPath": ".omo/ulw-loop/competency-map-v2-fix/goals.json",
+  "ledgerPath": ".omo/ulw-loop/competency-map-v2-fix/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-fix-pathfinder-analyze-result-page-t",
+      "title": "Fix PathFinder analyze result page to exactly replace old result layo...",
+      "objective": "Fix PathFinder analyze result page to exactly replace old result layout with analyze_result_competency_map_simple.html v2 layout; remove old sidebar/progress/evidence/timeline/interview remnants; implement competency detail current/company scores and rationales; define and apply personalized classification criteria for strength/articulate/study based on profile/cover-letter/job evidence; use the HTML guide drawer content directly adapted without emoji glyph breakage; replace emoji icons with stable text/SVG; verify with tests, desktop browser QA, and Antigravity CLI adversarial review loop until score >= 90. Mobile testing is not required.",
+      "status": "pending",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "happy path for: Fix PathFinder analyze result page to exactly replace old result layout with...",
+          "userModel": "happy",
+          "expectedEvidence": "Replace via revise_criterion with observable happy-path proof for goal 1.",
+          "essential": true,
+          "capturedEvidence": "AnalyzeResultView now renders only CompetencyGap v2; desktop visual QA confirms old selectors .sidebar, .progress-card, #scores, #roadmap, #prep-keywords, #interview-drill are all 0; screenshots under .omo/ulw-loop/competency-map-v2-fix/evidence/screenshots/desktop-result-v2-r2.png and desktop-guide-drawer-v2.png.",
+          "status": "pass",
+          "capturedAt": "2026-06-25T00:40:11.521Z"
+        },
+        {
+          "id": "C002",
+          "scenario": "edge case (boundary/empty/malformed)",
+          "userModel": "edge",
+          "expectedEvidence": "Replace via revise_criterion with boundary or malformed-input proof for: Fix PathFinder analyze result page to exactly replace old result layout with....",
+          "essential": true,
+          "capturedEvidence": "LLM prompt and roadmap_processing_competency now define strength/articulate/study criteria, radar_score/job_score thresholds, score_rationale fields, and derive missing required competencies as study with low current score. llm_server pytest: 30 passed.",
+          "status": "pass",
+          "capturedAt": "2026-06-25T00:40:11.479Z"
+        },
+        {
+          "id": "C003",
+          "scenario": "regression: adjacent surface still works",
+          "userModel": "regression",
+          "expectedEvidence": "Replace via revise_criterion with regression proof for neighboring behavior after: Fix PathFinder analyze result page to exactly replace old result layout with....",
+          "essential": false,
+          "capturedEvidence": "Verification passed: npm --prefix frontend test -- --run, npm --prefix frontend run build, PLAYWRIGHT_PORT=5179 npm --prefix frontend run test:e2e -- tests/e2e/analyze-flow.spec.js (4 passed), Antigravity adversarial review Score 100/100 PASS in evidence/antigravity-review-1.txt.",
+          "status": "pass",
+          "capturedAt": "2026-06-25T00:40:11.597Z"
+        }
+      ],
+      "attempt": 0,
+      "createdAt": "2026-06-25T00:20:05.535Z",
+      "updatedAt": "2026-06-25T00:40:11.597Z"
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/competency-map-v2-fix/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/competency-map-v2-fix/ledger.jsonl as the audit trail."
+}

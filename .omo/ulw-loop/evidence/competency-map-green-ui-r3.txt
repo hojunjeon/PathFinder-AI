@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ok 1 tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result (3.0s)
+
+  1 passed (5.4s)

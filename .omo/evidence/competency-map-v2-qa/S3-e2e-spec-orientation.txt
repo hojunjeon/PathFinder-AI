@@ -1,0 +1,161 @@
+﻿
+  frontend\tests\e2e\analyze-flow.spec.js:3:test.beforeEach(async ({ page }) => {
+  frontend\tests\e2e\analyze-flow.spec.js:4:  await page.addInitScript(() => {
+> frontend\tests\e2e\analyze-flow.spec.js:5:    localStorage.setItem('access', 'e2e-token')
+  frontend\tests\e2e\analyze-flow.spec.js:6:  })
+  frontend\tests\e2e\analyze-flow.spec.js:7:})
+  frontend\tests\e2e\analyze-flow.spec.js:8:
+> frontend\tests\e2e\analyze-flow.spec.js:9:test('analyze flow saves manual posting, cover letter, submits, and renders
+ result', async ({ page }) => {
+  frontend\tests\e2e\analyze-flow.spec.js:10:  await mockCompanySearch(page)
+> frontend\tests\e2e\analyze-flow.spec.js:11:  await mockManualPosting(page)
+  frontend\tests\e2e\analyze-flow.spec.js:12:  await mockProfileSave(page)
+> frontend\tests\e2e\analyze-flow.spec.js:13:  await page.route('**/api/analyze/', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:14:    if (route.request().method() === 'POST') {
+  frontend\tests\e2e\analyze-flow.spec.js:15:      const body = route.request().postDataJSON()
+  frontend\tests\e2e\analyze-flow.spec.js:16:      expect(body.company_id).toBe(1)
+  frontend\tests\e2e\analyze-flow.spec.js:17:      expect(body.job_posting).toMatchObject({
+  frontend\tests\e2e\analyze-flow.spec.js:18:        job_title: '백엔드 개발자',
+> frontend\tests\e2e\analyze-flow.spec.js:19:        responsibilities: '주문/배송 API 개발과 대규모 트래픽 처리',
+> frontend\tests\e2e\analyze-flow.spec.js:20:        requirements: 'Python, Database, REST API 경험',
+  frontend\tests\e2e\analyze-flow.spec.js:21:        preferred_qualifications: '분산 시스템 경험',
+  frontend\tests\e2e\analyze-flow.spec.js:22:      })
+  frontend\tests\e2e\analyze-flow.spec.js:23:      expect(body.job_posting_url).toBe('')
+  frontend\tests\e2e\analyze-flow.spec.js:26:      expect(body.selected_interview_types).toEqual(['technical', 'persona
+lity', 'etc'])
+  frontend\tests\e2e\analyze-flow.spec.js:27:      expect(body.interview_type_etc_text).toBe('임원 과제 리뷰')
+> frontend\tests\e2e\analyze-flow.spec.js:28:      await route.fulfill({ status: 201, json: { id: 99 } })
+  frontend\tests\e2e\analyze-flow.spec.js:29:    } else {
+  frontend\tests\e2e\analyze-flow.spec.js:30:      await route.fallback()
+  frontend\tests\e2e\analyze-flow.spec.js:31:    }
+  frontend\tests\e2e\analyze-flow.spec.js:33:  await mockAnalysisResult(page)
+  frontend\tests\e2e\analyze-flow.spec.js:34:
+> frontend\tests\e2e\analyze-flow.spec.js:35:  await fillManualPosting(page)
+  frontend\tests\e2e\analyze-flow.spec.js:36:  await page.locator('#next-step-btn').click()
+  frontend\tests\e2e\analyze-flow.spec.js:37:
+  frontend\tests\e2e\analyze-flow.spec.js:38:  await page.locator('.cover-question-input').fill('지원동기')
+  frontend\tests\e2e\analyze-flow.spec.js:40:  await page.locator('#next-cover-letter-btn').click()
+  frontend\tests\e2e\analyze-flow.spec.js:41:
+> frontend\tests\e2e\analyze-flow.spec.js:42:  await expect(page).toHaveURL(/\/analyze\/99$/)
+  frontend\tests\e2e\analyze-flow.spec.js:43:  await expect(page.getByRole('heading', { name: '역량 지도' })).toBeVisible()
+  frontend\tests\e2e\analyze-flow.spec.js:44:  const competencySection = page.locator('#gap')
+  frontend\tests\e2e\analyze-flow.spec.js:45:  await expect(competencySection.getByText('어필 가능', { exact: true })).toBe
+Visible()
+  frontend\tests\e2e\analyze-flow.spec.js:46:  await expect(competencySection.getByText('답변 정리', { exact: true })).toBe
+Visible()
+  frontend\tests\e2e\analyze-flow.spec.js:47:  await expect(competencySection.getByText('학습 필요', { exact: true })).toBe
+Visible()
+> frontend\tests\e2e\analyze-flow.spec.js:48:  await expect(page.getByText('API 성능 개선').first()).toBeVisible()
+  frontend\tests\e2e\analyze-flow.spec.js:49:  await expect(page.getByText('시스템 설계').first()).toBeVisible()
+  frontend\tests\e2e\analyze-flow.spec.js:50:  await expect(page.getByText('현재 역량', { exact: true })).toBeVisible()
+  frontend\tests\e2e\analyze-flow.spec.js:51:  await expect(page.getByText('직무 요구', { exact: true })).toBeVisible()
+  frontend\tests\e2e\analyze-flow.spec.js:97:test('cover letter submit request contains question and answer', async ({ 
+page }) => {
+  frontend\tests\e2e\analyze-flow.spec.js:98:  await mockCompanySearch(page)
+> frontend\tests\e2e\analyze-flow.spec.js:99:  await mockManualPosting(page)
+  frontend\tests\e2e\analyze-flow.spec.js:100:  let submittedCoverLetter = null
+> frontend\tests\e2e\analyze-flow.spec.js:101:  await page.route('**/api/analyze/', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:102:    submittedCoverLetter = route.request().postDataJSON().submitted_cover
+_letter
+> frontend\tests\e2e\analyze-flow.spec.js:103:    await route.fulfill({ status: 201, json: { id: 99 } })
+  frontend\tests\e2e\analyze-flow.spec.js:104:  })
+> frontend\tests\e2e\analyze-flow.spec.js:105:  await page.route('**/api/profile/', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:106:    await route.fulfill({ json: { cover_letters: [] } })
+  frontend\tests\e2e\analyze-flow.spec.js:107:  })
+  frontend\tests\e2e\analyze-flow.spec.js:108:
+> frontend\tests\e2e\analyze-flow.spec.js:109:  await fillManualPosting(page)
+  frontend\tests\e2e\analyze-flow.spec.js:110:  await page.locator('#next-step-btn').click()
+  frontend\tests\e2e\analyze-flow.spec.js:111:  await page.locator('.cover-question-input').fill('직무 역량을 설명해 주세요')
+> frontend\tests\e2e\analyze-flow.spec.js:112:  await page.locator('.cover-answer-input').fill('백엔드 API와 DB 최적화 경험이 있습니
+다.')
+  frontend\tests\e2e\analyze-flow.spec.js:113:  await page.locator('#next-cover-letter-btn').click()
+  frontend\tests\e2e\analyze-flow.spec.js:114:
+  frontend\tests\e2e\analyze-flow.spec.js:115:  expect(submittedCoverLetter).toContain('Q. 직무 역량을 설명해 주세요')
+> frontend\tests\e2e\analyze-flow.spec.js:116:  expect(submittedCoverLetter).toContain('A. 백엔드 API와 DB 최적화 경험이 있습니다.')
+  frontend\tests\e2e\analyze-flow.spec.js:117:})
+  frontend\tests\e2e\analyze-flow.spec.js:118:
+> frontend\tests\e2e\analyze-flow.spec.js:119:test('analyze flow accepts company-only fallback job without criterion wa
+rning', async ({ page }) => {
+  frontend\tests\e2e\analyze-flow.spec.js:120:  await mockCompanySearch(page)
+> frontend\tests\e2e\analyze-flow.spec.js:121:  await page.route('**/api/job-postings/manual/**', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:122:    await route.fulfill({
+  frontend\tests\e2e\analyze-flow.spec.js:123:      status: 201,
+  frontend\tests\e2e\analyze-flow.spec.js:124:      json: {
+  frontend\tests\e2e\analyze-flow.spec.js:144:  })
+  frontend\tests\e2e\analyze-flow.spec.js:145:
+> frontend\tests\e2e\analyze-flow.spec.js:146:  await fillManualPosting(page)
+  frontend\tests\e2e\analyze-flow.spec.js:147:  await page.locator('#job-title-input').fill('우주선 조종사')
+  frontend\tests\e2e\analyze-flow.spec.js:148:  await page.locator('#next-step-btn').click()
+  frontend\tests\e2e\analyze-flow.spec.js:149:
+  frontend\tests\e2e\analyze-flow.spec.js:152:})
+  frontend\tests\e2e\analyze-flow.spec.js:153:
+> frontend\tests\e2e\analyze-flow.spec.js:154:test('analyze flow does not allow arbitrary unsupported company names', a
+sync ({ page }) => {
+> frontend\tests\e2e\analyze-flow.spec.js:155:  await page.route('**/api/companies/?name=*', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:156:    await route.fulfill({ status: 200, json: [] })
+  frontend\tests\e2e\analyze-flow.spec.js:157:  })
+  frontend\tests\e2e\analyze-flow.spec.js:158:
+> frontend\tests\e2e\analyze-flow.spec.js:159:  await page.goto('/analyze/new')
+  frontend\tests\e2e\analyze-flow.spec.js:160:  await page.locator('#company-search-input').fill('없는회사')
+  frontend\tests\e2e\analyze-flow.spec.js:161:  await expect(page.getByRole('option', { name: /없는회사/ })).toHaveCount(0)
+  frontend\tests\e2e\analyze-flow.spec.js:162:  await expect(page.locator('#match-job-btn')).toHaveCount(0)
+  frontend\tests\e2e\analyze-flow.spec.js:164:})
+  frontend\tests\e2e\analyze-flow.spec.js:165:
+> frontend\tests\e2e\analyze-flow.spec.js:166:async function fillManualPosting(page) {
+> frontend\tests\e2e\analyze-flow.spec.js:167:  await page.goto('/analyze/new')
+  frontend\tests\e2e\analyze-flow.spec.js:168:  await page.locator('#company-search-input').fill('쿠팡')
+  frontend\tests\e2e\analyze-flow.spec.js:169:  await page.getByRole('option', { name: /쿠팡/ }).click()
+  frontend\tests\e2e\analyze-flow.spec.js:170:  await page.locator('#job-title-input').fill('백엔드 개발자')
+> frontend\tests\e2e\analyze-flow.spec.js:171:  await page.locator('#responsibilities-input').fill('주문/배송 API 개발과 대규모 트
+래픽 처리')
+> frontend\tests\e2e\analyze-flow.spec.js:172:  await page.locator('#requirements-input').fill('Python, Database, REST 
+API 경험')
+  frontend\tests\e2e\analyze-flow.spec.js:173:  await page.locator('#preferred-input').fill('분산 시스템 경험')
+  frontend\tests\e2e\analyze-flow.spec.js:174:  await page.getByLabel(/기술면접/).check()
+  frontend\tests\e2e\analyze-flow.spec.js:175:  await page.getByLabel(/인성면접/).check()
+  frontend\tests\e2e\analyze-flow.spec.js:181:
+  frontend\tests\e2e\analyze-flow.spec.js:182:async function mockCompanySearch(page) {
+> frontend\tests\e2e\analyze-flow.spec.js:183:  await page.route('**/api/companies/?name=*', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:184:    await route.fulfill({
+  frontend\tests\e2e\analyze-flow.spec.js:185:      status: 200,
+  frontend\tests\e2e\analyze-flow.spec.js:186:      json: [{
+  frontend\tests\e2e\analyze-flow.spec.js:197:}
+  frontend\tests\e2e\analyze-flow.spec.js:198:
+> frontend\tests\e2e\analyze-flow.spec.js:199:async function mockManualPosting(page) {
+> frontend\tests\e2e\analyze-flow.spec.js:200:  await page.route('**/api/job-postings/manual/**', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:201:    await route.fulfill({
+  frontend\tests\e2e\analyze-flow.spec.js:202:      status: 201,
+  frontend\tests\e2e\analyze-flow.spec.js:203:      json: {
+  frontend\tests\e2e\analyze-flow.spec.js:228:
+  frontend\tests\e2e\analyze-flow.spec.js:229:async function mockProfileSave(page) {
+> frontend\tests\e2e\analyze-flow.spec.js:230:  await page.route('**/api/profile/', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:231:    if (route.request().method() === 'PUT') {
+  frontend\tests\e2e\analyze-flow.spec.js:232:      await route.fulfill({ status: 200, json: route.request().postDataJS
+ON() })
+  frontend\tests\e2e\analyze-flow.spec.js:233:    } else {
+  frontend\tests\e2e\analyze-flow.spec.js:238:
+  frontend\tests\e2e\analyze-flow.spec.js:239:async function mockAnalysisResult(page) {
+> frontend\tests\e2e\analyze-flow.spec.js:240:  await page.route('**/api/analyze/99/', async route => {
+  frontend\tests\e2e\analyze-flow.spec.js:241:    await route.fulfill({
+  frontend\tests\e2e\analyze-flow.spec.js:242:      json: {
+> frontend\tests\e2e\analyze-flow.spec.js:243:        id: 99,
+  frontend\tests\e2e\analyze-flow.spec.js:244:        company_name: '쿠팡',
+  frontend\tests\e2e\analyze-flow.spec.js:245:        job_title: '백엔드 개발자',
+  frontend\tests\e2e\analyze-flow.spec.js:246:        selected_interview_types: ['technical'],
+  frontend\tests\e2e\analyze-flow.spec.js:247:        interview_type_etc_text: '임원 과제 리뷰',
+  frontend\tests\e2e\analyze-flow.spec.js:248:        competency_gap: {
+> frontend\tests\e2e\analyze-flow.spec.js:249:          summary: 'API 개선 경험은 강점이고 시스템 설계 지식은 우선 보완이 필요합니다.',
+  frontend\tests\e2e\analyze-flow.spec.js:250:          competency_map: [{
+> frontend\tests\e2e\analyze-flow.spec.js:251:            keyword: 'API 성능 개선',
+  frontend\tests\e2e\analyze-flow.spec.js:252:            status: 'strength',
+  frontend\tests\e2e\analyze-flow.spec.js:253:            importance: 'required',
+  frontend\tests\e2e\analyze-flow.spec.js:254:            signal: '성능 개선 프로젝트 경험 있음',
+  frontend\tests\e2e\analyze-flow.spec.js:268:          }],
+  frontend\tests\e2e\analyze-flow.spec.js:269:          strengths: [{
+> frontend\tests\e2e\analyze-flow.spec.js:270:            keyword: '주문 API 성능 개선',
+> frontend\tests\e2e\analyze-flow.spec.js:271:            experience: '주문 조회 API 개선 프로젝트',
+  frontend\tests\e2e\analyze-flow.spec.js:272:            evidence: '응답 시간을 비교한 기록이 있습니다.',
+  frontend\tests\e2e\analyze-flow.spec.js:273:            job_relevance: '대규모 트래픽 처리 업무와 직접 연결됩니다.',
+  frontend\tests\e2e\analyze-flow.spec.js:274:            interview_focus: '병목 분석 과정과 본인 역할을 강조합니다.',
+
+

@@ -1,0 +1,37 @@
+
+> frontend@0.0.0 test:e2e
+> playwright test tests/e2e/analyze-flow.spec.js --grep analyze flow saves manual posting
+
+
+Running 1 test using 1 worker
+
+  x  1 tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result (6.2s)
+
+
+  1) tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('어필 가능 역량')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('어필 가능 역량')[22m
+
+
+      41 |
+      42 |   await expect(page).toHaveURL(/\/analyze\/99$/)
+    > 43 |   await expect(page.getByText('어필 가능 역량')).toBeVisible()
+         |                                            ^
+      44 |   await expect(page.getByText('답변 정리 필요')).toBeVisible()
+      45 |   await expect(page.getByText('학습 필요')).toBeVisible()
+      46 |   await expect(page.getByText('전체 역량 항목')).toBeVisible()
+        at C:\Users\SSAFY\Desktop\t08_project\frontend\tests\e2e\analyze-flow.spec.js:43:44
+
+    Error Context: test-results\analyze-flow-analyze-flow--d3201--submits-and-renders-result\error-context.md
+
+  1 failed
+    tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result 

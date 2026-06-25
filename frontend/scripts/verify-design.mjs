@@ -56,7 +56,16 @@ assert(analyzeCreate.includes('job_posting:'), 'AnalyzeCreateView must submit st
 
 const result = read('src/views/AnalyzeResultView.vue')
 assert(result.includes('CompetencyGap'), 'AnalyzeResultView must render CompetencyGap')
-assert(result.includes('RoadmapTimeline'), 'AnalyzeResultView must render RoadmapTimeline')
+assert(!result.includes('RoadmapTimeline'), 'AnalyzeResultView must not render legacy RoadmapTimeline in v2 result layout')
+assert(!result.includes('PreparationKeywordBoard'), 'AnalyzeResultView must not render legacy PreparationKeywordBoard in v2 result layout')
+assert(!result.includes('InterviewDrill'), 'AnalyzeResultView must not render legacy InterviewDrill in v2 result layout')
+
+const competencyGap = read('src/components/result/CompetencyGap.vue')
+assert(competencyGap.includes('역량 지도 &amp; <span>액션 플래너</span>'), 'CompetencyGap must own the v2 result header')
+assert(competencyGap.includes('radar_score'), 'CompetencyGap must consume current competency scores')
+assert(competencyGap.includes('job_score'), 'CompetencyGap must consume company requirement scores')
+assert(competencyGap.includes('score_rationale'), 'CompetencyGap must consume score rationales')
+assert(competencyGap.includes('질문 &amp; 답변 전략'), 'CompetencyGap must render the v2 sprint Q&A panel')
 
 const jobsData = read('public/data/jobs_careers.jsonl').trim().split('\n')
 assert(jobsData.length > 0, 'jobs_careers.jsonl must not be empty')

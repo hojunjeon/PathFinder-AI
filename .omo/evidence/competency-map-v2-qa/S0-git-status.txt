@@ -1,0 +1,21 @@
+﻿ M frontend/src/components/result/CompetencyGap.vue
+ M frontend/src/views/AnalyzeResultView.vue
+ M frontend/tests/e2e/analyze-flow.spec.js
+ M llm_server/roadmap_prompt.py
+ M llm_server/tests/test_roadmap_prompt.py
+?? .omo/evidence/competency-map-v2-qa/
+?? .omo/plans/competency-map-v2-redesign.md
+?? .omo/ulw-loop/brief-competency-map.md
+?? .omo/ulw-loop/competency-map-v2/
+?? .omo/ulw-loop/evidence/competency-map-diff.patch
+?? .omo/ulw-loop/evidence/competency-map-green-ui.txt
+?? .omo/ulw-loop/evidence/competency-map-prompt-green.txt
+?? .omo/ulw-loop/evidence/competency-map-prompt-red.txt
+?? .omo/ulw-loop/evidence/competency-map-red.txt
+?? .omo/ulw-loop/evidence/frontend-analyze-flow.txt
+?? .omo/ulw-loop/evidence/frontend-build.txt
+?? .omo/ulw-loop/evidence/frontend-design-test.txt
+?? .omo/ulw-loop/evidence/llm-server-tests.txt
+?? .omo/ulw-loop/evidence/screenshots/
+?? .omo/ulw-loop/evidence/visual-qa-cleanup.txt
+?? .omo/ulw-loop/evidence/visual-qa-image-diff.json

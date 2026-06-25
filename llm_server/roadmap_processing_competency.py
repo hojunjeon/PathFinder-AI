@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from typing import Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
+
+
+class ScoreRationale(TypedDict):
+    my_reason: str
+    job_reason: str
 
 
 class CompetencyMapItem(TypedDict):
@@ -9,6 +14,9 @@ class CompetencyMapItem(TypedDict):
     importance: Literal["required", "preferred"]
     signal: str
     action: str
+    radar_score: NotRequired[int]
+    job_score: NotRequired[int]
+    score_rationale: NotRequired[ScoreRationale]
 
 
 class StrengthItem(TypedDict):
@@ -99,6 +107,12 @@ def _normalize_competency_map_item(item) -> CompetencyMapItem:
             "importance": "required",
             "signal": "",
             "action": "관련 경험 확인",
+            "radar_score": 40,
+            "job_score": 84,
+            "score_rationale": {
+                "my_reason": "입력 자료만으로 직접 경험 근거를 확정하기 어려워 보수적으로 책정했습니다.",
+                "job_reason": "직무 요구 역량으로 확인되지만 세부 중요도 근거가 부족해 기본 요구 점수를 적용했습니다.",
+            },
         }
     if not isinstance(item, dict):
         item = {}
@@ -108,12 +122,17 @@ def _normalize_competency_map_item(item) -> CompetencyMapItem:
     importance = _first_text(item, "importance") or "required"
     if importance not in {"required", "preferred"}:
         importance = "required"
+    radar_score = _score(item.get("radar_score", item.get("current_score", item.get("my_score"))), _fallback_radar_score(status_value))
+    job_score = _score(item.get("job_score", item.get("required_score", item.get("company_score"))), _fallback_job_score(importance, status_value))
     return {
         "keyword": _first_text(item, "keyword", "name", "title", "concept"),
         "status": status_value,
         "importance": importance,
         "signal": _first_text(item, "signal", "reason", "summary"),
         "action": _first_text(item, "action", "next_action"),
+        "radar_score": radar_score,
+        "job_score": job_score,
+        "score_rationale": _score_rationale(item, status_value, radar_score, importance, job_score),
     }
 
 
@@ -136,6 +155,12 @@ def _derive_competency_map(
             "importance": importance,
             "signal": signal,
             "action": action,
+            "radar_score": _fallback_radar_score(status_value),
+            "job_score": _fallback_job_score(importance, status_value),
+            "score_rationale": {
+                "my_reason": _fallback_my_reason(keyword, status_value, signal),
+                "job_reason": _fallback_job_reason(keyword, importance, signal),
+            },
         })
 
     for item in strengths:
@@ -161,9 +186,9 @@ def _derive_competency_map(
     for item in required_competencies:
         append_item(
             item["keyword"],
-            "insufficient_data",
+            "study",
             "직무 요구 역량",
-            "관련 경험 확인",
+            "핵심 개념과 적용 질문 학습",
             item["importance"],
         )
 
@@ -245,3 +270,80 @@ def _first_text(item: dict, *keys: str) -> str:
             if text:
                 return text
     return ""
+
+
+def _score(value, fallback: int) -> int:
+    try:
+        number = int(round(float(value)))
+    except (TypeError, ValueError):
+        return fallback
+    return max(0, min(100, number))
+
+
+def _score_rationale(
+    item: dict,
+    status_value: str,
+    radar_score: int,
+    importance: str,
+    job_score: int,
+) -> ScoreRationale:
+    raw = item.get("score_rationale")
+    raw = raw if isinstance(raw, dict) else {}
+    my_reason = _first_text(raw, "my_reason", "current_reason")
+    job_reason = _first_text(raw, "job_reason", "required_reason")
+    return {
+        "my_reason": my_reason or _fallback_my_reason(
+            _first_text(item, "keyword", "name", "title", "concept"),
+            status_value,
+            _first_text(item, "signal", "reason", "summary"),
+            radar_score,
+        ),
+        "job_reason": job_reason or _fallback_job_reason(
+            _first_text(item, "keyword", "name", "title", "concept"),
+            importance,
+            _first_text(item, "signal", "reason", "summary"),
+            job_score,
+        ),
+    }
+
+
+def _fallback_radar_score(status_value: str) -> int:
+    return {
+        "strength": 82,
+        "articulate": 56,
+        "study": 28,
+        "insufficient_data": 40,
+    }.get(status_value, 40)
+
+
+def _fallback_job_score(importance: str, status_value: str) -> int:
+    if importance == "preferred":
+        return 68 if status_value == "study" else 72
+    return 88 if status_value == "strength" else 84
+
+
+def _fallback_my_reason(
+    keyword: str,
+    status_value: str,
+    signal: str,
+    score: int | None = None,
+) -> str:
+    score = _fallback_radar_score(status_value) if score is None else score
+    if status_value == "strength":
+        return f"{keyword}는 프로필/자소서에서 직접 다룬 경험 신호가 확인되어 {score}점으로 추정했습니다. {signal}".strip()
+    if status_value == "articulate":
+        return f"{keyword}는 관련 경험은 보이나 개념, 선택 이유, 성과 설명 정리가 부족해 {score}점으로 추정했습니다."
+    if status_value == "study":
+        return f"{keyword}는 프로필/자소서에서 직접 경험 근거가 없거나 비중이 작아 {score}점으로 낮게 책정했습니다."
+    return f"{keyword}는 입력 자료만으로 경험 근거를 확정하기 어려워 {score}점의 보수적 기준을 적용했습니다."
+
+
+def _fallback_job_reason(
+    keyword: str,
+    importance: str,
+    signal: str,
+    score: int | None = None,
+) -> str:
+    status = "우대 역량" if importance == "preferred" else "필수 또는 핵심 역량"
+    score = (72 if importance == "preferred" else 84) if score is None else score
+    return f"{keyword}는 채용공고/직무 기준에서 {status}으로 해석되어 기업 요구 점수 {score}점으로 책정했습니다. {signal}".strip()

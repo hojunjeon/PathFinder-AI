@@ -1,0 +1,50 @@
+﻿### Review Summary
+
+We have evaluated the changes made in the target files:
+*   [AnalyzeResultView.vue](file:///C:/Users/SSAFY/Desktop/t08_project/frontend/src/views/AnalyzeResultView.vue)
+*   [CompetencyGap.vue](file:///C:/Users/SSAFY/Desktop/t08_project/frontend/src/components/result/CompetencyGap.vue)
+*   [verify-design.mjs](file:///C:/Users/SSAFY/Desktop/t08_project/frontend/scripts/verify-design.mjs)
+*   [analyze-flow.spec.js](file:///C:/Users/SSAFY/Desktop/t08_project/frontend/tests/e2e/analyze-flow.spec.js)
+*   [roadmap_prompt.py](file:///C:/Users/SSAFY/Desktop/t08_project/llm_server/roadmap_prompt.py)
+*   [roadmap_processing_competency.py](file:///C:/Users/SSAFY/Desktop/t08_project/llm_server/roadmap_processing_competency.py)
+*   [test_roadmap_prompt.py](file:///C:/Users/SSAFY/Desktop/t08_project/llm_server/tests/test_roadmap_prompt.py)
+*   [test_main.py](file:///C:/Users/SSAFY/Desktop/t08_project/llm_server/tests/test_main.py)
+
+---
+
+### Score & Status
+
+*   **Score**: 100/100
+*   **Pass/Fail**: PASS
+
+---
+
+### Key Requirements Checklist
+
+1.  **Replace Page Layout with Mockup v2**
+    *   **Status**: Satisfied. The old layout/functions (e.g. `RoadmapTimeline`, `PreparationKeywordBoard`, `InterviewDrill`) have been fully stripped out and replaced with the new two-column grid (`main-grid` containing the radar chart and detail cards) and the bottom three-column status-sprint grid.
+2.  **Detail Card Scores & Rationales**
+    *   **Status**: Satisfied. Each card displays scores and filled bars for "내 역량" (radarScore) and "기업 요구" (jobScore). Expanding a card displays the detailed rationales (myReason and jobReason) comparing profile/resume data to the job requirements.
+3.  **Competency Classification by Evidence**
+    *   **Status**: Satisfied. Competencies are successfully classified into three primary states matching the guidelines:
+        *   `strength` (어필 가능): Directly handled concepts/features in the user profile/resume.
+        *   `articulate` (답변 정리): Partial experiences or concepts requiring a structured interview answer.
+        *   `study` (학습 필요): Company-required but missing or negligible in the profile.
+4.  **Radar/Detail Scoring Criteria**
+    *   **Status**: Satisfied. Defined thresholds are enforced: low scores ($0$-$35$) for missing/tiny profile exposure, intermediate scores ($36$-$64$) for moderate exposure, and high scores ($65$-$90$, capped at $95$) for primary experiences. Corresponding LLM guidelines and UI fallback mappings are systematically aligned.
+5.  **Analysis Guide Drawer**
+    *   **Status**: Satisfied. The floating action button (FAB) triggers a right-hand drawer listing sections 01 to 08, matching the mockup's content and design style.
+6.  **Fix Broken Emojis/Icons**
+    *   **Status**: Satisfied. Chevrons, close triggers, and badges use clean characters (e.g., `⌄`, `x`), and E2E tests assert that the layout contains no broken UTF-8 glyphs (``).
+
+---
+
+### Top Blockers & Required Fixes
+
+*   None.
+
+---
+
+### Residual Risks
+
+*   **Prompt Length & Tokens**: The detailed analysis prompt in `roadmap_prompt.py` is comprehensive and strictly structured. Monitor LLM response latency to ensure prompt processing times remain optimized for real-time analysis.

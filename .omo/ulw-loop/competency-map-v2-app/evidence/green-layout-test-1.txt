@@ -1,0 +1,41 @@
+
+> frontend@0.0.0 test:e2e
+> playwright test tests/e2e/analyze-flow.spec.js --grep analyze flow saves manual posting
+
+
+Running 1 test using 1 worker
+
+  x  1 tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result (1.4s)
+
+
+  1) tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('학습 필요')
+    Expected: visible
+    Error: strict mode violation: getByText('학습 필요') resolved to 5 elements:
+        1) <div data-v-42fc6432="" class="stat-label">학습 필요</div> aka getByLabel('역량 상태 요약').getByText('학습 필요')
+        2) <span data-v-42fc6432="" class="badge study">학습 필요</span> aka getByRole('button', { name: '시스템 설계 학습 필요 우대' })
+        3) <span data-v-42fc6432="" class="status-label">학습 필요</span> aka getByText('학습 필요').nth(2)
+        4) <p data-v-f145b6bf="" class="section-description">어필 가능, 답변 정리, 학습 필요 항목을 상태별로 나누고 예상 질문의 답변 전략을 바로…</p> aka getByText('어필 가능, 답변 정리, 학습 필요 항목을 상태별로 나누고 예상 질문의 답변 전략을 바로 펼쳐봅니다')
+        5) <strong data-v-f145b6bf="">학습 필요</strong> aka locator('#action-plan').getByText('학습 필요', { exact: true })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('학습 필요')[22m
+
+
+      43 |   await expect(page.getByText('어필 가능 역량')).toBeVisible()
+      44 |   await expect(page.getByText('답변 정리 필요')).toBeVisible()
+    > 45 |   await expect(page.getByText('학습 필요')).toBeVisible()
+         |                                         ^
+      46 |   await expect(page.getByText('전체 역량 항목')).toBeVisible()
+      47 |   await expect(page.getByRole('heading', { name: '역량 레이더 차트' })).toBeVisible()
+      48 |   await expect(page.getByRole('heading', { name: '역량 상세 카드' })).toBeVisible()
+        at C:\Users\SSAFY\Desktop\t08_project\frontend\tests\e2e\analyze-flow.spec.js:45:41
+
+    Error Context: test-results\analyze-flow-analyze-flow--d3201--submits-and-renders-result\error-context.md
+
+  1 failed
+    tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result 

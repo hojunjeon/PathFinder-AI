@@ -40,49 +40,72 @@ test('analyze flow saves manual posting, cover letter, submits, and renders resu
   await page.locator('#next-cover-letter-btn').click()
 
   await expect(page).toHaveURL(/\/analyze\/99$/)
-  await expect(page.getByRole('heading', { name: '역량 분석' })).toBeVisible()
-  const competencySection = page.locator('#gap')
-  await expect(competencySection.getByText('어필 가능', { exact: true })).toBeVisible()
-  await expect(competencySection.getByText('답변 정리', { exact: true })).toBeVisible()
-  await expect(competencySection.getByText('학습 필요', { exact: true })).toBeVisible()
+  await expect(page.locator('.sidebar')).toHaveCount(0)
+  await expect(page.locator('.progress-card')).toHaveCount(0)
+  await expect(page.locator('#scores')).toHaveCount(0)
+  await expect(page.locator('#prep-keywords')).toHaveCount(0)
+  await expect(page.locator('#roadmap')).toHaveCount(0)
+  await expect(page.locator('#interview-drill')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: /쿠팡 면접 준비/ })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: /역량 지도 .*액션 플래너/ })).toBeVisible()
+
+  const competencyStats = page.getByLabel('역량 상태 요약')
+  await expect(competencyStats.getByText('어필 가능 역량')).toBeVisible()
+  await expect(competencyStats.getByText('답변 정리 필요')).toBeVisible()
+  await expect(competencyStats.getByText('학습 필요', { exact: true })).toBeVisible()
+  await expect(competencyStats.getByText('전체 역량 항목')).toBeVisible()
+  await expect(competencyStats.getByText('1').first()).toBeVisible()
+
+  await expect(page.getByRole('heading', { name: '역량 레이더 차트' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /역량 상세 카드/ })).toBeVisible()
+  await expect(page.locator('.main-grid')).toBeVisible()
+  await expect(page.locator('.main-grid')).toHaveCSS('display', 'grid')
+  await expect(page.getByText('내 역량').first()).toBeVisible()
+  await expect(page.getByText('기업 요구').first()).toBeVisible()
   await expect(page.getByText('API 성능 개선').first()).toBeVisible()
+  await expect(page.getByText('기술 선택 근거').first()).toBeVisible()
   await expect(page.getByText('시스템 설계').first()).toBeVisible()
-  await expect(page.getByRole('heading', { name: '직무 역량 매칭도' })).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: '준비 항목' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: '로보틱스' })).toBeVisible()
-  await expect(page.getByText('우선순위 1 · 담당업무')).toBeVisible()
-  await expect(page.locator('#roadmap').getByText('직접 경험', { exact: true })).toBeVisible()
-  await expect(page.getByText('업무 연결').first()).toBeVisible()
-  await expect(page.getByText('내 연결점').first()).toBeVisible()
-  await expect(page.getByText('핵심 개념').first()).toBeVisible()
-  await expect(page.getByText('준비 순서').first()).toBeVisible()
-  await expect(page.getByText('로봇 팔 제어 정확도 개선 경험', { exact: true }).first()).toBeVisible()
-  await expect(page.locator('#roadmap').getByText('FK와 IK 차이')).toBeVisible()
-  await expect(page.getByText(/직접 연결 경험 없음/).first()).toBeVisible()
-  await expect(page.getByRole('heading', { name: '준비 키워드' })).toBeVisible()
-  const prepKeywords = page.locator('#prep-keywords')
-  await expect(prepKeywords.getByText('대주제 키워드', { exact: true })).toBeVisible()
-  await expect(prepKeywords.getByText('소주제 키워드', { exact: true })).toBeVisible()
-  await expect(prepKeywords.getByText('로보틱스').first()).toBeVisible()
-  await expect(prepKeywords.getByText('역기구학').first()).toBeVisible()
-  await expect(prepKeywords.getByText('특이점').first()).toBeVisible()
-  await expect(page.getByText('개념', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText('경험', { exact: true }).first()).toBeVisible()
-  await expect(page.getByText('적용', { exact: true }).first()).toBeVisible()
-  await expect(page.getByRole('heading', { name: '질문 리허설' })).toBeVisible()
-  const rehearsal = page.locator('#interview-drill')
-  await expect(rehearsal.getByText('회사/업무 맥락', { exact: true }).first()).toBeVisible()
-  await expect(rehearsal.getByText('내 경험 근거', { exact: true }).first()).toBeVisible()
-  await expect(rehearsal.getByText('답변 방향', { exact: true }).first()).toBeVisible()
-  await expect(rehearsal.getByText('꼬리질문', { exact: true }).first()).toBeVisible()
-  await expect(rehearsal.getByText('산업용 로봇 제어 알고리즘 개발').first()).toBeVisible()
-  await expect(rehearsal.getByText('로봇 팔 제어 정확도 개선 경험').first()).toBeVisible()
-  await expect(rehearsal.getByText('실시간성이 깨질 때 fallback은 무엇인가요?')).toBeVisible()
-  await expect(page.getByLabel('순기구학과 역기구학의 차이는 무엇인가요?')).toBeChecked()
-  await expect(page.getByLabel('A가 아니라 B 방식을 채택한 이유는 무엇인가요?')).toBeChecked()
-  await page.getByLabel('EtherCAT').check()
+  await expect(page.getByText('88').first()).toBeVisible()
+  await expect(page.getByText('24').first()).toBeVisible()
+
+  await page.getByRole('button', { name: /API 성능 개선/ }).click()
+  await expect(page.getByText('성능 개선 프로젝트에서 병목 분석과 응답 시간 개선을 직접 수행해 현재 역량을 높게 책정했습니다.')).toBeVisible()
+  await expect(page.getByText('대규모 트래픽 처리와 API 개발이 필수 요구라 기업 요구 점수를 높게 책정했습니다.')).toBeVisible()
+  await page.getByRole('button', { name: /시스템 설계/ }).click()
+  await expect(page.getByText('프로필·자소서에서 대규모 시스템 설계 경험 근거가 확인되지 않아 낮게 책정했습니다.')).toBeVisible()
+
+  const sprint = page.locator('.sprint-section')
+  await expect(sprint.getByText('어필 가능', { exact: true })).toBeVisible()
+  await expect(sprint.getByText('답변 정리', { exact: true })).toBeVisible()
+  await expect(sprint.getByText('학습 필요', { exact: true })).toBeVisible()
+  await expect(sprint.getByText('이미 경험이 있어 면접에서 강조할 수 있는 역량')).toBeVisible()
+  await expect(sprint.getByText('경험은 있으나 설명 보완이 필요한 역량')).toBeVisible()
+  await expect(sprint.getByText('현재 경험 근거가 부족하여 개념 학습이 필요한 역량')).toBeVisible()
+  await sprint.getByRole('button', { name: /질문 .*답변 전략 보기/ }).first().click()
+  await expect(sprint.getByText('답변 전략', { exact: true }).first()).toBeVisible()
+  await expect(sprint.getByText('상황, 맡은 역할, 실행 방식, 검증 결과를 직무 요구와 연결하세요.')).toBeVisible()
+
+  await expect(page.getByRole('button', { name: '분석 결과 설명서 열기' })).toBeVisible()
+  await page.getByRole('button', { name: '분석 결과 설명서 열기' }).click()
+  await expect(page.getByRole('dialog', { name: '분석 결과 설명서' })).toBeVisible()
+  await expect(page.getByText('분석 결과 페이지 안내')).toBeVisible()
+  await expect(page.getByText('역량 레이더 차트').last()).toBeVisible()
+  await expect(page.getByText('역량 상세 카드').last()).toBeVisible()
+  await expect(page.getByText('점수 수치의 의미')).toBeVisible()
+  await expect(page.getByText('어필 가능 역량 활용법')).toBeVisible()
+  await expect(page.getByText('답변 정리 역량 활용법')).toBeVisible()
+  await expect(page.getByText('학습 필요 역량 활용법')).toBeVisible()
+  await expect(page.getByText('질문 & 답변 전략 패널')).toBeVisible()
+  await expect(page.getByText('체크박스 & 진행률')).toBeVisible()
+  await page.getByRole('button', { name: '분석 결과 설명서 닫기' }).click()
+  await expect(page.getByRole('dialog', { name: '분석 결과 설명서' })).toHaveCount(0)
+
+  await page.getByLabel('API 성능 개선을 어필 가능 관점에서 어떻게 설명할 수 있나요?').check()
   await page.reload()
-  await expect(page.getByLabel('EtherCAT')).toBeChecked()
+  await expect(page.getByLabel('API 성능 개선을 어필 가능 관점에서 어떻게 설명할 수 있나요?')).toBeChecked()
+
+  const bodyText = await page.locator('body').innerText()
+  expect(bodyText).not.toContain('�')
 })
 
 test('cover letter submit request contains question and answer', async ({ page }) => {
@@ -244,18 +267,36 @@ async function mockAnalysisResult(page) {
             importance: 'required',
             signal: '성능 개선 프로젝트 경험 있음',
             action: '병목 분석 과정을 어필',
+            radar_score: 88,
+            job_score: 92,
+            score_rationale: {
+              my_reason: '성능 개선 프로젝트에서 병목 분석과 응답 시간 개선을 직접 수행해 현재 역량을 높게 책정했습니다.',
+              job_reason: '대규모 트래픽 처리와 API 개발이 필수 요구라 기업 요구 점수를 높게 책정했습니다.',
+            },
           }, {
             keyword: '기술 선택 근거',
             status: 'articulate',
             importance: 'required',
             signal: '구현 경험은 있으나 선택 이유 부족',
             action: '트레이드오프 답변 정리',
+            radar_score: 58,
+            job_score: 84,
+            score_rationale: {
+              my_reason: '구현 경험은 있으나 기술 선택 기준과 트레이드오프 설명이 부족해 중간 점수로 책정했습니다.',
+              job_reason: '백엔드 API 개발에서 기술 선택 근거를 설명해야 하므로 높은 요구 점수를 책정했습니다.',
+            },
           }, {
             keyword: '시스템 설계',
             status: 'study',
             importance: 'preferred',
             signal: '대규모 설계 경험 근거 없음',
             action: '분산 구조 우선 학습',
+            radar_score: 24,
+            job_score: 70,
+            score_rationale: {
+              my_reason: '프로필·자소서에서 대규모 시스템 설계 경험 근거가 확인되지 않아 낮게 책정했습니다.',
+              job_reason: '분산 시스템 경험은 우대사항이지만 면접에서 확장 질문이 가능해 요구 점수를 중간 이상으로 책정했습니다.',
+            },
           }],
           strengths: [{
             keyword: '주문 API 성능 개선',

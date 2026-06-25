@@ -1,0 +1,6 @@
+﻿db_exists True size 847872
+analyses 10
+users 7
+companies_company ERR no such table: companies_company
+job_postings 33
+analysis_99_ERR no such column: company_name

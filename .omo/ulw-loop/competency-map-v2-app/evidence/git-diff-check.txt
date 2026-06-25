@@ -1,0 +1,5 @@
+warning: in the working copy of 'frontend/src/components/result/CompetencyGap.vue', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/src/views/AnalyzeResultView.vue', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'frontend/tests/e2e/analyze-flow.spec.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'llm_server/roadmap_prompt.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'llm_server/tests/test_roadmap_prompt.py', LF will be replaced by CRLF the next time Git touches it

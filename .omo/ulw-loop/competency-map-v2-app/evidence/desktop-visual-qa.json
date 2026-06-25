@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:5179/analyze/99",
+  "stats": [
+    "S1어필 가능 역량",
+    "A1답변 정리 필요",
+    "L1학습 필요",
+    "T3전체 역량 항목"
+  ],
+  "gridDisplay": "grid",
+  "gridColumns": "393px 393px",
+  "drawerOpen": true,
+  "bodyOverflowX": false,
+  "hasPersonalAnswerGuide": true,
+  "hasFakeFitHeading": false
+}

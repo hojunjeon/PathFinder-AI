@@ -259,7 +259,8 @@ def test_build_prompt_includes_company_and_job_context():
     assert "개인 맞춤 예상 면접 질문" in prompt
     assert "역량 분석 목적" in prompt
     assert "어떤 실제 경험을 강점으로 활용" in prompt
-    assert "점수, 적합도 퍼센트, 합격 가능성을 생성하지 마세요" in prompt
+    assert "competency_map의 radar_score와 job_score는 위 기준에 따라 반드시 생성하세요" in prompt
+    assert "합격 가능성, 최종 적합도 퍼센트, 채용 당락 예측은 생성하지 마세요" in prompt
     assert "어필해야 함" in prompt
     assert "담당업무 → 직무 지식 → 준비 방법 → 질문" in prompt
     assert '"competency_map"' in prompt

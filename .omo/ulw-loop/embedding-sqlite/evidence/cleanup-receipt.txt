@@ -1,4 +1,0 @@
-qa_company_rows=0
-qa_user_rows=0
-workspace_server_processes=0
-cleanup_receipt_exit=0

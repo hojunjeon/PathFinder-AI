@@ -1,5 +1,0 @@
-Invocation: cd backend && venv\Scripts\python.exe -m pytest -q
-........................................................................ [ 85%]
-............                                                             [100%]
-84 passed in 36.69s
-ExitCode: 0

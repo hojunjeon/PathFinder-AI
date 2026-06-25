@@ -1,2 +1,0 @@
-﻿frontend/src/components/analyze/StepJobUrl.vue
-frontend/tests/e2e/analyze-flow.spec.js

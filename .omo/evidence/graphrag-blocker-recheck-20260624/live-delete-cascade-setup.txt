@@ -1,5 +1,0 @@
-﻿stamp=20260624123921
-company_name=QA Delete Cascade 20260624123921
-company_id=520
-email=qa-delete-20260624123921@example.com
-marker=PRIVATE_CLAIM_DELETE_20260624123921

@@ -1,4 +1,0 @@
-﻿llm_pid=12620
-django_pid=17456
-LLM_INTERNAL_TOKEN=qa-token
-LLM_SERVER_URL=http://127.0.0.1:28081

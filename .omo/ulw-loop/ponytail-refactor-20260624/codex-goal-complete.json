@@ -1,9 +1,0 @@
-{
-    "threadId":  "019ef940-7465-75a3-abae-ff5337cd28cb",
-    "objective":  "Complete the durable ulw-loop plan in .omo/ulw-loop/ponytail-refactor-20260624/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/ponytail-refactor-20260624/ledger.jsonl as the audit trail.",
-    "status":  "complete",
-    "tokensUsed":  0,
-    "timeUsedSeconds":  3,
-    "createdAt":  1782304361,
-    "updatedAt":  1782304365
-}

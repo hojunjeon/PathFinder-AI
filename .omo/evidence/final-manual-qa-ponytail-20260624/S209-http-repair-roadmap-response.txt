@@ -1,9 +1,0 @@
-Invocation: curl.exe -i -X POST http://127.0.0.1:8092/llm/roadmap -H "X-Internal-Token: test-internal-token" -H "Content-Type: application/json" --data-binary "@.omo/evidence/final-manual-qa-ponytail-20260624/qa_llm_http_payload_repair.json"
-HTTP/1.1 200 OK
-date: Wed, 24 Jun 2026 12:21:48 GMT
-server: uvicorn
-content-length: 1155
-content-type: application/json
-
-{"competency_gap":{"summary":"","competency_map":[],"strengths":[],"gaps":[],"required_competencies":[]},"text_roadmap":"initial","timeline_data":[{"category":"로봇 제어","responsibility_index":1,"responsibility":"로봇 제어 알고리즘 개발","priority":1,"experience_match":"none","subtopics":[{"title":"fallback values","preparation_type":"study","questions":[],"job_reason":"","matched_experience":"","experience_source":"없음","experience_connection":{"evidence":"","transferable_point":"","gap":""},"study_focus":[],"preparation_steps":[]}],"priority_reason":"","experience_keywords":[],"competency_keywords":[],"sources":[]},{"category":"EtherCAT","responsibility_index":2,"responsibility":"EtherCAT 기반 서보 모터 실시간 제어","priority":2,"experience_match":"none","subtopics":[{"title":"pass through values","preparation_type":"organize","questions":[],"job_reason":"","matched_experience":"","experience_source":"없음","experience_connection":{"evidence":"","transferable_point":"","gap":""},"study_focus":[],"preparation_steps":[]}],"priority_reason":"","experience_keywords":[],"competency_keywords":[],"sources":[]}]}
-ExitCode: 0

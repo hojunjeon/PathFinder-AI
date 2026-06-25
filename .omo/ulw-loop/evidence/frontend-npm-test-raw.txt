@@ -1,6 +1,0 @@
-
-> frontend@0.0.0 test
-> node scripts/verify-design.mjs
-
-frontend design verification passed
-raw_exit=0

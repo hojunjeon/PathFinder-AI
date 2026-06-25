@@ -1,2 +1,0 @@
-desktop visual QA passed; cleanup: killed 2777; screenshots: result-v2-desktop-top.png result-v2-desktop-drawer.png
-final cleanup: killed leftover PID 7984; port 5179 connection count 0

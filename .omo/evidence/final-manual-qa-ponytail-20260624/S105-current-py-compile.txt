@@ -1,7 +1,0 @@
-﻿# S105 py_compile touched LLM files
-Timestamp: 2026-06-24T20:55:26.3022974+09:00
-Surface: CLI Python syntax compile touched LLM source and tests
-Exact invocation: llm_server\venv\Scripts\python.exe -m py_compile llm_server\main.py llm_server\roadmap_processing_competency.py llm_server\roadmap_processing_timeline.py llm_server\roadmap_processing_values.py llm_server\tests\test_roadmap_processing_values.py llm_server\tests\test_roadmap_repair_branch.py
-
-
-ExitCode: 0

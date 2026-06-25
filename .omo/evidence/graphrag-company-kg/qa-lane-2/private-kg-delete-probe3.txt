@@ -1,3 +1,0 @@
-﻿private_claim_created= 7
-private_claim_after_user_delete= {'id': 7, 'created_by_user_id': None, 'trust_level': 'user_private_candidate', 'object': 'PRIVATE_KG_DELETE_MARKER_1782271514'}
-remaining_private_marker_claim_count= 1

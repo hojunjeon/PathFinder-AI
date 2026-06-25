@@ -1,4 +1,0 @@
-..........                                                               [100%]
-10 passed in 13.84s
-
-embedding_fallback_backend_exit=0

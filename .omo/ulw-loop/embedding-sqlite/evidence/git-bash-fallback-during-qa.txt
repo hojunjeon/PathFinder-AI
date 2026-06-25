@@ -1,3 +1,0 @@
-Git Bash MCP diagnose failed during embedding QA with: Transport closed.
-Fallback: PowerShell shell_command used for UTF-8 no-BOM rewrite and Django/pytest verification.
-PowerShell 5.1 did not support -Encoding utf8NoBOM, so no-BOM writes used System.IO.File.WriteAllText with UTF8Encoding(false).

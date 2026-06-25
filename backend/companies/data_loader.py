@@ -159,7 +159,12 @@ def seed_jobs_careers_records(company_model, job_model, path=JOBS_CAREERS_DATA_P
 
     path = Path(path)
     if not path.exists():
-        raise CommandError(f"직무 데이터 파일을 찾을 수 없습니다: {path}")
+        return {
+            "processed_records": 0,
+            "created_companies": 0,
+            "created_jobs": 0,
+            "skipped": True,
+        }
 
     required_keys = {
         "company_name",

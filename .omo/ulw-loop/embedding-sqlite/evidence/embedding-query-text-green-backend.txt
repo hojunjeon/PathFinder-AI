@@ -1,4 +1,0 @@
-.........                                                                [100%]
-9 passed in 8.30s
-
-query_text_backend_exit=0

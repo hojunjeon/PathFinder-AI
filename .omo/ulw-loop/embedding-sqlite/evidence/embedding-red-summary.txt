@@ -1,2 +1,0 @@
-﻿llm_exit=1
-backend_exit=1

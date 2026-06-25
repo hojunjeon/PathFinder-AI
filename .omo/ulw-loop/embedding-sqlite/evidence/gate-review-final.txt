@@ -1,7 +1,0 @@
-Gate reviewer final verdict: APPROVED
-Reviewed blockers fixed:
-1. GMS unavailable fallback in search_company_source_chunks_by_text.
-2. Private JobPosting marker leakage QA strengthened.
-3. ULW status reconciled to complete:3, criteria pass:9.
-4. Review evidence captured in gate thread.
-5. LLM/backend test files split below LOC threshold.

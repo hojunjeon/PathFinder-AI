@@ -1,5 +1,0 @@
-﻿PASS: repair /llm/roadmap returned HTTP/1.1 200 OK with two timeline rows.
-PASS: fallback normalization converted invalid preparation_type practice to study and experience_match adjacent to none.
-PASS: pass-through retained valid preparation_type organize on repaired row.
-PASS: repair branch inserted the EtherCAT responsibility from the second mocked GMS response.
-PASS: forced repair httpx.HTTPError returned the original result with text_roadmap original-before-repair-error and one timeline row.

@@ -1,9 +1,0 @@
-﻿{
-    "status_code":  200,
-    "is_mock":  false,
-    "has_competency_gap":  true,
-    "has_timeline_data":  true,
-    "first_has_subtopics":  true,
-    "has_question":  true,
-    "has_authorization_leak":  false
-}

@@ -1,4 +1,0 @@
-﻿Operations to perform:
-  Apply all migrations: companies
-Running migrations:
-  Applying companies.0009_source_chunk_embeddings... OK

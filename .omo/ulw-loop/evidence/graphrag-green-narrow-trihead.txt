@@ -1,3 +1,0 @@
-...                                                                      [100%]
-3 passed, 9 deselected in 9.22s
-trihead_exit=0

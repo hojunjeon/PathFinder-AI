@@ -1,2 +1,0 @@
-﻿launcher_pid=18460
-frontend_ready=True

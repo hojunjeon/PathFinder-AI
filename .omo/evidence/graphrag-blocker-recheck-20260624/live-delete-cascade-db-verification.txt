@@ -1,4 +1,0 @@
-﻿22 objects imported automatically (use -v 2 for details).
-
-private_claims_before_delete= 1
-claims_after_user_delete= 0

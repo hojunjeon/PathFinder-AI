@@ -1,9 +1,0 @@
-﻿## codex/graphrag-plan
-?? .omo/drafts/graphrag-adoption.md
-?? .omo/drafts/graphrag-company-kg.md
-?? .omo/evidence/graphrag-company-kg/
-?? .omo/plans/graphrag-company-kg.md
-?? .omo/reviews/
-?? .omo/ultraresearch/
-?? .omo/ulw-loop/019ef70f-7181-7d33-9b5d-e24e6b13990a/
-?? .omo/ulw-loop/graphrag-company-kg-wave1/

@@ -8,7 +8,7 @@
             <span>PathFinder AI · 역량 분석</span>
           </div>
           <h1 class="header-title">
-            역량 지도 &amp; <span>액션 플래너</span><span class="v2-tag">v2</span>
+            역량 지도 &amp; <span>액션 플래너</span>
           </h1>
           <p class="header-subtitle">{{ subtitle }}</p>
         </div>

@@ -890,16 +890,21 @@ function loadFallbackDone(key) {
 
 .stat-icon {
   display: grid;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 12px;
+  border-radius: 10px;
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 800;
 }
-.stat-icon img,
+.stat-icon img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
 .sprint-day-icon img {
   display: block;
   width: 100%;

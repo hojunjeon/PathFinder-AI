@@ -281,10 +281,10 @@ const openQaKeys = ref({})
 const radarRings = [0.2, 0.4, 0.6, 0.8, 1]
 const scoreRingLabels = [0.2, 0.4, 0.6, 0.8]
 const saltIcons = {
-  S: new URL('../../../../docs/images/S.png', import.meta.url).href,
-  A: new URL('../../../../docs/images/A.png', import.meta.url).href,
-  L: new URL('../../../../docs/images/L.png', import.meta.url).href,
-  T: new URL('../../../../docs/images/T.png', import.meta.url).href,
+  S: new URL('../../assets/S.png', import.meta.url).href,
+  A: new URL('../../assets/A.png', import.meta.url).href,
+  L: new URL('../../assets/L.png', import.meta.url).href,
+  T: new URL('../../assets/T.png', import.meta.url).href,
 }
 
 const subtitle = computed(() => {
@@ -1270,12 +1270,6 @@ function loadFallbackDone(key) {
   height: 64px;
   place-items: center;
   flex: 0 0 auto;
-  border-radius: 999px;
-  background: var(--fg);
-  color: white;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 800;
 }
 .sprint-day-icon img {
   display: block;
@@ -1283,10 +1277,6 @@ function loadFallbackDone(key) {
   height: 100%;
   object-fit: contain;
 }
-
-.d-strength .sprint-day-icon { background: var(--success); }
-.d-articulate .sprint-day-icon { background: var(--warn); }
-.d-study .sprint-day-icon { background: var(--danger); }
 
 .sprint-day-title {
   font-size: 13px;

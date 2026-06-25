@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PathFinder AI가 채용공고와 나의 경험을 연결해 개인 맞춤형 면접 준비 로드맵을 만듭니다." />
+  <title>PathFinder AI · Pathi와 만드는 면접 준비 경로</title>
+  <style>
+    /*
+      PT/DESIGN.md 적용 방향
+      - warm off-white canvas / black typography / orange accent
+      - 16:9 poster-like visual frames
+      - short copy, large image-led storytelling
+      - flat color, clear grid, strong hierarchy
+      - Pathi is a guide, not decorative filler
+    */
+    :root {
+      --paper: #faf8f6;
+      --white: #ffffff;
+      --ink: #111111;
+      --muted: #68615d;
+      --orange: #f24b35;
+      --orange-strong: #ef2f1a;
+      --peach: #fff0eb;
+      --green: #2f8f63;
+      --green-soft: #eaf6ef;
+      --blue: #3568d4;
+      --blue-soft: #edf3ff;
+      --yellow: #f5c84c;
+      --line: #111111;
+      --soft-line: #ddd7d2;
+      --shadow: 5px 5px 0 var(--ink);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1280px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Pretendard, SUIT, "Noto Sans KR", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    svg { display: block; }
+    .container { width: calc(100% - 48px); max-width: var(--max); margin-inline: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+    .skip-link {
+      position: fixed;
+      left: 18px;
+      top: -80px;
+      z-index: 100;
+      padding: 12px 16px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background: var(--white);
+      font-weight: 800;
+    }
+    .skip-link:focus { top: 18px; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(17,17,17,.12);
+      background: rgba(250,248,246,.92);
+      backdrop-filter: blur(14px);
+    }
+    .nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 900; letter-spacing: -.035em; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      background: var(--orange);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .brand-word { font-size: 18px; }
+    .brand-word small { display: block; color: var(--muted); font-size: 10px; letter-spacing: .12em; font-weight: 800; }
+    .nav-links { display: flex; align-items: center; gap: 28px; color: #38322f; font-size: 14px; font-weight: 700; }
+    .nav-links a { position: relative; }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 100%;
+      bottom: -7px;
+      height: 3px;
+      background: var(--orange);
+      transition: right .18s ease;
+    }
+    .nav-links a:hover::after { right: 0; }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+    .button {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 18px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .button:hover { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+    .button.primary { background: var(--orange); color: var(--white); }
+    .button.dark { background: var(--ink); color: var(--white); }
+    .button:focus-visible, .nav a:focus-visible { outline: 4px solid rgba(53,104,212,.35); outline-offset: 3px; }
+
+    .hero { padding: 56px 0 36px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+    .hero-copy {
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 34px 14px 34px 0;
+    }
+    .eyebrow {
+      width: fit-content;
+      margin-bottom: 24px;
+      padding: 9px 13px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--peach);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin-bottom: 24px;
+      font-size: clamp(50px, 6vw, 82px);
+      line-height: .98;
+      letter-spacing: -.065em;
+      font-weight: 950;
+    }
+    .hero-line { display: block; }
+    .hero-line.accent { color: var(--orange); }
+    .hero-lead {
+      max-width: 560px;
+      margin-bottom: 28px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+      letter-spacing: -.012em;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .micro-proof {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 22px;
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 2px solid var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .micro-proof span { display: inline-flex; align-items: center; gap: 7px; }
+    .micro-proof i { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); }
+
+    .poster-frame {
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--ink);
+      border-radius: var(--radius-xl);
+      background: var(--orange);
+      box-shadow: var(--shadow);
+    }
+    .hero-poster { min-height: 620px; aspect-ratio: 16 / 12; }
+    .poster-grid {
+      position: absolute;
+      inset: 0;
+      opacity: .15;
+      background-image:
+        linear-gradient(var(--ink) 1px, transparent 1px),
+        linear-gradient(90deg, var(--ink) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+    .poster-label {
+      position: absolute;
+      top: 22px;
+      left: 24px;
+      z-index: 3;
+      padding: 8px 12px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--paper);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .12em;
+    }
+    .poster-index {
+      position: absolute;
+      right: 24px;
+      top: 20px;
+      z-index: 3;
+      font-size: 14px;
+      font-weight: 950;
+    }
+    .hero-route {
+      position: absolute;
+      inset: 10% 7% 8%;
+      z-index: 1;
+      width: 86%;
+      height: 82%;
+    }
+    .pathi-hero {
+      position: absolute;
+      z-index: 4;
+      width: 36%;
+      max-width: 280px;
+      left: 50%;
+      top: 51%;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(8px 10px 0 rgba(17,17,17,.22));
+    }
+    .hero-node {
+      position: absolute;
+      z-index: 5;
+      width: 170px;
+      min-height: 98px;
+      padding: 14px;
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      background: var(--white);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+    .hero-node small { display: block; margin-bottom: 8px; color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: .08em; }
+    .hero-node strong { display: block; font-size: 16px; line-height: 1.25; }
+    .hero-node .node-icon { width: 34px; height: 34px; margin-bottom: 11px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 10px; background: var(--peach); font-size: 17px; }
+    .node-job { left: 5%; top: 18%; transform: rotate(-3deg); }
+    .node-profile { left: 5%; bottom: 15%; transform: rotate(2deg); }
+    .node-gap { right: 5%; top: 18%; transform: rotate(3deg); }
+    .node-plan { right: 5%; bottom: 15%; transform: rotate(-2deg); }
+    .hero-bubble {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      bottom: 4.5%;
+      transform: translateX(-50%);
+      width: 64%;
+      max-width: 420px;
+      padding: 13px 16px;
+      border: 2px solid var(--ink);
+      border-radius: 16px 16px 16px 5px;
+      background: var(--ink);
+      color: var(--white);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .value-strip { padding: 18px 0 54px; }
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 2px solid var(--ink);
+      border-radius: 22px;
+      overflow: hidden;
+      background: var(--white);
+    }
+    .value-item { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; padding: 20px 22px; }
+    .value-item + .value-item { border-left: 2px solid var(--ink); }
+    .value-icon { width: 58px; height: 58px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 18px; background: var(--peach); font-size: 25px; }
+    .value-item strong { display: block; margin-bottom: 4px; font-size: 16px; }
+    .value-item span { color: var(--muted); font-size: 13px; }
+
+    .section { padding: 76px 0; }
+    .section.orange-section { background: var(--orange); border-block: 3px solid var(--ink); }
+    .section-head {
+      display: grid;
+      grid-template-columns: .7fr 1.3fr;
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 950; letter-spacing: .12em; text-transform: uppercase; }
+    .kicker::before { content: ""; width: 28px; height: 4px; background: var(--orange); }
+    .orange-section .kicker::before { background: var(--ink); }
+    h2 { margin-bottom: 0; font-size: clamp(38px, 4vw, 58px); line-height: 1.04; letter-spacing: -.055em; font-weight: 950; }
+    .section-summary { max-width: 520px; justify-self: end; margin-bottom: 2px; color: var(--muted); font-size: 16px; line-height: 1.7; }
+    .orange-section .section-summary { color: rgba(17,17,17,.72); }
+
+    .story-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .story-card {
+      overflow: hidden;
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+    .story-visual {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      border-bottom: 3px solid var(--ink);
+      background: var(--peach);
+    }
+    .story-card:nth-child(2) .story-visual { background: var(--blue-soft); }
+    .story-card:nth-child(3) .story-visual { background: var(--green-soft); }
+    .story-copy { display: grid; grid-template-columns: 54px 1fr; gap: 14px; padding: 18px; }
+    .story-no { font-size: 30px; font-weight: 950; line-height: 1; color: var(--orange); }
+    .story-copy h3 { margin-bottom: 5px; font-size: 19px; letter-spacing: -.025em; }
+    .story-copy p { margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .scene-svg { width: 100%; height: 100%; }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      grid-template-areas:
+        "map question"
+        "map market";
+      gap: 20px;
+    }
+    .output-card {
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+    .map-card { grid-area: map; min-height: 610px; }
+    .question-card { grid-area: question; min-height: 290px; background: var(--peach); }
+    .market-card { grid-area: market; min-height: 300px; background: var(--ink); color: var(--white); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; border-bottom: 2px solid currentColor; }
+    .card-top strong { font-size: 17px; }
+    .card-top small { font-size: 11px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+    .map-layout { display: grid; grid-template-columns: 1fr .9fr; gap: 16px; padding: 22px; }
+    .radar-wrap { min-height: 300px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 22px; background: var(--paper); }
+    .radar-svg { width: 92%; max-width: 340px; }
+    .priority-list { display: grid; gap: 10px; align-content: center; }
+    .priority {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 13px;
+      border: 2px solid var(--ink);
+      border-radius: 15px;
+      background: var(--white);
+    }
+    .priority b { width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 12px; background: var(--orange); color: var(--white); }
+    .priority strong { display: block; font-size: 14px; }
+    .priority span { color: var(--muted); font-size: 11px; }
+    .priority em { font-style: normal; font-size: 12px; font-weight: 900; }
+    .timeline { margin: 0 22px 22px; padding: 18px; border: 2px solid var(--ink); border-radius: 20px; background: var(--peach); }
+    .timeline-line { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-top: 24px; }
+    .timeline-line::before { content: ""; position: absolute; top: 8px; left: 8%; right: 8%; height: 4px; background: var(--ink); }
+    .week { position: relative; text-align: center; font-size: 12px; font-weight: 900; }
+    .week::before { content: ""; position: absolute; top: -23px; left: 50%; width: 16px; height: 16px; transform: translateX(-50%); border: 3px solid var(--ink); border-radius: 50%; background: var(--white); }
+    .week.active::before { background: var(--orange); }
+    .question-body { padding: 22px; }
+    .question-mark { width: 54px; height: 54px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 18px; background: var(--orange); color: var(--white); font-size: 28px; font-weight: 950; box-shadow: 3px 3px 0 var(--ink); }
+    .question-body h3 { margin: 18px 0 10px; font-size: 23px; line-height: 1.25; letter-spacing: -.03em; }
+    .question-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .question-tags span { padding: 7px 10px; border: 2px solid var(--ink); border-radius: 999px; background: var(--white); font-size: 11px; font-weight: 900; }
+    .market-body { display: grid; grid-template-columns: 1fr 118px; gap: 18px; align-items: end; padding: 22px; }
+    .bars { height: 155px; display: flex; align-items: flex-end; gap: 12px; }
+    .bar { flex: 1; min-width: 22px; border: 2px solid var(--white); border-bottom: 0; background: var(--orange); }
+    .bar:nth-child(2), .bar:nth-child(5) { background: var(--yellow); }
+    .bar:nth-child(3) { background: var(--blue); }
+    .market-stat strong { display: block; color: var(--orange); font-size: 42px; line-height: 1; }
+    .market-stat span { display: block; margin-top: 9px; color: rgba(255,255,255,.68); font-size: 12px; }
+
+    .pathi-band {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: .7fr 1.3fr;
+      gap: 26px;
+      align-items: center;
+      min-height: 430px;
+      padding: 36px 54px;
+      border: 3px solid var(--ink);
+      border-radius: 30px;
+      background: var(--peach);
+      box-shadow: var(--shadow);
+    }
+    .pathi-band::after {
+      content: "PATHI";
+      position: absolute;
+      right: -22px;
+      bottom: -52px;
+      color: rgba(242,75,53,.12);
+      font-size: 176px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -.08em;
+      pointer-events: none;
+    }
+    .pathi-band svg { width: 100%; max-width: 320px; margin-inline: auto; position: relative; z-index: 2; }
+    .pathi-message { position: relative; z-index: 2; }
+    .pathi-message h2 { max-width: 620px; }
+    .pathi-message p { max-width: 580px; margin: 18px 0 24px; color: var(--muted); font-size: 17px; }
+    .speech {
+      width: fit-content;
+      margin-bottom: 20px;
+      padding: 11px 15px;
+      border: 2px solid var(--ink);
+      border-radius: 18px 18px 18px 5px;
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .final-cta { padding: 80px 0 92px; }
+    .cta-board {
+      display: grid;
+      grid-template-columns: 1.3fr auto;
+      gap: 28px;
+      align-items: center;
+      padding: 42px 46px;
+      border: 3px solid var(--ink);
+      border-radius: 28px;
+      background: var(--ink);
+      color: var(--white);
+      box-shadow: 7px 7px 0 var(--orange);
+    }
+    .cta-board h2 { max-width: 740px; }
+    .cta-board p { margin: 14px 0 0; color: rgba(255,255,255,.65); }
+    .cta-board .button { box-shadow: 4px 4px 0 var(--orange); }
+
+    footer { padding: 26px 0 42px; border-top: 2px solid var(--ink); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    @media (max-width: 1080px) {
+      .nav-links { display: none; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { min-height: auto; padding-right: 0; }
+      .hero-poster { min-height: 620px; }
+      .story-grid { grid-template-columns: 1fr; }
+      .story-card { display: grid; grid-template-columns: 1.1fr .9fr; }
+      .story-visual { border-bottom: 0; border-right: 3px solid var(--ink); }
+      .output-grid { grid-template-columns: 1fr; grid-template-areas: "map" "question" "market"; }
+      .pathi-band { grid-template-columns: .85fr 1.15fr; }
+    }
+
+    @media (max-width: 760px) {
+      .container { width: calc(100% - 28px); max-width: var(--max); }
+      .nav { min-height: 64px; }
+      .brand-word small, .nav-actions .button:not(.primary) { display: none; }
+      .button { min-height: 42px; padding-inline: 15px; }
+      .hero { padding-top: 34px; }
+      h1 { font-size: clamp(46px, 14vw, 68px); }
+      .hero-lead { font-size: 16px; }
+      .hero-poster { min-height: 580px; aspect-ratio: auto; }
+      .pathi-hero { width: 46%; }
+      .hero-node { width: 138px; min-height: 86px; padding: 11px; }
+      .hero-node strong { font-size: 13px; }
+      .hero-node .node-icon { width: 30px; height: 30px; margin-bottom: 7px; }
+      .value-grid { grid-template-columns: 1fr; }
+      .value-item + .value-item { border-left: 0; border-top: 2px solid var(--ink); }
+      .section { padding: 58px 0; }
+      .section-head { grid-template-columns: 1fr; gap: 14px; }
+      .section-summary { justify-self: start; }
+      .story-card { grid-template-columns: 1fr; }
+      .story-visual { border-right: 0; border-bottom: 3px solid var(--ink); }
+      .map-layout { grid-template-columns: 1fr; }
+      .map-card { min-height: auto; }
+      .pathi-band { grid-template-columns: 1fr; padding: 28px 24px; }
+      .pathi-band svg { width: 210px; }
+      .cta-board { grid-template-columns: 1fr; padding: 30px 24px; }
+      .footer-inner { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-actions .button.primary { font-size: 12px; padding-inline: 12px; }
+      .hero-actions { display: grid; }
+      .hero-actions .button { width: 100%; }
+      .hero-poster { min-height: 520px; }
+      .hero-node { width: 118px; }
+      .node-job, .node-profile { left: 3%; }
+      .node-gap, .node-plan { right: 3%; }
+      .hero-bubble { width: 82%; }
+      .market-body { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+
+    @media print {
+      .site-header { position: static; }
+      .button { box-shadow: none; }
+      .poster-frame, .story-card, .output-card, .pathi-band, .cta-board { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 이동</a>
+
+  <svg class="sr-only" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="pathi" viewBox="0 0 320 360">
+        <g stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="160" cy="330" rx="94" ry="18" fill="#111111" opacity=".14" stroke="none"/>
+          <path d="M84 198c-23 4-39 19-48 45" fill="none"/>
+          <path d="M236 198c23 4 39 19 48 45" fill="none"/>
+          <circle cx="35" cy="253" r="18" fill="#f24b35"/>
+          <circle cx="285" cy="253" r="18" fill="#f5c84c"/>
+          <rect x="82" y="156" width="156" height="140" rx="42" fill="#ffffff"/>
+          <path d="M104 281v35"/><path d="M216 281v35"/>
+          <rect x="79" y="309" width="56" height="24" rx="12" fill="#f24b35"/>
+          <rect x="185" y="309" width="56" height="24" rx="12" fill="#111111"/>
+          <rect x="110" y="191" width="100" height="65" rx="18" fill="#fff0eb"/>
+          <path d="M127 223h66"/>
+          <path d="M140 239h40"/>
+          <circle cx="160" cy="104" r="78" fill="#ffffff"/>
+          <circle cx="160" cy="104" r="57" fill="#fff0eb"/>
+          <path d="M160 18v-12"/>
+          <circle cx="160" cy="5" r="8" fill="#f24b35"/>
+          <path d="M160 52l15 47-15 34-15-34z" fill="#f24b35"/>
+          <circle cx="160" cy="104" r="7" fill="#111111"/>
+          <path d="M111 104h14M195 104h14M160 55v12M160 141v12"/>
+          <path d="M132 134c15 12 41 12 56 0" fill="none"/>
+          <path d="M100 72l-15-13M220 72l15-13"/>
+          <circle cx="120" cy="93" r="8" fill="#111111"/>
+          <circle cx="200" cy="93" r="8" fill="#111111"/>
+          <rect x="91" y="146" width="138" height="29" rx="14" fill="#f24b35"/>
+        </g>
+      </symbol>
+
+      <symbol id="mini-pathi" viewBox="0 0 120 120">
+        <g stroke="#111111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="60" cy="42" r="30" fill="#ffffff"/>
+          <circle cx="60" cy="42" r="20" fill="#fff0eb"/>
+          <path d="M60 20l7 18-7 13-7-13z" fill="#f24b35"/>
+          <circle cx="60" cy="42" r="3" fill="#111111"/>
+          <rect x="27" y="72" width="66" height="38" rx="17" fill="#ffffff"/>
+          <rect x="38" y="79" width="44" height="17" rx="7" fill="#f24b35"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/" aria-label="PathFinder AI 홈">
+        <span class="brand-mark"><svg width="31" height="31" viewBox="0 0 120 120" aria-hidden="true"><use href="#mini-pathi"/></svg></span>
+        <span class="brand-word">PathFinder AI<small>AI INTERVIEW ROADMAP</small></span>
+      </a>
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="#how">분석 과정</a>
+        <a href="#output">결과 미리보기</a>
+        <a href="/dashboard">채용 대시보드</a>
+        <a href="/community">면접 후기</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="button" href="/login">로그인</a>
+        <a class="button primary" href="/analyze/new">분석 시작 <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Pathi's AI Interview Map</span>
+          <h1 id="hero-title">
+            <span class="hero-line">면접 준비,</span>
+            <span class="hero-line">감이 아니라</span>
+            <span class="hero-line accent">경로로.</span>
+          </h1>
+          <p class="hero-lead">채용공고와 나의 경험을 연결하면 Pathi가 강점, 보완점, 예상 질문을 한 장의 로드맵으로 정리합니다.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/analyze/new">내 로드맵 만들기 <span aria-hidden="true">↗</span></a>
+            <a class="button" href="#output">결과 먼저 보기</a>
+          </div>
+          <div class="micro-proof" aria-label="주요 분석 요소">
+            <span><i></i> 프로필</span>
+            <span><i></i> 자기소개서</span>
+            <span><i></i> 채용공고</span>
+            <span><i></i> 기업 정보</span>
+          </div>
+        </div>
+
+        <div class="poster-frame hero-poster" role="img" aria-label="Pathi가 채용공고와 사용자 경험을 분석해 역량 갭과 면접 로드맵으로 연결하는 모습">
+          <div class="poster-grid"></div>
+          <span class="poster-label">FROM INPUT TO INTERVIEW</span>
+          <span class="poster-index">01 / HOME</span>
+          <svg class="hero-route" viewBox="0 0 720 500" aria-hidden="true">
+            <path d="M118 116C245 44 270 228 360 247S474 72 610 119" fill="none" stroke="#111" stroke-width="7" stroke-dasharray="14 13"/>
+            <path d="M111 379C237 455 271 282 360 254S484 433 613 376" fill="none" stroke="#111" stroke-width="7" stroke-dasharray="14 13"/>
+            <circle cx="119" cy="116" r="13" fill="#fff" stroke="#111" stroke-width="6"/>
+            <circle cx="610" cy="119" r="13" fill="#fff" stroke="#111" stroke-width="6"/>
+            <circle cx="111" cy="379" r="13" fill="#fff" stroke="#111" stroke-width="6"/>
+            <circle cx="613" cy="376" r="13" fill="#fff" stroke="#111" stroke-width="6"/>
+          </svg>
+          <svg class="pathi-hero" viewBox="0 0 320 360" aria-hidden="true"><use href="#pathi"/></svg>
+          <div class="hero-node node-job"><div class="node-icon">📄</div><small>INPUT 01</small><strong>채용공고</strong></div>
+          <div class="hero-node node-profile"><div class="node-icon">🧩</div><small>INPUT 02</small><strong>나의 경험</strong></div>
+          <div class="hero-node node-gap"><div class="node-icon">◎</div><small>OUTPUT 01</small><strong>Skill Gap</strong></div>
+          <div class="hero-node node-plan"><div class="node-icon">↗</div><small>OUTPUT 02</small><strong>면접 Roadmap</strong></div>
+          <div class="hero-bubble">“준비할 것만 남기고, 순서까지 정리했어요.”</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="value-strip" aria-label="PathFinder AI 핵심 가치">
+      <div class="container value-grid">
+        <div class="value-item"><span class="value-icon">↔</span><div><strong>경험을 직무 언어로</strong><span>내 프로젝트와 공고를 연결</span></div></div>
+        <div class="value-item"><span class="value-icon">◎</span><div><strong>역량 Gap 한눈에</strong><span>강점과 학습 우선순위 분리</span></div></div>
+        <div class="value-item"><span class="value-icon">?</span><div><strong>질문까지 바로 연습</strong><span>예상 질문과 꼬리질문 제공</span></div></div>
+      </div>
+    </section>
+
+    <section class="section orange-section" id="how" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-head">
+          <div><span class="kicker">How it works</span><h2 id="how-title">Pathi가<br>3단계로 정리해요.</h2></div>
+          <p class="section-summary">긴 설명 대신 입력 → 분석 → 준비의 흐름을 시각적으로 보여줍니다.</p>
+        </div>
+
+        <div class="story-grid">
+          <article class="story-card">
+            <div class="story-visual">
+              <svg class="scene-svg" viewBox="0 0 500 310" role="img" aria-label="채용공고와 지원자 경험 카드를 수집하는 장면">
+                <rect x="44" y="54" width="178" height="204" rx="20" fill="#fff" stroke="#111" stroke-width="6"/>
+                <rect x="67" y="80" width="82" height="18" rx="9" fill="#f24b35"/>
+                <path d="M67 126h124M67 152h100M67 178h116M67 204h78" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+                <rect x="278" y="70" width="176" height="188" rx="20" fill="#fff" stroke="#111" stroke-width="6"/>
+                <circle cx="326" cy="118" r="28" fill="#fff0eb" stroke="#111" stroke-width="6"/>
+                <path d="M306 176h120M306 202h92" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+                <path d="M228 156h42" stroke="#111" stroke-width="8" stroke-dasharray="9 8"/>
+                <circle cx="249" cy="156" r="13" fill="#f24b35" stroke="#111" stroke-width="5"/>
+              </svg>
+            </div>
+            <div class="story-copy"><span class="story-no">01</span><div><h3>자료를 넣고</h3><p>공고 · 프로필 · 자소서를 한 번에.</p></div></div>
+          </article>
+
+          <article class="story-card">
+            <div class="story-visual">
+              <svg class="scene-svg" viewBox="0 0 500 310" role="img" aria-label="Pathi가 요구 역량과 보유 경험을 비교하는 장면">
+                <circle cx="250" cy="155" r="82" fill="#fff" stroke="#111" stroke-width="6"/>
+                <path d="M250 98l18 49-18 36-18-36z" fill="#f24b35" stroke="#111" stroke-width="5"/>
+                <circle cx="250" cy="155" r="8" fill="#111"/>
+                <rect x="45" y="74" width="135" height="58" rx="16" fill="#fff" stroke="#111" stroke-width="6"/>
+                <rect x="45" y="178" width="135" height="58" rx="16" fill="#fff" stroke="#111" stroke-width="6"/>
+                <rect x="320" y="74" width="135" height="58" rx="16" fill="#fff" stroke="#111" stroke-width="6"/>
+                <rect x="320" y="178" width="135" height="58" rx="16" fill="#fff" stroke="#111" stroke-width="6"/>
+                <path d="M180 103l42 30M180 207l42-30M320 103l-42 30M320 207l-42-30" stroke="#111" stroke-width="6" stroke-dasharray="8 7"/>
+                <circle cx="74" cy="103" r="11" fill="#2f8f63"/><circle cx="74" cy="207" r="11" fill="#f24b35"/><circle cx="349" cy="103" r="11" fill="#3568d4"/><circle cx="349" cy="207" r="11" fill="#f5c84c"/>
+              </svg>
+            </div>
+            <div class="story-copy"><span class="story-no">02</span><div><h3>차이를 찾고</h3><p>강점 · 설명 보완 · 학습 항목으로 분류.</p></div></div>
+          </article>
+
+          <article class="story-card">
+            <div class="story-visual">
+              <svg class="scene-svg" viewBox="0 0 500 310" role="img" aria-label="면접 준비 로드맵과 질문 카드를 완성하는 장면">
+                <path d="M55 227C125 93 206 252 276 127S392 96 448 68" fill="none" stroke="#111" stroke-width="8" stroke-dasharray="13 11"/>
+                <circle cx="66" cy="212" r="17" fill="#f24b35" stroke="#111" stroke-width="6"/>
+                <circle cx="186" cy="193" r="17" fill="#fff" stroke="#111" stroke-width="6"/>
+                <circle cx="293" cy="112" r="17" fill="#fff" stroke="#111" stroke-width="6"/>
+                <circle cx="434" cy="76" r="17" fill="#2f8f63" stroke="#111" stroke-width="6"/>
+                <rect x="76" y="44" width="145" height="90" rx="18" fill="#fff" stroke="#111" stroke-width="6" transform="rotate(-4 76 44)"/>
+                <text x="104" y="86" font-family="sans-serif" font-size="18" font-weight="800" fill="#111">Q. 예상 질문</text>
+                <path d="M104 104h83" stroke="#f24b35" stroke-width="7" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="story-copy"><span class="story-no">03</span><div><h3>경로를 만들어요</h3><p>학습 순서 · 답변 포인트 · 예상 질문까지.</p></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="output" aria-labelledby="output-title">
+      <div class="container">
+        <div class="section-head">
+          <div><span class="kicker">Your output</span><h2 id="output-title">한 번의 분석,<br>네 가지 결과.</h2></div>
+          <p class="section-summary">읽는 보고서가 아니라 바로 준비에 쓰는 화면으로 구성합니다.</p>
+        </div>
+
+        <div class="output-grid">
+          <article class="output-card map-card">
+            <div class="card-top"><strong>나의 역량 지도</strong><small>Competency Map</small></div>
+            <div class="map-layout">
+              <div class="radar-wrap">
+                <svg class="radar-svg" viewBox="0 0 360 330" role="img" aria-label="지원자 역량과 직무 요구 수준을 비교한 레이더 차트">
+                  <g transform="translate(180 165)">
+                    <polygon points="0,-130 124,-40 77,105 -77,105 -124,-40" fill="none" stroke="#cfc7c2" stroke-width="2"/>
+                    <polygon points="0,-96 92,-30 57,78 -57,78 -92,-30" fill="none" stroke="#cfc7c2" stroke-width="2"/>
+                    <polygon points="0,-62 59,-19 36,50 -36,50 -59,-19" fill="none" stroke="#cfc7c2" stroke-width="2"/>
+                    <path d="M0-130V0M124-40L0 0M77 105L0 0M-77 105L0 0M-124-40L0 0" stroke="#cfc7c2" stroke-width="2"/>
+                    <polygon points="0,-112 92,-30 58,80 -45,62 -102,-33" fill="rgba(242,75,53,.28)" stroke="#f24b35" stroke-width="5"/>
+                    <polygon points="0,-92 114,-37 68,92 -63,86 -75,-24" fill="rgba(53,104,212,.14)" stroke="#3568d4" stroke-width="4" stroke-dasharray="8 6"/>
+                    <g fill="#111"><circle cx="0" cy="-112" r="6"/><circle cx="92" cy="-30" r="6"/><circle cx="58" cy="80" r="6"/><circle cx="-45" cy="62" r="6"/><circle cx="-102" cy="-33" r="6"/></g>
+                  </g>
+                  <g font-family="sans-serif" font-size="13" font-weight="800" fill="#111" text-anchor="middle">
+                    <text x="180" y="18">문제 해결</text><text x="330" y="126">백엔드</text><text x="275" y="316">협업</text><text x="85" y="316">CS 기초</text><text x="28" y="126">데이터</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="priority-list">
+                <div class="priority"><b>01</b><div><strong>강점</strong><span>API 성능 개선 경험</span></div><em>어필</em></div>
+                <div class="priority"><b>02</b><div><strong>설명 보완</strong><span>기술 선택 근거</span></div><em>정리</em></div>
+                <div class="priority"><b>03</b><div><strong>학습 우선</strong><span>대규모 트래픽</span></div><em>학습</em></div>
+              </div>
+            </div>
+            <div class="timeline" aria-label="4주 면접 준비 타임라인">
+              <div class="timeline-line"><div class="week active">경험 정리</div><div class="week active">개념 보완</div><div class="week">질문 연습</div><div class="week">최종 점검</div></div>
+            </div>
+          </article>
+
+          <article class="output-card question-card">
+            <div class="card-top"><strong>개인 맞춤 예상 질문</strong><small>Interview Q&A</small></div>
+            <div class="question-body">
+              <div class="question-mark">?</div>
+              <h3>“성능 개선 경험을 우리 서비스 확장성과 연결해 설명해보세요.”</h3>
+              <div class="question-tags"><span>STAR 답변</span><span>기술 판단</span><span>꼬리질문</span></div>
+            </div>
+          </article>
+
+          <article class="output-card market-card">
+            <div class="card-top"><strong>채용시장 인사이트</strong><small>Market Dashboard</small></div>
+            <div class="market-body">
+              <div class="bars" aria-label="산업별 채용 데이터 막대 차트"><div class="bar" style="height:52%"></div><div class="bar" style="height:74%"></div><div class="bar" style="height:92%"></div><div class="bar" style="height:63%"></div><div class="bar" style="height:81%"></div></div>
+              <div class="market-stat"><strong>5</strong><span>산업·경력·연봉 필터로 비교</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="pathi-title">
+      <div class="container pathi-band">
+        <svg viewBox="0 0 320 360" role="img" aria-label="면접 준비 지도를 들고 안내하는 Pathi"><use href="#pathi"/></svg>
+        <div class="pathi-message">
+          <div class="speech">“막막한 준비를, 체크 가능한 경로로 바꿔볼까요?”</div>
+          <h2 id="pathi-title">Pathi는 분석부터<br>마지막 질문까지 함께해요.</h2>
+          <p>입력 화면에서는 안내하고, 결과 화면에서는 우선순위를 짚고, 준비 과정에서는 다음 행동을 알려줍니다.</p>
+          <a class="button dark" href="/analyze/new">Pathi와 시작하기 <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="cta-title">
+      <div class="container cta-board">
+        <div><h2 id="cta-title">다음 면접의 준비 경로를<br>지금 만들어보세요.</h2><p>채용공고와 나의 경험만 준비하면 됩니다.</p></div>
+        <a class="button primary" href="/analyze/new">무료 분석 시작 <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner"><span>PathFinder AI · Personal Interview Roadmap</span><span>Guide character · Pathi</span></div>
+  </footer>
+</body>
+</html>

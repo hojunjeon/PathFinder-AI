@@ -1,0 +1,8 @@
+[vite] 
+  [32m[1mVITE[22m v8.0.16[39m  [2mready in [0m[1m312[22m[2m[0m ms[22m
+
+
+[vite]   [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+
+PASS: sidebar hash navigation, structured modal scroll, close/focus path, and raw fallback rendered.
+cleanup: stopped QA Vite process tree 23516

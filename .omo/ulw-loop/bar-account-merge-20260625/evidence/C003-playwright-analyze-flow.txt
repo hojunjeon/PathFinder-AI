@@ -1,0 +1,9 @@
+﻿
+Running 4 tests using 1 worker
+
+  ok 1 tests\e2e\analyze-flow.spec.js:9:1 › analyze flow saves manual posting, cover letter, submits, and renders result (7.9s)
+  ok 2 tests\e2e\analyze-flow.spec.js:144:1 › cover letter submit request contains question and answer (1.3s)
+  ok 3 tests\e2e\analyze-flow.spec.js:166:1 › analyze flow accepts company-only fallback job without criterion warning (987ms)
+  ok 4 tests\e2e\analyze-flow.spec.js:201:1 › analyze flow does not allow arbitrary unsupported company names (576ms)
+
+  4 passed (13.1s)

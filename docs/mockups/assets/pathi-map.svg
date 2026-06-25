@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-labelledby="title desc">
+  <title id="title">로드맵을 들고 있는 Pathi</title>
+  <desc id="desc">주황색 포인트가 있는 나침반형 로봇이 펼친 로드맵을 들고 있다.</desc>
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#f2efe9"/></linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7a3d"/><stop offset="1" stop-color="#f04b23"/></linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#8e3d1d" flood-opacity=".18"/></filter>
+  </defs>
+  <ellipse cx="260" cy="452" rx="146" ry="34" fill="#1a1a1a" opacity=".09"/>
+  <g filter="url(#shadow)">
+    <path d="M208 102c0-26 21-47 47-47h10c26 0 47 21 47 47v20H208z" fill="url(#body)" stroke="#111" stroke-width="8"/>
+    <circle cx="260" cy="42" r="20" fill="#ff642f" stroke="#111" stroke-width="8"/>
+    <path d="M260 58v24" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+    <rect x="146" y="111" width="228" height="220" rx="72" fill="url(#body)" stroke="#111" stroke-width="9"/>
+    <rect x="174" y="142" width="172" height="116" rx="44" fill="#111"/>
+    <circle cx="222" cy="199" r="17" fill="#fff"/><circle cx="298" cy="199" r="17" fill="#fff"/>
+    <circle cx="227" cy="194" r="7" fill="#ff642f"/><circle cx="303" cy="194" r="7" fill="#ff642f"/>
+    <path d="M218 230c24 19 60 19 84 0" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="260" cy="293" r="27" fill="#fff" stroke="#111" stroke-width="7"/>
+    <path d="M260 273l10 20-10 20-10-20z" fill="#ff642f"/><circle cx="260" cy="293" r="5" fill="#111"/>
+    <path d="M154 191c-36 11-60 40-65 74" fill="none" stroke="#111" stroke-width="26" stroke-linecap="round"/>
+    <path d="M366 188c38 3 69 28 80 62" fill="none" stroke="#111" stroke-width="26" stroke-linecap="round"/>
+    <circle cx="88" cy="276" r="23" fill="url(#body)" stroke="#111" stroke-width="8"/>
+    <circle cx="446" cy="264" r="23" fill="url(#body)" stroke="#111" stroke-width="8"/>
+    <path d="M181 322v91" stroke="#111" stroke-width="32" stroke-linecap="round"/>
+    <path d="M339 322v91" stroke="#111" stroke-width="32" stroke-linecap="round"/>
+    <path d="M151 424h69" stroke="#111" stroke-width="27" stroke-linecap="round"/>
+    <path d="M305 424h69" stroke="#111" stroke-width="27" stroke-linecap="round"/>
+    <path d="M56 255l91 18-14 111-91-18z" fill="#fff9f4" stroke="#111" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M90 262l-12 112M119 268l-12 111" stroke="#ff642f" stroke-width="6"/>
+    <path d="M55 316c30-20 50 18 81-6" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M404 238l54 44" stroke="#111" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="430" cy="224" r="42" fill="#fff" fill-opacity=".82" stroke="#111" stroke-width="10"/>
+    <path d="M408 224h44M430 202v44" stroke="#ff642f" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <g fill="#ff642f"><circle cx="105" cy="101" r="9"/><circle cx="402" cy="87" r="7"/><path d="M415 129l8 17 18 3-13 13 3 18-16-8-16 8 3-18-13-13 18-3z"/></g>
+</svg>

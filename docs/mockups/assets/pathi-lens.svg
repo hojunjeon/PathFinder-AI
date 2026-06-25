@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" role="img" aria-labelledby="title desc">
+  <title id="title">데이터를 분석하는 Pathi</title>
+  <desc id="desc">Pathi가 돋보기형 데이터 렌즈로 역량 그래프를 살펴본다.</desc>
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#f1eee7"/></linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7a3d"/><stop offset="1" stop-color="#f04b23"/></linearGradient>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#8e3d1d" flood-opacity=".18"/></filter>
+  </defs>
+  <ellipse cx="258" cy="454" rx="143" ry="32" fill="#1a1a1a" opacity=".09"/>
+  <rect x="39" y="70" width="190" height="180" rx="30" fill="#fff" stroke="#111" stroke-width="8"/>
+  <path d="M76 206v-43M112 206v-79M148 206v-56M184 206v-106" stroke="#ff642f" stroke-width="18" stroke-linecap="round"/>
+  <path d="M69 111h98" stroke="#111" stroke-width="7" stroke-linecap="round"/><circle cx="184" cy="111" r="8" fill="#ff642f"/>
+  <g filter="url(#shadow)">
+    <path d="M209 103c0-26 21-47 47-47h8c26 0 47 21 47 47v20H209z" fill="url(#body)" stroke="#111" stroke-width="8"/>
+    <circle cx="260" cy="42" r="20" fill="#ff642f" stroke="#111" stroke-width="8"/><path d="M260 58v24" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+    <rect x="147" y="112" width="226" height="220" rx="72" fill="url(#body)" stroke="#111" stroke-width="9"/>
+    <rect x="175" y="143" width="170" height="116" rx="44" fill="#111"/>
+    <circle cx="222" cy="199" r="17" fill="#fff"/><circle cx="298" cy="199" r="17" fill="#fff"/>
+    <circle cx="227" cy="194" r="7" fill="#ff642f"/><circle cx="303" cy="194" r="7" fill="#ff642f"/>
+    <path d="M222 231c22 12 54 12 76 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="260" cy="294" r="27" fill="#fff" stroke="#111" stroke-width="7"/><path d="M260 274l10 20-10 20-10-20z" fill="#ff642f"/><circle cx="260" cy="294" r="5" fill="#111"/>
+    <path d="M158 190c-39 0-75 16-94 45" fill="none" stroke="#111" stroke-width="26" stroke-linecap="round"/>
+    <path d="M367 195c38 13 66 45 72 83" fill="none" stroke="#111" stroke-width="26" stroke-linecap="round"/>
+    <circle cx="64" cy="244" r="23" fill="url(#body)" stroke="#111" stroke-width="8"/><circle cx="441" cy="292" r="23" fill="url(#body)" stroke="#111" stroke-width="8"/>
+    <path d="M181 324v91M339 324v91" stroke="#111" stroke-width="32" stroke-linecap="round"/><path d="M151 426h69M305 426h69" stroke="#111" stroke-width="27" stroke-linecap="round"/>
+    <circle cx="411" cy="213" r="73" fill="#fff" fill-opacity=".82" stroke="#111" stroke-width="11"/>
+    <path d="M458 268l43 45" stroke="#111" stroke-width="16" stroke-linecap="round"/>
+    <path d="M374 232l25-34 26 19 29-48" fill="none" stroke="#ff642f" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="374" cy="232" r="8" fill="#111"/><circle cx="399" cy="198" r="8" fill="#111"/><circle cx="425" cy="217" r="8" fill="#111"/><circle cx="454" cy="169" r="8" fill="#111"/>
+  </g>
+</svg>

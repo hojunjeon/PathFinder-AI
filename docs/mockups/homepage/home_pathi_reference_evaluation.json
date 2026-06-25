@@ -1,0 +1,152 @@
+[
+  {
+    "file": "/mnt/data/t08_project/docs/mockups/home_pathi_reference_round1.html",
+    "score": 55.0,
+    "metrics": {
+      "word_count": 135,
+      "paragraph_average_words": 7.6,
+      "max_heading_words": 6,
+      "svg_count": 0,
+      "visual_modules": 0,
+      "aria_markers": 12,
+      "media_queries": 2,
+      "css_variables": 11,
+      "external_assets": 0
+    },
+    "categories": {
+      "brand_alignment": {
+        "score": 4,
+        "max": 20,
+        "parts": {
+          "warm_off_white": 0,
+          "orange_primary": 0,
+          "black_typography": 0,
+          "peach_support": 0,
+          "avoids_previous_neon_dark": 4
+        }
+      },
+      "visual_storytelling": {
+        "score": 0.0,
+        "max": 20,
+        "parts": {
+          "inline_svg_assets": 0.0,
+          "visual_modules": 0.0,
+          "poster_ratio": 0,
+          "pathi_repetition": 0
+        }
+      },
+      "text_economy": {
+        "score": 20,
+        "max": 20,
+        "parts": {
+          "total_text_under_650_words": 7,
+          "short_paragraphs": 7,
+          "short_headings": 3,
+          "clear_cta_copy": 3
+        }
+      },
+      "accessibility": {
+        "score": 17.2,
+        "max": 20,
+        "parts": {
+          "korean_lang": 2,
+          "viewport": 2,
+          "semantic_main": 2,
+          "skip_link": 0,
+          "aria_coverage": 4.199999999999999,
+          "focus_visible": 3,
+          "reduced_motion": 2,
+          "meaningful_title": 2
+        }
+      },
+      "implementation": {
+        "score": 13.8,
+        "max": 20,
+        "parts": {
+          "responsive_breakpoints": 3.0,
+          "design_tokens": 3.8499999999999996,
+          "self_contained": 3,
+          "route_ctas": 2,
+          "no_javascript_dependency": 2,
+          "print_rules": 0
+        }
+      }
+    },
+    "passed": false
+  },
+  {
+    "file": "/mnt/data/t08_project/docs/mockups/home_pathi_reference.html",
+    "score": 99.2,
+    "metrics": {
+      "word_count": 283,
+      "paragraph_average_words": 8.0,
+      "max_heading_words": 8,
+      "svg_count": 9,
+      "visual_modules": 11,
+      "aria_markers": 17,
+      "media_queries": 5,
+      "css_variables": 19,
+      "external_assets": 0
+    },
+    "categories": {
+      "brand_alignment": {
+        "score": 20,
+        "max": 20,
+        "parts": {
+          "warm_off_white": 4,
+          "orange_primary": 5,
+          "black_typography": 4,
+          "peach_support": 3,
+          "avoids_previous_neon_dark": 4
+        }
+      },
+      "visual_storytelling": {
+        "score": 19.2,
+        "max": 20,
+        "parts": {
+          "inline_svg_assets": 7.2,
+          "visual_modules": 6,
+          "poster_ratio": 3,
+          "pathi_repetition": 3
+        }
+      },
+      "text_economy": {
+        "score": 20,
+        "max": 20,
+        "parts": {
+          "total_text_under_650_words": 7,
+          "short_paragraphs": 7,
+          "short_headings": 3,
+          "clear_cta_copy": 3
+        }
+      },
+      "accessibility": {
+        "score": 20,
+        "max": 20,
+        "parts": {
+          "korean_lang": 2,
+          "viewport": 2,
+          "semantic_main": 2,
+          "skip_link": 2,
+          "aria_coverage": 5,
+          "focus_visible": 3,
+          "reduced_motion": 2,
+          "meaningful_title": 2
+        }
+      },
+      "implementation": {
+        "score": 20,
+        "max": 20,
+        "parts": {
+          "responsive_breakpoints": 6,
+          "design_tokens": 5,
+          "self_contained": 3,
+          "route_ctas": 2,
+          "no_javascript_dependency": 2,
+          "print_rules": 2
+        }
+      }
+    },
+    "passed": true
+  }
+]

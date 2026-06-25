@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-25T01:51:03.666Z",
+  "updatedAt": "2026-06-25T02:47:21.206Z",
+  "briefPath": ".omo/ulw-loop/bar-account-merge-20260625/brief.md",
+  "goalsPath": ".omo/ulw-loop/bar-account-merge-20260625/goals.json",
+  "ledgerPath": ".omo/ulw-loop/bar-account-merge-20260625/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-merge-origin-fix-bar-account-into-ma",
+      "title": "Merge origin/fix/bar-account into main after resolving conflicts by p...",
+      "objective": "Merge origin/fix/bar-account into main after resolving conflicts by preserving main's v2 AnalyzeResultView/CompetencyGap result structure, adding a sidebar for in-page navigation, adding a submitted cover-letter confirmation button and read-only modal, then completing the merge on main with tests and browser evidence. Stop only if merge conflicts require user choice; user already chose this resolution strategy.",
+      "status": "blocked",
+      "successCriteria": [
+        {
+          "id": "C001",
+          "scenario": "CLI static contract: from frontend run npm run verify-design after conflicts are resolved; PASS iff it exits 0 and output says frontend design verification passed while preserving v2 CompetencyGap ownership and checking sidebar/modal cover-letter strings.",
+          "userModel": "happy",
+          "expectedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C001-verify-design.txt",
+          "essential": true,
+          "capturedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C001-verify-design.txt: npm test exited 0 with frontend design verification passed | cleanup: no runtime process spawned",
+          "status": "pass",
+          "capturedAt": "2026-06-25T02:13:05.551Z"
+        },
+        {
+          "id": "C002",
+          "scenario": "Browser happy path: run Playwright against /analyze/99 through frontend e2e analyze flow; PASS iff v2 result page keeps CompetencyGap, shows sidebar navigation, clicking sidebar anchors changes hash/active section, clicking 제출 자기소개서 확인 opens centered read-only dialog with structured Q/A items and long-content internal scrolling, and close returns focus without route navigation.",
+          "userModel": "edge",
+          "expectedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C002-browser-analyze-flow.txt plus screenshots C002-result-desktop.png and C002-cover-letter-dialog.png",
+          "essential": true,
+          "capturedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C002-browser-analyze-flow.txt plus C002-result-desktop.png, C002-result-tablet.png, C002-result-mobile.png, C002-cover-letter-dialog.png, C004-raw-fallback-dialog.png: Chrome QA passed sidebar navigation, structured modal scroll, focus return, raw fallback | cleanup: stopped QA Vite process tree 3868; no listener on 5173",
+          "status": "pass",
+          "capturedAt": "2026-06-25T02:26:43.278Z"
+        },
+        {
+          "id": "C003",
+          "scenario": "Regression suite: from frontend run npx playwright test tests/e2e/analyze-flow.spec.js after implementation; PASS iff manual posting, submitted cover-letter payload, v2 result UI, modal, reload persistence, and company fallback tests pass.",
+          "userModel": "regression",
+          "expectedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C003-playwright-analyze-flow.txt",
+          "essential": false,
+          "capturedEvidence": ".omo/ulw-loop/bar-account-merge-20260625/evidence/C003-playwright-analyze-flow.txt: npx playwright test tests/e2e/analyze-flow.spec.js exited 0 with 4 passed | cleanup: Playwright web server/test worker exited",
+          "status": "pass",
+          "capturedAt": "2026-06-25T02:13:17.917Z"
+        }
+      ],
+      "attempt": 1,
+      "createdAt": "2026-06-25T01:51:03.666Z",
+      "updatedAt": "2026-06-25T02:47:21.206Z",
+      "startedAt": "2026-06-25T01:52:01.797Z",
+      "blockedReason": "work completed in merge commit 48a5f75, but completed legacy Codex goal objective mismatched ULW aggregate objective and blocks terminal complete checkpoint in this thread"
+    }
+  ],
+  "codexObjective": "Complete the durable ulw-loop plan in .omo/ulw-loop/bar-account-merge-20260625/goals.json, including later accepted/appended stories, under the original brief constraints; use .omo/ulw-loop/bar-account-merge-20260625/ledger.jsonl as the audit trail."
+}

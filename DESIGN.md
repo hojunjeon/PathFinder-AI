@@ -2,7 +2,7 @@
 
 ## Source of truth
 - Status: Active
-- Last refreshed: 2026-06-24
+- Last refreshed: 2026-06-25
 - Primary product surfaces: 분석 생성, 역량 분석 결과, 면접 준비 항목
 - Evidence reviewed: `frontend/src/views/AnalyzeResultView.vue`, `frontend/src/components/result/*`, `frontend/src/composables/useRoadmapProgress.js`, `llm_server/roadmap_prompt.py`, `docs/09_분석결과_페이지_가독성_개선.md`, `docs/13_면접_예상질문_AI_결과_설계.md`
 
@@ -120,3 +120,19 @@
 ## Open questions
 - [ ] 실제 사용자 평가를 통해 상태 분류 명칭과 설명의 이해도를 검증한다.
 - [ ] 질문별 답변 초안과 AI 피드백 기능을 후속 범위에서 결정한다.
+
+## Account creation contract
+- Surface: 로그인과 회원가입은 `/login`의 동일 화면과 동일 카드 안에서 탭으로 전환한다.
+- Required signup data:
+  - 이메일: 로그인 식별자와 향후 계정 복구 수단
+  - 이름: 프로필 표시와 계정 식별을 위한 최소 사용자 정보
+  - 비밀번호 및 확인: 8자 이상, 영문과 숫자 포함, 서버 공통 비밀번호 검증 적용
+  - 서비스 이용약관 및 개인정보 수집·이용 동의: 필수이며 동의 시각을 서버에 기록
+- Explicitly excluded at signup: 전화번호, 생년월일, 성별, 전공, 학력, 경력, 프로젝트, 자기소개서, 자격증, 수상 이력
+- Progressive disclosure: 분석용 이력 정보는 회원가입 완료 후 프로필 화면에서만 입력한다.
+- Interaction rules:
+  - 비밀번호 조건과 확인 일치 여부를 입력 중 바로 표시한다.
+  - 비밀번호 보기/숨기기, 브라우저 자동완성 속성, 오류 알림의 `role="alert"`를 제공한다.
+  - 구현되지 않은 소셜 로그인이나 비밀번호 찾기 동작을 활성 버튼처럼 노출하지 않는다.
+  - 이메일은 서버에서 소문자로 정규화하고 대소문자와 무관하게 중복을 차단한다.
+- Evidence reviewed: `frontend/src/views/LoginView.vue`, `frontend/src/stores/auth.js`, `backend/accounts/models.py`, `backend/accounts/serializers.py`, GitHub authentication guidance, Google Account creation guidance, LinkedIn signup guidance, OpenAI authentication guidance.

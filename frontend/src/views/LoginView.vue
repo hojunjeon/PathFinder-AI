@@ -43,59 +43,144 @@
     <section class="auth-side" data-od-id="login-form">
       <div class="auth-card">
         <p class="auth-kicker">계정</p>
-        <h2 class="auth-title">PathFinder AI 시작하기</h2>
-        <p class="auth-sub">저장된 프로필과 이전 분석 결과를 불러오려면 로그인하세요.</p>
+        <h2 class="auth-title">{{ mode === 'login' ? '다시 만나서 반가워요' : 'PathFinder AI 시작하기' }}</h2>
+        <p class="auth-sub">
+          {{ mode === 'login'
+            ? '저장된 프로필과 이전 분석 결과를 이어서 확인하세요.'
+            : '계정 생성에 필요한 최소 정보만 입력합니다. 이력은 가입 후 프로필에서 작성할 수 있어요.' }}
+        </p>
 
-        <div class="segmented" role="tablist" aria-label="로그인 방식">
-          <button :class="['tab-btn', { active: mode === 'login' }]" id="tab-login" type="button" @click="mode = 'login'">로그인</button>
-          <button :class="['tab-btn', { active: mode === 'signup' }]" id="tab-signup" type="button" @click="mode = 'signup'">회원가입</button>
+        <div class="segmented" role="tablist" aria-label="계정 접근 방식">
+          <button
+            :class="['tab-btn', { active: mode === 'login' }]"
+            id="tab-login"
+            type="button"
+            role="tab"
+            :aria-selected="mode === 'login'"
+            @click="changeMode('login')"
+          >
+            로그인
+          </button>
+          <button
+            :class="['tab-btn', { active: mode === 'signup' }]"
+            id="tab-signup"
+            type="button"
+            role="tab"
+            :aria-selected="mode === 'signup'"
+            @click="changeMode('signup')"
+          >
+            회원가입
+          </button>
         </div>
 
-        <form @submit.prevent="submit">
+        <form novalidate @submit.prevent="submit">
           <div v-if="mode === 'signup'" class="field">
             <label for="name">이름</label>
-            <input id="name" v-model.trim="name" type="text" autocomplete="name" maxlength="50" placeholder="이름 입력" required />
-          </div>
-          <div class="field">
-            <label for="email">이메일</label>
-            <input id="email" v-model="email" type="email" autocomplete="email" placeholder="name@example.com" required />
-          </div>
-          <div class="field">
-            <label for="password">비밀번호</label>
             <input
-              id="password"
-              v-model="password"
-              type="password"
-              :autocomplete="mode === 'login' ? 'current-password' : 'new-password'"
-              minlength="8"
-              placeholder="8자 이상 입력"
+              id="name"
+              v-model="name"
+              type="text"
+              autocomplete="name"
+              maxlength="50"
+              placeholder="서비스에서 사용할 이름"
               required
             />
+            <span class="field-hint">프로필 표시와 계정 식별에 사용됩니다.</span>
           </div>
+
+          <div class="field">
+            <label for="email">이메일</label>
+            <input
+              id="email"
+              v-model.trim="email"
+              type="email"
+              autocomplete="email"
+              inputmode="email"
+              placeholder="name@example.com"
+              required
+            />
+            <span v-if="mode === 'signup'" class="field-hint">로그인과 계정 복구에 사용할 주소입니다.</span>
+          </div>
+
+          <div class="field">
+            <label for="password">비밀번호</label>
+            <div class="password-input">
+              <input
+                id="password"
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                :autocomplete="mode === 'login' ? 'current-password' : 'new-password'"
+                :placeholder="mode === 'login' ? '비밀번호 입력' : '8자 이상, 영문과 숫자 포함'"
+                required
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                :aria-label="showPassword ? '비밀번호 숨기기' : '비밀번호 보기'"
+                @click="showPassword = !showPassword"
+              >
+                {{ showPassword ? '숨기기' : '보기' }}
+              </button>
+            </div>
+            <ul v-if="mode === 'signup'" class="password-rules" aria-label="비밀번호 조건">
+              <li :class="{ valid: passwordChecks.length }">8자 이상</li>
+              <li :class="{ valid: passwordChecks.letter }">영문 포함</li>
+              <li :class="{ valid: passwordChecks.number }">숫자 포함</li>
+            </ul>
+          </div>
+
           <div v-if="mode === 'signup'" class="field">
             <label for="password-confirm">비밀번호 확인</label>
             <input
               id="password-confirm"
               v-model="passwordConfirm"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               autocomplete="new-password"
-              minlength="8"
-              placeholder="비밀번호 다시 입력"
+              placeholder="비밀번호를 한 번 더 입력"
               required
+              :aria-invalid="passwordConfirm.length > 0 && !passwordsMatch"
             />
+            <span v-if="passwordConfirm.length > 0" :class="['field-hint', { invalid: !passwordsMatch, valid: passwordsMatch }]">
+              {{ passwordsMatch ? '비밀번호가 일치합니다.' : '비밀번호가 일치하지 않습니다.' }}
+            </span>
           </div>
-          <p v-if="errorMsg" class="error">{{ errorMsg }}</p>
-          <button class="btn-primary" id="submit-btn" type="submit" :disabled="loading">
-            {{ loading ? '처리 중...' : mode === 'login' ? '로그인' : '회원가입' }}
+
+          <fieldset v-if="mode === 'signup'" class="agreements">
+            <legend>약관 동의</legend>
+            <label class="consent-row consent-all">
+              <input v-model="agreeAll" type="checkbox" />
+              <span>필수 항목 모두 동의</span>
+            </label>
+            <label class="consent-row">
+              <input v-model="termsAgreed" type="checkbox" required />
+              <span><strong>[필수]</strong> 서비스 이용약관 동의</span>
+            </label>
+            <label class="consent-row">
+              <input v-model="privacyAgreed" type="checkbox" required />
+              <span><strong>[필수]</strong> 개인정보 수집 및 이용 동의</span>
+            </label>
+            <details class="agreement-details">
+              <summary>필수 약관 내용 보기</summary>
+              <p><strong>서비스 이용:</strong> 본인 계정으로 서비스를 이용하며 타인의 권리를 침해하거나 서비스를 부정하게 사용하지 않습니다.</p>
+              <p><strong>개인정보:</strong> 계정 생성과 로그인을 위해 이메일, 이름, 암호화된 비밀번호, 약관 동의 시각을 수집하며 회원 탈퇴 시까지 보관합니다.</p>
+            </details>
+          </fieldset>
+
+          <p v-if="errorMsg" class="error form-error" role="alert">{{ errorMsg }}</p>
+          <button class="btn-primary" id="submit-btn" type="submit" :disabled="loading || !canSubmit">
+            {{ loading ? '처리 중...' : mode === 'login' ? '로그인' : '계정 만들기' }}
           </button>
         </form>
 
-        <div class="divider">또는</div>
-        <button class="btn-secondary" type="button">Google 계정으로 계속하기</button>
+        <p class="security-note">
+          {{ mode === 'login'
+            ? '공용 기기에서는 이용 후 반드시 로그아웃하세요.'
+            : '전화번호, 생년월일, 학력과 경력은 가입 단계에서 수집하지 않습니다.' }}
+        </p>
 
         <p class="auth-footer">
           {{ mode === 'login' ? '계정이 없으신가요?' : '이미 계정이 있으신가요?' }}
-          <a href="#" @click.prevent="mode = mode === 'login' ? 'signup' : 'login'">
+          <a href="#" @click.prevent="changeMode(mode === 'login' ? 'signup' : 'login')">
             {{ mode === 'login' ? '회원가입' : '로그인' }}
           </a>
         </p>
@@ -105,7 +190,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -117,14 +202,61 @@ const name = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
+const termsAgreed = ref(false)
+const privacyAgreed = ref(false)
+const showPassword = ref(false)
 const errorMsg = ref('')
 const loading = ref(false)
 
+const passwordChecks = computed(() => ({
+  length: password.value.length >= 8,
+  letter: /[A-Za-z]/.test(password.value),
+  number: /\d/.test(password.value),
+}))
+
+const passwordsMatch = computed(() => password.value === passwordConfirm.value)
+
+const agreeAll = computed({
+  get: () => termsAgreed.value && privacyAgreed.value,
+  set: value => {
+    termsAgreed.value = value
+    privacyAgreed.value = value
+  },
+})
+
+const canSubmit = computed(() => {
+  if (!email.value || !password.value) return false
+  if (mode.value === 'login') return true
+  return name.value.trim().length >= 2
+    && Object.values(passwordChecks.value).every(Boolean)
+    && passwordsMatch.value
+    && termsAgreed.value
+    && privacyAgreed.value
+})
+
+function changeMode(nextMode) {
+  mode.value = nextMode
+  password.value = ''
+  passwordConfirm.value = ''
+  showPassword.value = false
+  errorMsg.value = ''
+}
+
+function firstError(data) {
+  if (!data) return '오류가 발생했습니다.'
+  if (typeof data === 'string') return data
+  if (Array.isArray(data)) return firstError(data[0])
+  for (const value of Object.values(data)) {
+    const message = firstError(value)
+    if (message) return message
+  }
+  return '오류가 발생했습니다.'
+}
+
 async function submit() {
   errorMsg.value = ''
-
-  if (mode.value === 'signup' && password.value !== passwordConfirm.value) {
-    errorMsg.value = '비밀번호가 일치하지 않습니다.'
+  if (!canSubmit.value) {
+    errorMsg.value = '입력 내용과 필수 동의 항목을 확인해 주세요.'
     return
   }
 
@@ -134,17 +266,17 @@ async function submit() {
       await authStore.login(email.value, password.value)
     } else {
       await authStore.signup({
-        name: name.value,
         email: email.value,
+        name: name.value,
         password: password.value,
-        passwordConfirm: passwordConfirm.value,
+        password_confirm: passwordConfirm.value,
+        terms_agreed: termsAgreed.value,
+        privacy_agreed: privacyAgreed.value,
       })
     }
     router.push('/')
-  } catch (e) {
-    errorMsg.value = e.response?.data?.detail
-      || Object.values(e.response?.data || {})[0]
-      || '오류가 발생했습니다.'
+  } catch (error) {
+    errorMsg.value = firstError(error.response?.data)
   } finally {
     loading.value = false
   }
@@ -155,7 +287,7 @@ async function submit() {
 .page {
   min-height: calc(100vh - 44px);
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(460px, 0.95fr);
 }
 .showcase {
   background: color-mix(in oklab, var(--fg), black 45%);
@@ -171,7 +303,6 @@ async function submit() {
   color: rgba(255, 255, 255, 0.7);
   font-size: var(--text-sm);
   font-weight: 600;
-  letter-spacing: 0;
 }
 .showcase-title {
   max-width: 20ch;
@@ -251,16 +382,15 @@ async function submit() {
   font-size: var(--text-sm);
   font-weight: 600;
 }
-
 .auth-side {
   background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(var(--space-8), 6vw, var(--section-y-tablet));
+  padding: clamp(var(--space-8), 5vw, var(--section-y-tablet));
 }
 .auth-card {
-  width: min(100%, 420px);
+  width: min(100%, 440px);
 }
 .auth-kicker {
   color: var(--muted);
@@ -275,8 +405,9 @@ async function submit() {
 }
 .auth-sub {
   color: var(--muted);
-  margin: var(--space-2) 0 var(--space-8);
+  margin: var(--space-2) 0 var(--space-6);
   font-size: var(--text-sm);
+  line-height: 1.6;
 }
 .segmented {
   display: grid;
@@ -307,29 +438,124 @@ async function submit() {
   gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
+.field label,
+.agreements legend {
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.field-hint {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.field-hint.valid,
+.password-rules .valid {
+  color: var(--success);
+}
+.field-hint.invalid {
+  color: var(--danger);
+}
+.password-input {
+  position: relative;
+}
+.password-input input {
+  padding-right: 70px;
+}
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 8px;
+}
+.password-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.password-rules li::before {
+  content: '○';
+  margin-right: 5px;
+}
+.password-rules li.valid::before {
+  content: '✓';
+}
+.agreements {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-warm);
+}
+.agreements legend {
+  padding: 0 var(--space-2);
+}
+.consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.consent-row input {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  margin-top: 1px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+.consent-row strong {
+  color: var(--accent);
+}
+.consent-all {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+  font-weight: 600;
+}
+.agreement-details {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.agreement-details summary {
+  cursor: pointer;
+  color: var(--fg-2);
+}
+.agreement-details p {
+  margin: var(--space-2) 0 0;
+  line-height: 1.6;
+}
+.form-error {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--danger), transparent 92%);
+}
 .btn-primary {
   width: 100%;
 }
-.btn-secondary {
-  width: 100%;
-  margin-top: var(--space-3);
-}
-.divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.security-note {
+  margin: var(--space-4) 0 0;
   color: var(--muted);
   font-size: var(--text-xs);
-  margin: var(--space-6) 0;
-}
-.divider::before, .divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--border-soft);
+  text-align: center;
+  line-height: 1.5;
 }
 .auth-footer {
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
   text-align: center;
   color: var(--muted);
   font-size: var(--text-sm);
@@ -345,14 +571,17 @@ async function submit() {
     grid-template-columns: 1fr;
   }
   .showcase {
-    min-height: 48vh;
+    min-height: 42vh;
     padding: var(--section-y-phone) var(--container-gutter-phone);
+  }
+  .product-stage {
+    display: none;
+  }
+  .showcase-lead {
+    margin-bottom: 0;
   }
   .auth-side {
     padding: var(--section-y-phone) var(--container-gutter-phone);
-  }
-  .showcase-title {
-    max-width: 20ch;
   }
 }
 </style>

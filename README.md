@@ -3,6 +3,15 @@
 > **서류 합격 이후, AI가 나만을 위한 면접 로드맵을 그려드립니다.**  
 > 이력서·자기소개서·채용공고를 종합 분석해 직무별 맞춤 준비 전략을 자동 생성하는 서비스입니다.
 
+### 🎥 서비스 하이라이트 & 핵심 프리젠테이션
+| 🧭 메인 슬로건 & 브랜드 아이덴티티 | 🛠️ 시스템 아키텍처 및 LLM 파이프라인 |
+|:---:|:---:|
+| ![PathFinder AI 메인 소개](docs/images/slide_1.png) | ![PathFinder AI 아키텍처](docs/images/slide_5.png) |
+
+| 📊 취업 데이터 시각화 & 대시보드 | 🧠 GraphRAG 기반 기업 지식 그래프 |
+|:---:|:---:|
+| ![PathFinder AI 대시보드](docs/images/slide_6.png) | ![PathFinder AI 지식그래프](docs/images/slide_4.png) |
+
 ---
 
 ## 📌 목차
